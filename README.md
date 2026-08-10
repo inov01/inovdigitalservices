@@ -1,1 +1,973 @@
-# INOV-Digital-Services
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Meta Tags -->
+  <title>INOV Digital Services — Agence Créative & Marketing Digital</title>
+  <meta name="description" content="INOV Digital Services est une agence créative spécialisée en branding, création de logo, animation, montage vidéo, motion design, packaging et marketing digital. Design premium, résultats concrets.">
+  <meta name="keywords" content="agence créative, branding, logo, animation logo, montage vidéo, motion design, packaging, marketing digital, promotion en ligne">
+  <meta name="author" content="INOV Digital Services">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="INOV Digital Services — Agence Créative & Marketing Digital">
+  <meta property="og:description" content="Transformez votre vision en réalité digitale. Design premium, résultats concrets.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/hero_bg.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237c3aed'/><text y='.9em' font-size='70' x='50%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-weight='900' font-family='Arial'>I</text></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css?v=2.0.1">
+  <!-- PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+<!-- ================================================================
+     NAVIGATION
+================================================================ -->
+<nav class="nav" id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <img src="assets/logo.png" alt="INOV Digital Services Logo" class="nav-logo-img">
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#services" data-i18n="nav.services">Services</a></li>
+      <li><a href="#why-us" data-i18n="nav.why">Pourquoi nous</a></li>
+      <li><a href="#pricing" data-i18n="nav.pricing">Tarifs</a></li>
+      <li><a href="#portfolio" data-i18n="nav.portfolio">Portfolio</a></li>
+      <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="fr">FR</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+      </div>
+      <a href="#contact" class="btn btn-primary btn-sm" data-i18n="nav.cta">Démarrer un projet</a>
+    </div>
+
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="nav-mobile" id="mobile-menu">
+  <a href="#services" data-i18n="nav.services">Services</a>
+  <a href="#why-us" data-i18n="nav.why">Pourquoi nous</a>
+  <a href="#pricing" data-i18n="nav.pricing">Tarifs</a>
+  <a href="#portfolio" data-i18n="nav.portfolio">Portfolio</a>
+  <a href="#contact" data-i18n="nav.contact">Contact</a>
+  <a href="#contact" class="btn btn-primary" data-i18n="nav.cta">Démarrer un projet</a>
+</div>
+
+<!-- ================================================================
+     HERO SECTION (SIMPLIFIÉE & ÉPURÉE)
+================================================================ -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span>🚀 AGENCE CRÉATIVE & DIGITALE</span>
+    </div>
+
+    <h1 class="hero-title">
+      Design Premium & <br>
+      <span class="hero-orange-text">Solutions Digitales Sur-Mesure</span>
+    </h1>
+
+    <p class="hero-description">
+      INOV Digital Services propulse votre marque avec des visuels percutants, du branding haut de gamme et des campagnes marketing digitales axées sur les résultats.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#pricing" class="btn btn-primary btn-lg" id="hero-cta1">
+        ⚡ Voir les Tarifs & Commander
+      </a>
+      <a href="#portfolio" class="btn btn-secondary btn-lg" id="hero-cta2">
+        👁️ Notre Portfolio
+      </a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-number" data-count="150" data-suffix="+">0+</span>
+        <span class="stat-label">Projets Réalisés</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-count="80" data-suffix="+">0+</span>
+        <span class="stat-label">Clients Satisfaits</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-count="12" data-suffix="+">0+</span>
+        <span class="stat-label">Pays Servis</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-count="98" data-suffix="%">0%</span>
+        <span class="stat-label">Taux de Satisfaction</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     SERVICES SECTION
+================================================================ -->
+<section class="services" id="services">
+  <div class="container">
+    <div class="services-header animate-on-scroll">
+      <div class="section-tag" data-i18n="services.tag">Nos Services</div>
+      <h2 class="section-title">
+        <span data-i18n="services.title">Des solutions créatives pour votre</span>
+        <br><span class="gradient-text" data-i18n="services.title2">croissance digitale</span>
+      </h2>
+      <p class="section-subtitle" data-i18n="services.subtitle">
+        Du branding à la promotion en ligne, nous offrons une gamme complète de services pour propulser votre marque.
+      </p>
+    </div>
+
+    <div class="services-grid">
+      <!-- Service 1 -->
+      <div class="service-card animate-on-scroll delay-1">
+        <h3 class="service-title" data-i18n="s1.title">Branding & Identité</h3>
+        <p class="service-desc" data-i18n="s1.desc">Création d'une identité visuelle forte et cohérente qui reflète les valeurs de votre marque.</p>
+      </div>
+
+      <!-- Service 2 -->
+      <div class="service-card animate-on-scroll delay-2">
+        <h3 class="service-title" data-i18n="s2.title">Création de Logo</h3>
+        <p class="service-desc" data-i18n="s2.desc">Un logo professionnel, mémorable et unique qui représente votre entreprise.</p>
+      </div>
+
+      <!-- Service 3 -->
+      <div class="service-card animate-on-scroll delay-3">
+        <h3 class="service-title" data-i18n="s3.title">Animation de Logo</h3>
+        <p class="service-desc" data-i18n="s3.desc">Donnez vie à votre logo avec des animations fluides et percutantes.</p>
+      </div>
+
+      <!-- Service 4 -->
+      <div class="service-card animate-on-scroll delay-4">
+        <h3 class="service-title" data-i18n="s4.title">Montage Vidéo</h3>
+        <p class="service-desc" data-i18n="s4.desc">Montage professionnel pour vos vidéos promotionnelles, clips et contenus réseaux.</p>
+      </div>
+
+      <!-- Service 5 -->
+      <div class="service-card animate-on-scroll delay-1">
+        <h3 class="service-title" data-i18n="s5.title">Motion Design</h3>
+        <p class="service-desc" data-i18n="s5.desc">Animations graphiques et effets visuels pour des contenus qui captivent.</p>
+      </div>
+
+      <!-- Service 6 -->
+      <div class="service-card animate-on-scroll delay-2">
+        <h3 class="service-title" data-i18n="s6.title">Packaging Design</h3>
+        <p class="service-desc" data-i18n="s6.desc">Designs d'emballages attractifs qui boostent vos ventes en rayon et en ligne.</p>
+      </div>
+
+      <!-- Service 7 -->
+      <div class="service-card animate-on-scroll delay-3">
+        <h3 class="service-title" data-i18n="s7.title">Promotion en Ligne</h3>
+        <p class="service-desc" data-i18n="s7.desc">Stratégies de promotion ciblées pour maximiser votre visibilité digitale.</p>
+      </div>
+
+      <!-- Service 8 -->
+      <div class="service-card animate-on-scroll delay-4">
+        <h3 class="service-title" data-i18n="s8.title">Marketing Digital</h3>
+        <p class="service-desc" data-i18n="s8.desc">Campagnes de marketing digital complètes pour développer votre audience.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     WHY US SECTION
+================================================================ -->
+<section class="why-us" id="why-us">
+  <div class="container">
+    <div class="why-us-inner">
+      <div class="why-us-content animate-on-scroll">
+        <div class="section-tag" data-i18n="why.tag">Pourquoi INOV ?</div>
+        <h2 class="section-title" data-i18n="why.title">Ce qui nous distingue de la concurrence</h2>
+        <p class="section-subtitle" data-i18n="why.subtitle">Nous ne créons pas juste du design — nous créons des expériences qui convertissent.</p>
+
+        <div class="why-us-features">
+          <div class="feature-item">
+            <div class="feature-text">
+              <h4 data-i18n="f1.title">Design Premium</h4>
+              <p data-i18n="f1.desc">Chaque projet est traité avec un soin extrême pour un rendu professionnel et moderne.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-text">
+              <h4 data-i18n="f2.title">Livraison Rapide</h4>
+              <p data-i18n="f2.desc">Nous respectons vos délais et livrons dans les temps, sans compromis sur la qualité.</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-text">
+              <h4 data-i18n="f3.title">Support Continu</h4>
+              <p data-i18n="f3.desc">Nous restons disponibles après livraison pour toute modification ou question.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="why-us-visual animate-on-scroll delay-2">
+        <div class="glass-card-big">
+          <img src="assets/macbook.png" alt="INOV Designer" class="macbook-person-img">
+          <div class="metric-grid">
+            <div class="metric-item">
+              <span class="metric-value" data-count="150" data-suffix="+">0+</span>
+              <div class="metric-label" data-i18n="m1">Projets</div>
+            </div>
+            <div class="metric-item">
+              <span class="metric-value" data-count="80" data-suffix="+">0+</span>
+              <div class="metric-label" data-i18n="m2">Clients</div>
+            </div>
+            <div class="metric-item">
+              <span class="metric-value" data-count="98" data-suffix="%">0%</span>
+              <div class="metric-label" data-i18n="m3">Satisfaction</div>
+            </div>
+            <div class="metric-item">
+              <span class="metric-value" data-count="12" data-suffix="+">0+</span>
+              <div class="metric-label" data-i18n="m4">Pays</div>
+            </div>
+          </div>
+
+          <!-- Tools we use -->
+          <div style="margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border-color);">
+            <div style="font-size:0.75rem; color: var(--text-muted); text-transform:uppercase; letter-spacing:.1em; margin-bottom: 14px;">Outils & Plateformes</div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+              <span style="padding:6px 14px; background:#f4f5f8; border:1px solid #000000; border-radius:6px; font-size:0.8rem; font-weight:600; color:#000000;">Adobe After Effects</span>
+              <span style="padding:6px 14px; background:#f4f5f8; border:1px solid #000000; border-radius:6px; font-size:0.8rem; font-weight:600; color:#000000;">Premiere Pro</span>
+              <span style="padding:6px 14px; background:#f4f5f8; border:1px solid #000000; border-radius:6px; font-size:0.8rem; font-weight:600; color:#000000;">Illustrator</span>
+              <span style="padding:6px 14px; background:#f4f5f8; border:1px solid #000000; border-radius:6px; font-size:0.8rem; font-weight:600; color:#000000;">Photoshop</span>
+              <span style="padding:6px 14px; background:#f4f5f8; border:1px solid #000000; border-radius:6px; font-size:0.8rem; font-weight:600; color:#000000;">Figma</span>
+              <span style="padding:6px 14px; background:#f4f5f8; border:1px solid #000000; border-radius:6px; font-size:0.8rem; font-weight:600; color:#000000;">DaVinci Resolve</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     PRICING / TARIFS SECTION — Sélection Interactive
+================================================================ -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="pricing-header animate-on-scroll">
+      <div class="section-tag" data-i18n="pricing.tag">Tarifs</div>
+      <h2 class="section-title">Services de Conception Graphique</h2>
+      <p class="section-subtitle">Des visuels professionnels pour booster votre image. Sélectionnez vos services et commandez en un clic.</p>
+    </div>
+
+    <div class="tarifs-layout">
+      <!-- ====== TABLEAU DES SERVICES ====== -->
+      <div class="tarifs-table-wrapper animate-on-scroll">
+        <div class="tarifs-table-header">
+          <div class="tarifs-th tarifs-th-service">Tarifs des services de conception graphique</div>
+          <div class="tarifs-th tarifs-th-price">À partir de</div>
+        </div>
+
+        <div class="tarifs-table-body" id="tarifs-body">
+          <!-- Généré dynamiquement par JS -->
+        </div>
+
+        <!-- Option "Autre" -->
+        <div class="tarifs-other-row" id="tarifs-other-row">
+          <div class="tarifs-other-check">
+            <input type="checkbox" class="tarifs-checkbox" id="other-checkbox" onchange="toggleOther()">
+            <div class="tarifs-other-info">
+              <strong>Autre — Conception spécifique</strong>
+              <input type="text" class="tarifs-other-input" id="other-input" placeholder="Décrivez votre projet ici..." oninput="updateCart()" disabled>
+            </div>
+          </div>
+          <div class="tarifs-row-price">20 $US</div>
+        </div>
+
+        <div class="tarifs-note">
+          <span>💡</span> Tous les prix sont affichés <strong>« à partir de »</strong> et peuvent varier selon les exigences ou les contraintes liées au service. Vous aurez vos conceptions sous <strong>12h à 3 jours</strong> à compter de la date du paiement.
+        </div>
+      </div>
+
+      <!-- ====== PANIER SIDEBAR ====== -->
+      <div class="tarifs-cart-wrapper">
+        <div class="tarifs-cart" id="tarifs-cart">
+          <div class="tarifs-cart-header">
+            <span class="tarifs-cart-icon">🛒</span>
+            <h3>Votre Sélection</h3>
+            <span class="tarifs-cart-count" id="cart-count">0</span>
+          </div>
+
+          <div class="tarifs-cart-items" id="cart-items">
+            <div class="tarifs-cart-empty" id="cart-empty">
+              <span>📋</span>
+              <p>Sélectionnez des services dans le tableau pour les ajouter ici</p>
+            </div>
+          </div>
+
+          <div class="tarifs-cart-summary" id="cart-summary" style="display:none;">
+            <div class="tarifs-cart-line">
+              <span>Sous-total</span>
+              <span id="cart-subtotal">0 $US</span>
+            </div>
+            <div class="tarifs-cart-discount" id="cart-discount-line" style="display:none;">
+              <span id="cart-discount-label">Réduction (0%)</span>
+              <span id="cart-discount-amount">- 0 $US</span>
+            </div>
+            <div class="tarifs-cart-total">
+              <span>Total estimé</span>
+              <span id="cart-total">0 $US</span>
+            </div>
+            <div class="tarifs-cart-acompte" id="cart-acompte-line" style="margin-top:8px;padding-top:8px;border-top:1px dashed rgba(0,0,0,0.15);display:flex;justify-content:space-between;font-size:0.85rem;font-weight:700;color:#ff5500;">
+              <span>Acompte (70%)</span>
+              <span id="cart-acompte">0 $US</span>
+            </div>
+          </div>
+
+          <!-- Badges de réduction -->
+          <div class="tarifs-discount-badges">
+            <div class="tarifs-discount-badge badge-10" id="badge-10">
+              <span class="badge-percent">10%</span>
+              <span class="badge-text">de réduction à partir de <strong>5 services</strong></span>
+            </div>
+            <div class="tarifs-discount-badge badge-30" id="badge-30">
+              <span class="badge-percent">30%</span>
+              <span class="badge-text">de réduction à partir de <strong>10 services</strong></span>
+            </div>
+          </div>
+
+          <!-- Champs de personnalisation client -->
+          <div class="tarifs-client-fields" id="tarifs-client-fields" style="display:none;">
+            <div class="tarifs-client-group">
+              <label class="tarifs-client-label" for="devis-client-name">Nom du client / Entreprise</label>
+              <input type="text" class="tarifs-client-input" id="devis-client-name" placeholder="Ex: Liberté Juridique" />
+            </div>
+            <div class="tarifs-client-group">
+              <label class="tarifs-client-label" for="devis-num">N° de Proforma <span style="font-size:0.75em;opacity:0.6;font-weight:400;">(généré automatiquement)</span></label>
+              <input type="text" class="tarifs-client-input" id="devis-num" placeholder="Cliquez sur Télécharger le Devis..." readonly style="opacity:0.7;cursor:default;" />
+            </div>
+          </div>
+
+          <div class="tarifs-cart-actions" id="cart-actions" style="display:none;">
+            <button class="tarifs-btn tarifs-btn-whatsapp" onclick="commanderWhatsAppTarifs()">
+              📲 Commander via WhatsApp
+            </button>
+            <button class="tarifs-btn tarifs-btn-devis" onclick="telechargerDevisPDF()">
+              📥 Télécharger le Devis (PDF)
+            </button>
+          </div>
+
+          <div class="tarifs-cart-info">
+            <div class="tarifs-info-item">
+              <span>📞</span> (+509) 3625-5920
+            </div>
+            <div class="tarifs-info-item">
+              <span>📷</span> @inov_digital_services
+            </div>
+            <div class="tarifs-payment-methods">
+              <span class="tarifs-pay-badge">MonCash</span>
+              <span class="tarifs-pay-badge">NatCash</span>
+              <span class="tarifs-pay-badge">2Checkout</span>
+              <span class="tarifs-pay-badge">CamTransfert</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     MODÈLE PDF CACHÉ — Proforma dynamique
+================================================================ -->
+<div id="devis-pdf-template" style="position:absolute;left:0;top:0;z-index:-9999;opacity:0;pointer-events:none;width:210mm;background:#fff;font-family:'Montserrat','Outfit',sans-serif;padding:0;">
+  <div id="devis-pdf-doc" style="padding:35px 40px;background:#fff;color:#111;position:relative;overflow:hidden;">
+
+    <!-- Contenu principal -->
+    <div style="position:relative;z-index:1;">
+
+      <!-- En-tête -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;padding-bottom:18px;border-bottom:3px solid #ff5500;">
+        <img src="assets/logo.png" alt="Logo" style="height:55px;width:auto;" crossorigin="anonymous">
+        <div style="text-align:right;">
+          <div style="font-size:24px;font-weight:900;text-transform:uppercase;color:#000;letter-spacing:1px;">Facture Proforma</div>
+          <div style="font-size:10px;font-weight:800;color:#ff5500;text-transform:uppercase;margin-top:4px;">
+            <span id="pdf-doc-num">N° PF-2026-0001</span>&nbsp;|&nbsp;Offre valable 30 jours
+          </div>
+        </div>
+      </div>
+
+      <!-- Meta grille client / date -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+        <div style="display:flex;border:2px solid #000;font-size:11px;font-weight:800;">
+          <div style="background:#e5e5e5;padding:10px 14px;text-transform:uppercase;border-right:2px solid #000;white-space:nowrap;display:flex;align-items:center;">Au nom de</div>
+          <div style="padding:10px 14px;display:flex;align-items:center;flex:1;" id="pdf-client-name">Client</div>
+        </div>
+        <div style="display:flex;border:2px solid #000;font-size:11px;font-weight:800;">
+          <div style="background:#e5e5e5;padding:10px 14px;text-transform:uppercase;border-right:2px solid #000;display:flex;align-items:center;">Date</div>
+          <div style="padding:10px 14px;display:flex;align-items:center;flex:1;" id="pdf-date"></div>
+        </div>
+      </div>
+
+      <!-- Tableau des services -->
+      <table style="width:100%;border-collapse:collapse;border:2px solid #000;margin-bottom:14px;">
+        <thead>
+          <tr>
+            <th style="background:#e5e5e5;color:#000;font-weight:800;font-size:11px;text-transform:uppercase;padding:11px 14px;border:1px solid #000;text-align:left;">Nom du service ou produit</th>
+            <th style="background:#ff5500;color:#fff;font-weight:800;font-size:11px;text-transform:uppercase;padding:11px 14px;border:1px solid #000;text-align:right;width:120px;">Prix</th>
+          </tr>
+        </thead>
+        <tbody id="pdf-services-body"></tbody>
+      </table>
+
+      <!-- Badges de réduction -->
+      <div id="pdf-discount-badges" style="display:flex;gap:10px;margin-bottom:20px;">
+        <div id="pdf-badge-5" style="flex:1;background:#fff;border:2px solid #ff5500;border-radius:6px;padding:8px 12px;font-size:10px;font-weight:800;color:#ff5500;text-align:center;display:none;">
+          ✨ 10% de réduction appliquée (5+ services)
+        </div>
+        <div id="pdf-badge-10" style="flex:1;background:#ff5500;border:2px solid #ff5500;border-radius:6px;padding:8px 12px;font-size:10px;font-weight:800;color:#fff;text-align:center;display:none;">
+          🔥 30% de réduction appliquée (10+ services)
+        </div>
+      </div>
+
+      <!-- Pied de page -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:22px;">
+        <div style="font-size:11px;font-weight:800;color:#000;line-height:2;">
+          <div>📷 @inov_digital_services</div>
+          <div>📞 (+509) 3625-5920</div>
+          <div>✉️ inov01contact@gmail.com</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="display:inline-flex;border:2px solid #000;height:45px;min-width:250px;">
+            <div style="background:#e5e5e5;font-weight:800;font-size:12px;text-transform:uppercase;display:flex;align-items:center;padding:0 16px;border-right:2px solid #000;">Total</div>
+            <div style="background:#fff;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:flex-end;padding:0 16px;flex-grow:1;color:#000;" id="pdf-total">0 $ US</div>
+          </div>
+          <div id="pdf-discount-text" style="color:#2e7d32;font-weight:800;font-size:10px;margin-top:4px;"></div>
+          <div style="display:inline-flex;border:2px solid #ff5500;height:35px;min-width:250px;margin-top:6px;">
+            <div style="background:#ff5500;font-weight:800;font-size:10px;text-transform:uppercase;display:flex;align-items:center;padding:0 12px;border-right:2px solid #ff5500;color:#fff;">Acompte 70%</div>
+            <div style="background:#fff;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:flex-end;padding:0 12px;flex-grow:1;color:#ff5500;" id="pdf-acompte">0 $ US</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mentions légales -->
+      <div style="margin-top:22px;padding-top:14px;border-top:1px solid #ddd;font-size:9px;color:#888;text-align:center;font-weight:600;">
+        INOV Digital Services — Port-au-Prince, Haïti — Tous droits réservés © 2025
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     PORTFOLIO SECTION
+================================================================ -->
+<section class="portfolio" id="portfolio">
+  <div class="container">
+    <div class="portfolio-header animate-on-scroll">
+      <div class="section-tag" data-i18n="portfolio.tag">Portfolio</div>
+      <h2 class="section-title" data-i18n="portfolio.title">Quelques-unes de nos réalisations</h2>
+      <p class="section-subtitle" data-i18n="portfolio.subtitle">Chaque projet est unique, conçu sur mesure pour nos clients.</p>
+    </div>
+
+    <!-- Filtres du portfolio -->
+    <div class="portfolio-filters animate-on-scroll">
+      <button class="portfolio-filter-btn active" onclick="filtrerPortfolio('all', this)">Tous</button>
+      <button class="portfolio-filter-btn" onclick="filtrerPortfolio('packaging', this)">Packaging &amp; Étiquettes</button>
+      <button class="portfolio-filter-btn" onclick="filtrerPortfolio('branding', this)">Branding &amp; Logo</button>
+      <button class="portfolio-filter-btn" onclick="filtrerPortfolio('flyer', this)">Flyers &amp; Affiches</button>
+    </div>
+
+    <div class="portfolio-grid" id="portfolio-grid">
+      <div class="portfolio-item animate-on-scroll delay-1" data-category="packaging">
+        <img src="assets/portfolios/packaging_anana.png" alt="Packaging Design — Konfiti Anana" class="portfolio-img">
+        <div class="portfolio-overlay">
+          <h4>Packaging Design Pro</h4>
+          <p>Konfiti Anana — Boîte, pot &amp; sac produit tropical</p>
+          <button class="btn btn-sm btn-secondary lightbox-trigger" style="margin-top:12px;" onclick="ouvrirLightbox('assets/portfolios/packaging_anana.png','Packaging Design Pro')">🔍 Voir le projet</button>
+        </div>
+      </div>
+
+      <div class="portfolio-item animate-on-scroll delay-2" data-category="flyer packaging">
+        <img src="assets/portfolios/product_flyer.png" alt="Product Flyer — Konfiti Anana" class="portfolio-img">
+        <div class="portfolio-overlay">
+          <h4>Product Flyer &amp; Mockup</h4>
+          <p>Konfiti Anana — Photo produit lifestyle &amp; étiquette sur-mesure</p>
+          <button class="btn btn-sm btn-secondary lightbox-trigger" style="margin-top:12px;" onclick="ouvrirLightbox('assets/portfolios/product_flyer.png','Product Flyer & Mockup')">🔍 Voir le projet</button>
+        </div>
+      </div>
+
+      <div class="portfolio-item animate-on-scroll delay-3" data-category="branding">
+        <img src="assets/portfolios/logo_branding.png" alt="Logo Design & Branding — INOV" class="portfolio-img">
+        <div class="portfolio-overlay">
+          <h4>Logo Design &amp; Branding</h4>
+          <p>Identité visuelle complète — logo, typographie, palette &amp; mockups</p>
+          <button class="btn btn-sm btn-secondary lightbox-trigger" style="margin-top:12px;" onclick="ouvrirLightbox('assets/portfolios/logo_branding.png','Logo Design & Branding')">🔍 Voir le projet</button>
+        </div>
+      </div>
+
+      <div class="portfolio-item animate-on-scroll delay-1" data-category="packaging">
+        <img src="assets/portfolios/etiquette_anana.png" alt="Conception d'étiquette — Konfiti Anana" class="portfolio-img">
+        <div class="portfolio-overlay">
+          <h4>Conception d'Étiquette</h4>
+          <p>Konfiti Anana — Étiquette pot avec ingrédients, QR code &amp; branding</p>
+          <button class="btn btn-sm btn-secondary lightbox-trigger" style="margin-top:12px;" onclick="ouvrirLightbox('assets/portfolios/etiquette_anana.png','Conception d\'Étiquette')">🔍 Voir le projet</button>
+        </div>
+      </div>
+
+      <div class="portfolio-item animate-on-scroll delay-2" data-category="flyer">
+        <img src="assets/portfolios/social_flyer.png" alt="Social Media Design — Flyer INOV" class="portfolio-img">
+        <div class="portfolio-overlay">
+          <h4>Social Media Design</h4>
+          <p>Flyer promotionnel dynamique — « Donnez un nouvel élan à votre marque »</p>
+          <button class="btn btn-sm btn-secondary lightbox-trigger" style="margin-top:12px;" onclick="ouvrirLightbox('assets/portfolios/social_flyer.png','Social Media Design')">🔍 Voir le projet</button>
+        </div>
+      </div>
+
+      <div class="portfolio-item animate-on-scroll delay-3" data-category="flyer">
+        <img src="assets/portfolios/affiche_ceremonie.png" alt="Affiche Événementielle — Parrots Modern Language School" class="portfolio-img">
+        <div class="portfolio-overlay">
+          <h4>Affiche Événementielle</h4>
+          <p>Cérémonie de remise de certificats — Parrots Modern Language School</p>
+          <button class="btn btn-sm btn-secondary lightbox-trigger" style="margin-top:12px;" onclick="ouvrirLightbox('assets/portfolios/affiche_ceremonie.png','Affiche Événementielle')">🔍 Voir le projet</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="text-align:center; margin-top:48px;" class="animate-on-scroll">
+      <a href="#contact" class="btn btn-secondary" id="portfolio-cta" data-i18n="portfolio.cta">Voir tout le portfolio</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     TESTIMONIALS / TÉMOIGNAGES CLIENTS
+================================================================ -->
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="portfolio-header animate-on-scroll" style="text-align:center;">
+      <div class="section-tag">Avis Clients</div>
+      <h2 class="section-title">Ce que nos clients disent de nous</h2>
+      <p class="section-subtitle">Découvrez les retours de marques et entreprises qui nous ont fait confiance.</p>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card animate-on-scroll delay-1">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">« INOV Digital Services a conçu l'emballage et les étiquettes de nos produits de manière exceptionnelle. La réactivité et le professionnalisme sont au rendez-vous ! »</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">K</div>
+          <div class="testimonial-info">
+            <h4>Konfiti Anana</h4>
+            <p>Marque Agroalimentaire — Haïti</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card animate-on-scroll delay-2">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">« Leur travail sur notre branding complet et nos affiches événementielles a considérablement amélioré notre visibilité auprès des étudiants. »</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">P</div>
+          <div class="testimonial-info">
+            <h4>Parrots Modern Language</h4>
+            <p>Centre de Langues — Éducation</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card animate-on-scroll delay-3">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">« Le devis PDF instantané et la commande rapide via WhatsApp m'ont fait gagner un temps précieux. Les visuels créés dépassent nos attentes. »</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">L</div>
+          <div class="testimonial-info">
+            <h4>Liberté Juridique</h4>
+            <p>Cabinet de Conseil</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     FAQ ACCORDION (FOIRE AUX QUESTIONS)
+================================================================ -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="portfolio-header animate-on-scroll" style="text-align:center;">
+      <div class="section-tag">FAQ</div>
+      <h2 class="section-title">Questions Fréquentes</h2>
+      <p class="section-subtitle">Tout ce que vous devez savoir avant de démarrer votre projet.</p>
+    </div>
+
+    <div class="faq-list">
+      <div class="faq-item animate-on-scroll">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>Quels sont les délais de livraison pour un projet ?</span>
+          <span class="faq-icon">▼</span>
+        </button>
+        <div class="faq-answer">
+          <p>Nos délais de livraison varient de <strong>12 heures à 3 jours ouvrisés</strong> à compter de la date du paiement de l'acompte, selon la complexité et le volume des services sélectionnés.</p>
+        </div>
+      </div>
+
+      <div class="faq-item animate-on-scroll">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>Comment fonctionne le paiement de l'acompte de 70% ?</span>
+          <span class="faq-icon">▼</span>
+        </button>
+        <div class="faq-answer">
+          <p>Pour lancer la création, un acompte de 70% du montant total est requis à la commande. Le solde de 30% est réglé à la livraison finale des fichiers HD valides.</p>
+        </div>
+      </div>
+
+      <div class="faq-item animate-on-scroll">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>Quels modes de paiement acceptez-vous ?</span>
+          <span class="faq-icon">▼</span>
+        </button>
+        <div class="faq-answer">
+          <p>Nous acceptons <strong>MonCash</strong>, <strong>NatCash</strong>, <strong>2Checkout</strong> (Visa, Mastercard, PayPal), et <strong>CamTransfert</strong>.</p>
+        </div>
+      </div>
+
+      <div class="faq-item animate-on-scroll">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          <span>Dans quels formats recevrai-je mes visuels ?</span>
+          <span class="faq-icon">▼</span>
+        </button>
+        <div class="faq-answer">
+          <p>Vous recevrez tous les formats professionnels nécessaires : <strong>PNG haute définition (fond transparent), JPEG, PDF prêt à l'impression et fichiers sources (AI, PSD, SVG)</strong> selon le pack souscrit.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     LIGHTBOX PORTFOLIO
+================================================================ -->
+<div id="portfolio-lightbox" role="dialog" aria-modal="true" aria-label="Aperçu du projet">
+  <div class="lightbox-close-bg" onclick="fermerLightbox()"></div>
+  <img id="lightbox-img" src="" alt="Aperçu projet" onclick="toggleZoomLightbox()">
+  <div class="lightbox-toolbar">
+    <button class="lightbox-btn lightbox-btn-zoom" onclick="toggleZoomLightbox()">🔍 Zoom</button>
+    <button class="lightbox-btn lightbox-btn-download" onclick="telechargerImageLightbox()">📥 Télécharger</button>
+    <button class="lightbox-btn lightbox-btn-close" onclick="fermerLightbox()">✕ Fermer</button>
+  </div>
+  <p id="lightbox-title" style="color:#aaa;font-size:0.85rem;margin-top:10px;font-weight:600;"></p>
+</div>
+
+<script>
+  let _lightboxSrc = '';
+
+  window.ouvrirLightbox = function(src, title) {
+    _lightboxSrc = src;
+    const lb = document.getElementById('portfolio-lightbox');
+    const img = document.getElementById('lightbox-img');
+    const titleEl = document.getElementById('lightbox-title');
+    img.src = src;
+    img.classList.remove('zoomed');
+    if (titleEl) titleEl.textContent = title || '';
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.fermerLightbox = function() {
+    const lb = document.getElementById('portfolio-lightbox');
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+    const img = document.getElementById('lightbox-img');
+    img.classList.remove('zoomed');
+  };
+
+  window.toggleZoomLightbox = function() {
+    document.getElementById('lightbox-img').classList.toggle('zoomed');
+  };
+
+  window.telechargerImageLightbox = function() {
+    const a = document.createElement('a');
+    a.href = _lightboxSrc;
+    a.download = _lightboxSrc.split('/').pop();
+    a.click();
+  };
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') fermerLightbox();
+  });
+</script>
+
+<!-- ================================================================
+     CONTACT SECTION
+================================================================ -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="contact-inner">
+      <div class="contact-info animate-on-scroll">
+        <div class="section-tag" data-i18n="contact.tag">Contact</div>
+        <h2 class="section-title" data-i18n="contact.title">Parlons de votre projet</h2>
+        <p data-i18n="contact.desc">Vous avez un projet en tête ? Contactez-nous et obtenez un devis gratuit sous 24h.</p>
+
+        <div class="contact-details">
+          <div class="contact-detail-item">
+            <div class="contact-detail-text">
+              <span class="contact-detail-label">Email</span>
+              <span class="contact-detail-value">inov01contact@gmail.com</span>
+            </div>
+          </div>
+          <div class="contact-detail-item">
+            <div class="contact-detail-text">
+              <span class="contact-detail-label">WhatsApp</span>
+              <span class="contact-detail-value">(+509) 3625-5920</span>
+            </div>
+          </div>
+          <div class="contact-detail-item">
+            <div class="contact-detail-text">
+              <span class="contact-detail-label">Localisation</span>
+              <span class="contact-detail-value">Port-au-Prince, Haïti</span>
+            </div>
+          </div>
+          <div class="contact-detail-item">
+            <div class="contact-detail-text">
+              <span class="contact-detail-label">Réponse</span>
+              <span class="contact-detail-value">Sous 24h garanties</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social -->
+        <div class="social-links-text" style="margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px;">
+          <a href="https://linktr.ee/inovdigitalservices" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">Linktree Officiel</a>
+          <a href="https://wa.me/50936255920" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">WhatsApp</a>
+          <a href="https://instagram.com/inov_digital_services" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://tiktok.com/@inovdigitalservices" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">TikTok</a>
+          <a href="https://facebook.com/inov01design" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">Facebook</a>
+        </div>
+        
+        <div style="margin-top: 24px;">
+          <a href="https://linktr.ee/inovdigitalservices" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: center;">
+            Voir tous nos réseaux (Linktree Officiel)
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-form-wrap animate-on-scroll delay-2">
+        <h3 style="font-size:1.4rem; margin-bottom:8px; color: #ffffff;">Envoyez-nous un message</h3>
+        <p style="color:#a0a0b0; font-size:0.875rem; margin-bottom:28px;">Réponse garantie sous 24h</p>
+
+        <form id="contact-form" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="contact-name" data-i18n="form.name" style="color: #ffffff;">Votre nom</label>
+              <input type="text" id="contact-name" name="name" class="form-control" placeholder="Jean Dupont" required data-i18n-placeholder="form.name">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-email" data-i18n="form.email" style="color: #ffffff;">Adresse email</label>
+              <input type="email" id="contact-email" name="email" class="form-control" placeholder="jean@exemple.com" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="contact-service" data-i18n="form.service" style="color: #ffffff;">Service souhaité</label>
+              <select id="contact-service" name="service" class="form-control">
+                <option value="">-- Sélectionner --</option>
+                <option>Logo & Identité Visuelle</option>
+                <option>Cartes de Visite</option>
+                <option>Étiquettes & Packaging Design</option>
+                <option>Conception Réseaux Sociaux</option>
+                <option>Conception Impression (Petit/Grand format)</option>
+                <option>Montage Vidéo & Animation</option>
+                <option>Promotion Réseaux Sociaux</option>
+                <option>Autre / Projet spécifique</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-budget" data-i18n="form.budget" style="color: #ffffff;">Budget estimé</label>
+              <select id="contact-budget" name="budget" class="form-control">
+                <option value="">-- Sélectionner --</option>
+                <option>Moins de $50</option>
+                <option>$50 – $100</option>
+                <option>$100 – $300</option>
+                <option>$300 – $500</option>
+                <option>$500+</option>
+                <option>À discuter</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="contact-message" style="color: #ffffff;">Message</label>
+            <textarea id="contact-message" name="message" class="form-control" placeholder="Décrivez votre projet..." data-i18n-placeholder="form.message" required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-secondary" id="form-submit" style="width:100%; justify-content:center; border-radius: var(--radius-md); padding: 16px; background: #ffffff; color: #000000; border: none;" data-i18n="form.submit">
+            Envoyer le message
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     FOOTER
+================================================================ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo" style="display:inline-flex; margin-bottom:12px;">
+          <img src="assets/logo.png" alt="INOV Digital Services Logo" class="nav-logo-img">
+        </a>
+        <p>Votre partenaire créatif pour un digital impactant. Design premium, résultats concrets. Port-au-Prince, Haïti.</p>
+        <div class="social-links-text" style="margin-top: 16px; display: flex; gap: 16px;">
+          <a href="https://linktr.ee/inovdigitalservices" target="_blank" rel="noopener" style="color: #ffffff; text-decoration: none; font-size: 0.85rem; font-weight: 600;">Linktree</a>
+          <a href="https://wa.me/50936255920" target="_blank" rel="noopener" style="color: #ffffff; text-decoration: none; font-size: 0.85rem; font-weight: 600;">WhatsApp</a>
+          <a href="https://instagram.com/inov_digital_services" target="_blank" rel="noopener" style="color: #ffffff; text-decoration: none; font-size: 0.85rem; font-weight: 600;">Instagram</a>
+          <a href="https://tiktok.com/@inovdigitalservices" target="_blank" rel="noopener" style="color: #ffffff; text-decoration: none; font-size: 0.85rem; font-weight: 600;">TikTok</a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul class="footer-links">
+          <li><a href="#services">Branding & Identité</a></li>
+          <li><a href="#services">Création de Logo</a></li>
+          <li><a href="#services">Animation de Logo</a></li>
+          <li><a href="#services">Montage Vidéo</a></li>
+          <li><a href="#services">Motion Design</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Plus de services</h4>
+        <ul class="footer-links">
+          <li><a href="#services">Packaging Design</a></li>
+          <li><a href="#services">Promotion en Ligne</a></li>
+          <li><a href="#services">Marketing Digital</a></li>
+          <li><a href="#pricing">Nos Tarifs</a></li>
+          <li><a href="#portfolio">Portfolio</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact & Réseaux</h4>
+        <ul class="footer-links">
+          <li><a href="https://linktr.ee/inovdigitalservices" target="_blank" rel="noopener">Linktree Officiel</a></li>
+          <li><a href="mailto:inov01contact@gmail.com">inov01contact@gmail.com</a></li>
+          <li><a href="https://wa.me/50936255920" target="_blank" rel="noopener">(+509) 3625-5920</a></li>
+          <li><a href="https://instagram.com/inov_digital_services" target="_blank" rel="noopener">@inov_digital_services</a></li>
+          <li><a href="https://tiktok.com/@inovdigitalservices" target="_blank" rel="noopener">@inovdigitalservices</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 <strong>INOV Digital Services</strong>. Tous droits réservés.</span>
+      <div class="footer-legal">
+        <a href="#">Politique de confidentialité</a>
+        <a href="#">Conditions d'utilisation</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ================================================================
+     PAYMENT MODAL
+================================================================ -->
+<div class="modal-overlay" id="payment-modal">
+  <div class="modal">
+    <button class="modal-close" aria-label="Fermer">✕</button>
+
+    <h3 class="gradient-text">Choisissez votre mode de paiement</h3>
+    <p class="modal-subtitle">Paiement 100% sécurisé — Confirmation directe via WhatsApp / Email</p>
+
+    <div class="modal-service-info">
+      <div>
+        <div class="modal-service-title" id="modal-service-title">Service</div>
+        <div class="modal-service-price" id="modal-service-price">Prix</div>
+      </div>
+    </div>
+
+    <div class="payment-options-grid">
+      <!-- MonCash -->
+      <a href="https://wa.me/50936255920?text=Bonjour%20INOV,%20je%20souhaite%20payer%20via%20MonCash" class="payment-option-btn" id="pay-moncash" target="_blank" rel="noopener">
+        <span class="payment-name" style="color: #000000; font-weight: 700;">MonCash</span>
+        <span class="payment-desc">Paiement Mobile Haïti</span>
+      </a>
+
+      <!-- NatCash -->
+      <a href="https://wa.me/50936255920?text=Bonjour%20INOV,%20je%20souhaite%20payer%20via%20NatCash" class="payment-option-btn" id="pay-natcash" target="_blank" rel="noopener">
+        <span class="payment-name" style="color: #000000; font-weight: 700;">NatCash</span>
+        <span class="payment-desc">Paiement Mobile Haïti</span>
+      </a>
+
+      <!-- 2Checkout -->
+      <a href="https://wa.me/50936255920?text=Bonjour%20INOV,%20je%20souhaite%20payer%20via%202Checkout%20/ %20Carte" class="payment-option-btn" id="pay-2checkout" target="_blank" rel="noopener">
+        <span class="payment-name" style="color: #000000; font-weight: 700;">2Checkout</span>
+        <span class="payment-desc">Visa, Mastercard, PayPal</span>
+      </a>
+
+      <!-- CamTransfert -->
+      <a href="https://wa.me/50936255920?text=Bonjour%20INOV,%20je%20souhaite%20payer%20via%20CamTransfert" class="payment-option-btn" id="pay-camtransfert" target="_blank" rel="noopener">
+        <span class="payment-name" style="color: #000000; font-weight: 700;">CamTransfert</span>
+        <span class="payment-desc">Transfert Cameroun & International</span>
+      </a>
+
+      <!-- WhatsApp (fallback) -->
+      <a href="https://wa.me/50936255920?text=Bonjour%20INOV%20Digital%20Services,%20je%20souhaite%20commander%20un%20service" class="payment-option-btn" id="pay-whatsapp" target="_blank" rel="noopener" style="grid-column: span 2;">
+        <span class="payment-name" style="color: #000000; font-weight: 700;">WhatsApp Direct</span>
+        <span class="payment-desc">Commander et négocier directement sur WhatsApp</span>
+      </a>
+    </div>
+
+    <div class="modal-note">
+      Après votre paiement, envoyez-nous la capture du reçu sur WhatsApp au (+509) 3625-5920. Votre commande est confirmée immédiatement.
+    </div>
+  </div>
+</div>
+
+<!-- WhatsApp Floating Button -->
+<div class="whatsapp-float">
+  <a href="https://wa.me/50936255920?text=Bonjour%20INOV%20Digital%20Services,%20je%20voudrais%20un%20devis" target="_blank" rel="noopener" aria-label="Contacter par WhatsApp">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+    <span>WhatsApp</span>
+  </a>
+</div>
+
+<!-- Mobile Floating Cart Bar -->
+<div class="mobile-cart-bar" id="mobile-cart-bar">
+  <div class="mobile-cart-info">
+    <span class="mobile-cart-count" id="mobile-cart-count">0 service(s) sélectionné(s)</span>
+    <span class="mobile-cart-total" id="mobile-cart-total">0 $US</span>
+  </div>
+  <div class="mobile-cart-actions">
+    <button class="mobile-cart-btn mobile-cart-btn-pdf" onclick="telechargerDevisPDF()">📥 PDF</button>
+    <button class="mobile-cart-btn mobile-cart-btn-wa" onclick="commanderWhatsAppTarifs()">📲 WhatsApp</button>
+  </div>
+</div>
+
+<!-- Script -->
+<script src="js/main.js"></script>
+</body>
+</html>
