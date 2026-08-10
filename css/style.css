@@ -4,6 +4,96 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
+/* ================================================================
+   LOADING SCREEN
+================================================================ */
+#loader-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #0a0a0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+#loader-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  animation: loaderFadeIn 0.5s ease forwards;
+}
+
+@keyframes loaderFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.loader-logo {
+  height: 70px;
+  width: auto;
+  animation: logoPulse 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 24px rgba(255, 85, 0, 0.5));
+}
+
+@keyframes logoPulse {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%       { transform: scale(1.07); opacity: 0.85; }
+}
+
+.loader-bar-wrapper {
+  width: 220px;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.loader-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff5500, #ff8800, #ff5500);
+  background-size: 200% 100%;
+  border-radius: 99px;
+  animation: loaderFill 2s ease forwards, shimmer 1.2s linear infinite;
+}
+
+@keyframes loaderFill {
+  0%   { width: 0%; }
+  60%  { width: 80%; }
+  100% { width: 100%; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.loader-text {
+  color: rgba(255,255,255,0.45);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  animation: blink 1.4s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.45; }
+  50%       { opacity: 1; }
+}
+
+
 /* ---- CSS Custom Properties (Noir et Blanc / High Contrast Black & White) ---- */
 :root {
   --bg-primary: #ffffff;
