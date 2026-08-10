@@ -2,7 +2,23 @@
 // INOV DIGITAL SERVICES — Main JavaScript
 // ============================================================
 
+// ================================================================
+// LOADING SCREEN
+// ================================================================
+(function () {
+  const loader = document.getElementById('loader-screen');
+  if (!loader) return;
+
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      loader.classList.add('hidden');
+      setTimeout(() => loader.remove(), 700);
+    }, 2200);
+  });
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
+
 
   /* ---- LANGUAGE MANAGEMENT ---- */
   /* ---- LANGUAGE MANAGEMENT ---- */
