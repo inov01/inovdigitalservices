@@ -43,14 +43,26 @@ jobs:
             --project-ref "$PROJECT_ID" \
             --no-verify-jwt
 
+      # Note: the `secrets` context is NOT allowed in step `if:` conditions, so
+      # the emptiness check is done inside the run step via an env var instead.
       - name: Set GEMINI_API_KEY secret (optional)
-        if: ${{ secrets.GEMINI_API_KEY != '' }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          supabase secrets set "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" \
-            --project-ref "$PROJECT_ID"
+          if [ -n "$GEMINI_API_KEY" ]; then
+            supabase secrets set "GEMINI_API_KEY=$GEMINI_API_KEY" \
+              --project-ref "$PROJECT_ID"
+          else
+            echo "GEMINI_API_KEY not set — skipping."
+          fi
 
       - name: Set CRON_SECRET secret (optional)
-        if: ${{ secrets.CRON_SECRET != '' }}
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          supabase secrets set "CRON_SECRET=${{ secrets.CRON_SECRET }}" \
-            --project-ref "$PROJECT_ID"
+          if [ -n "$CRON_SECRET" ]; then
+            supabase secrets set "CRON_SECRET=$CRON_SECRET" \
+              --project-ref "$PROJECT_ID"
+          else
+            echo "CRON_SECRET not set — skipping."
+          fi
