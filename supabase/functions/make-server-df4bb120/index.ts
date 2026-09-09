@@ -77,6 +77,32 @@ const admin = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 
+// Private bucket holding client-uploaded brief attachments (logos references,
+// documents, sample videos…). Created lazily on first use. Files are never
+// public: the site gets a short-lived signed upload URL, the admin gets a
+// short-lived signed download URL. 200 MB cap covers short reference clips.
+const BRIEF_BUCKET = "brief-uploads";
+const BRIEF_MAX_BYTES = 200 * 1024 * 1024;
+let briefBucketReady = false;
+async function ensureBriefBucket(): Promise<void> {
+  if (briefBucketReady) return;
+  const { data } = await admin.storage.getBucket(BRIEF_BUCKET);
+  if (!data) {
+    await admin.storage.createBucket(BRIEF_BUCKET, {
+      public: false,
+      fileSizeLimit: BRIEF_MAX_BYTES,
+    }).catch(() => { /* concurrent create — ignore */ });
+  }
+  briefBucketReady = true;
+}
+// Keep only safe path characters so a crafted filename can't escape the folder.
+function safeName(name: string): string {
+  return (name || "file")
+    .slice(-120)
+    .replace(/[^a-zA-Z0-9._-]/g, "_")
+    .replace(/^\.+/, "_");
+}
+
 // Admin allowlist — emails permitted to read/manage leads, subscribers, settings.
 // Falls back to the known owner account so the API is NEVER open to any
 // authenticated user (client signups share this Supabase project). Override or
@@ -145,6 +171,8 @@ const DEFAULT_SETTINGS = {
   servicesAdded: [] as any[],
   albumsRemoved: [] as string[],
   albumsAdded: [] as any[],
+  worksRemoved: [] as string[],
+  worksAdded: {} as Record<string, any[]>,
   blogsRemoved: [] as string[],
   blogsAdded: [] as any[],
 };
@@ -227,6 +255,40 @@ function cleanAlbums(input: unknown): any[] {
       works,
     };
   }).filter((a) => a.client && a.works.length > 0);
+}
+
+// Sanitize a single portfolio work item (shared by albums & per-album extras).
+function cleanWork(w: any): any {
+  return {
+    title: str(w?.title, 160),
+    category: str(w?.category, 80),
+    desc: str(w?.desc, 400),
+    img: str(w?.img, 600) || undefined,
+    videoId: str(w?.videoId, 40) || undefined,
+  };
+}
+
+// Sanitize the list of hidden individual works, keyed `${albumId}#${index}`.
+function cleanWorksRemoved(input: unknown): string[] {
+  if (!Array.isArray(input)) return [];
+  const out: string[] = [];
+  for (const v of input.slice(0, 2000)) {
+    if (typeof v === "string" && v) out.push(v.slice(0, 100));
+  }
+  return out;
+}
+
+// Sanitize the map of extra works appended per album id.
+function cleanWorksAdded(input: unknown): Record<string, any[]> {
+  const out: Record<string, any[]> = {};
+  if (input && typeof input === "object") {
+    for (const [k, v] of Object.entries(input as Record<string, unknown>).slice(0, 300)) {
+      if (!k || !Array.isArray(v)) continue;
+      const works = v.slice(0, 40).map(cleanWork).filter((w: any) => w.img || w.videoId);
+      if (works.length) out[k.slice(0, 80)] = works;
+    }
+  }
+  return out;
 }
 
 // Sanitize admin-authored blog articles.
@@ -641,6 +703,58 @@ app.post(`${P}/leads`, async (c) => {
   return c.json({ ok: true, id });
 });
 
+// ── Public: get a signed URL to upload one brief attachment ───────────────────────
+// The browser sends file metadata, we return a one-shot signed upload URL + token
+// and the storage path. The client then uploads the bytes directly to Storage
+// (uploadToSignedUrl) and sends us back the path with the brief.
+app.post(`${P}/brief/upload-url`, async (c) => {
+  if (!(await rateLimit(c, "brief-upload", 40))) return c.json({ error: "rate_limited" }, 429);
+  const b = await c.req.json().catch(() => ({} as any));
+  const size = typeof b.size === "number" ? b.size : 0;
+  if (size > BRIEF_MAX_BYTES) return c.json({ error: "file_too_large" }, 413);
+  const name = safeName(typeof b.filename === "string" ? b.filename : "file");
+  const now = new Date();
+  const path = `briefs/${now.getFullYear()}/${now.getMonth() + 1}/${newId()}-${name}`;
+  await ensureBriefBucket();
+  const { data, error } = await admin.storage.from(BRIEF_BUCKET).createSignedUploadUrl(path);
+  if (error || !data) return c.json({ error: "upload_url_failed" }, 500);
+  return c.json({ ok: true, path: data.path, token: data.token, bucket: BRIEF_BUCKET });
+});
+
+// ── Admin: get a short-lived signed URL to view/download one attachment ────────────
+app.post(`${P}/brief/file-url`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const b = await c.req.json().catch(() => ({} as any));
+  const path = typeof b.path === "string" ? b.path : "";
+  if (!path) return c.json({ error: "missing_path" }, 400);
+  const { data, error } = await admin.storage.from(BRIEF_BUCKET).createSignedUrl(path, 3600);
+  if (error || !data) return c.json({ error: "sign_failed" }, 500);
+  return c.json({ ok: true, url: data.signedUrl });
+});
+
+// ── Admin: permanently delete one attachment (frees Supabase storage) ──────────────
+// Removes the object from the private bucket and, when a lead id is supplied,
+// also strips it from that lead's meta.attachments so it stops showing up.
+app.post(`${P}/brief/file-delete`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const b = await c.req.json().catch(() => ({} as any));
+  const path = typeof b.path === "string" ? b.path : "";
+  const id = typeof b.id === "string" ? b.id : "";
+  if (!path) return c.json({ error: "missing_path" }, 400);
+  const { error } = await admin.storage.from(BRIEF_BUCKET).remove([path]);
+  if (error) return c.json({ error: "delete_failed" }, 500);
+  if (id) {
+    const lead: any = await kv.get(`lead:${id}`);
+    if (lead && lead.meta && Array.isArray(lead.meta.attachments)) {
+      lead.meta.attachments = lead.meta.attachments.filter((a: any) => a?.path !== path);
+      await kv.set(`lead:${id}`, lead);
+    }
+  }
+  return c.json({ ok: true });
+});
+
 // ── Public: newsletter subscribe ─────────────────────────────────────────────────
 app.post(`${P}/newsletter`, async (c) => {
   if (!(await rateLimit(c, "newsletter", 8))) return c.json({ error: "rate_limited" }, 429);
@@ -983,6 +1097,260 @@ app.post(`${P}/newsletter/dispatch`, async (c) => {
   return c.json({ ok: true, processed });
 });
 
+// ── Auto follow-up (relance automatique) for quotes with no reply ──────────────
+// Nudges leads that asked for a quote/proforma, received it, but never reached a
+// concrete outcome (still "new"). A friendly reminder is emailed after a delay,
+// spaced out, up to a small cap — so a client is reminded, never spammed.
+//
+// Tunable via env (all optional, sensible defaults):
+//   FOLLOWUP_DELAY_DAYS     min age before the FIRST reminder   (default 3)
+//   FOLLOWUP_INTERVAL_DAYS  min gap between reminders           (default 4)
+//   FOLLOWUP_MAX            max reminders per lead              (default 2)
+// A lead is skipped once won/lost, if it opted out (meta.followUpOptOut), or
+// once it hit the cap.
+const WHATSAPP_HUMAN = Deno.env.get("WHATSAPP_NUMBER") ?? "+509 3625 5920";
+
+function followUpConfig() {
+  const n = (k: string, d: number) => {
+    const v = Number(Deno.env.get(k));
+    return Number.isFinite(v) && v >= 0 ? v : d;
+  };
+  return {
+    delayDays: n("FOLLOWUP_DELAY_DAYS", 3),
+    intervalDays: n("FOLLOWUP_INTERVAL_DAYS", 4),
+    max: Math.max(1, n("FOLLOWUP_MAX", 2)),
+  };
+}
+
+// A quote/proforma lead that never reached a concrete outcome.
+function isOpenQuote(l: any): boolean {
+  if (!l || l.status !== "new") return false;
+  if (l.meta?.followUpOptOut) return false;
+  const src = String(l.source ?? "");
+  return (
+    src === "quote" ||
+    src === "proforma" ||
+    (Array.isArray(l.items) && l.items.length > 0) ||
+    typeof l.total === "number"
+  );
+}
+
+// Is a reminder due for this lead right now?
+function followUpDue(l: any, now: number, cfg: { delayDays: number; intervalDays: number; max: number }): boolean {
+  if (!isOpenQuote(l) || !isEmail(l.email)) return false;
+  const count = Number(l.meta?.followUpCount ?? 0);
+  if (count >= cfg.max) return false;
+  const day = 86_400_000;
+  const created = new Date(l.createdAt).getTime();
+  if (!Number.isFinite(created)) return false;
+  if (count === 0) return now - created >= cfg.delayDays * day;
+  const last = l.meta?.followUpSentAt ? new Date(l.meta.followUpSentAt).getTime() : 0;
+  return now - last >= cfg.intervalDays * day;
+}
+
+function followUpText(l: any, attempt: number): string {
+  const first = String(l.name ?? "").trim().split(/\s+/)[0] || "";
+  const hello = first ? `Bonjour ${first},` : "Bonjour,";
+  const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
+  const totalStr =
+    typeof l.total === "number" ? `${l.total.toLocaleString("fr-FR")} ${l.currency ?? ""}`.trim() : "";
+  const intro =
+    attempt <= 1
+      ? "Nous revenons vers vous au sujet du devis que vous nous avez demandé. Avez-vous eu le temps d'y jeter un œil ?"
+      : "Nous nous permettons une dernière relance au sujet de votre devis. Si le moment n'est pas idéal, dites-le-nous simplement.";
+  return [
+    hello,
+    "",
+    intro,
+    totalStr ? `Pour rappel, votre devis s'élève à ${totalStr}.` : "",
+    "",
+    `Pour avancer ou poser une question, répondez simplement à cet e-mail ou écrivez-nous sur WhatsApp au ${WHATSAPP_HUMAN}.`,
+    "",
+    "À très vite,",
+    `L'équipe ${displayName}`,
+  ]
+    .filter((x) => x !== "")
+    .join("\n");
+}
+
+function buildFollowUpHtml(l: any, attempt: number): string {
+  const first = escH(String(l.name ?? "").trim().split(/\s+/)[0] || "");
+  const hello = first ? `Bonjour ${first},` : "Bonjour,";
+  const displayName = escH(Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services");
+  const totalStr =
+    typeof l.total === "number" ? escH(`${l.total.toLocaleString("fr-FR")} ${l.currency ?? ""}`.trim()) : "";
+  const waDigits = WHATSAPP_HUMAN.replace(/[^\d]/g, "");
+  const waMsg = encodeURIComponent(
+    `Bonjour, je reviens vers vous au sujet de mon devis${l.meta?.proformaNo ? ` (${l.meta.proformaNo})` : ""}.`,
+  );
+  const intro =
+    attempt <= 1
+      ? "Nous revenons vers vous au sujet du devis que vous nous avez demandé. Avez-vous eu le temps d'y jeter un œil ?"
+      : "Nous nous permettons une dernière relance au sujet de votre devis. Si le moment n'est pas idéal, dites-le-nous simplement.";
+  return `<!doctype html><html><body style="margin:0;background:#f4f4f5;padding:24px;font-family:'Segoe UI',Arial,sans-serif;color:#111;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
+  <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border:1.5px solid #111;">
+    <tr><td style="padding:28px 32px 8px;">
+      <img src="${EMAIL_LOGO}" alt="${displayName}" style="height:34px;display:block;margin-bottom:20px;" />
+      <p style="font-size:15px;font-weight:700;margin:0 0 12px;">${hello}</p>
+      <p style="font-size:14px;line-height:1.6;margin:0 0 12px;">${intro}</p>
+      ${totalStr ? `<p style="font-size:14px;line-height:1.6;margin:0 0 12px;">Pour rappel, votre devis s'élève à <strong>${totalStr}</strong>.</p>` : ""}
+      <p style="font-size:14px;line-height:1.6;margin:0 0 20px;">Pour avancer ou poser une question, répondez simplement à cet e-mail — ou écrivez-nous directement sur WhatsApp, c'est souvent le plus rapide.</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 24px;"><tr>
+        <td style="background:#25D366;border-radius:6px;">
+          <a href="https://wa.me/${waDigits}?text=${waMsg}" style="display:inline-block;padding:12px 22px;color:#fff;font-weight:800;font-size:14px;text-decoration:none;">Répondre sur WhatsApp</a>
+        </td>
+      </tr></table>
+      <p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 4px;">À très vite,</p>
+      <p style="font-size:13px;color:#111;font-weight:700;margin:0 0 24px;">L'équipe ${displayName}</p>
+    </td></tr>
+    <tr><td style="padding:14px 32px;border-top:1.5px solid #111;font-size:11px;color:#888;">
+      Vous recevez cet e-mail car vous avez demandé un devis à ${displayName}. Si vous ne souhaitez plus être relancé, répondez simplement « STOP ».
+    </td></tr>
+  </table>
+  </td></tr></table>
+  </body></html>`;
+}
+
+async function sendFollowUpEmail(l: any, attempt: number): Promise<void> {
+  const user = Deno.env.get("GMAIL_USER");
+  const pass = Deno.env.get("GMAIL_APP_PASSWORD");
+  if (!user || !pass) throw new Error("GMAIL_USER / GMAIL_APP_PASSWORD not configured");
+  const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
+  const client = new SMTPClient({
+    connection: { hostname: "smtp.gmail.com", port: 465, tls: true, auth: { username: user, password: pass } },
+  });
+  const first = String(l.name ?? "").trim().split(/\s+/)[0] || "";
+  const subject =
+    attempt <= 1
+      ? `${first ? first + ", v" : "V"}otre devis vous attend — ${displayName}`
+      : `Dernière relance concernant votre devis — ${displayName}`;
+  try {
+    await client.send({
+      from: `${displayName} <${user}>`,
+      to: l.email,
+      subject,
+      content: followUpText(l, attempt),
+      html: buildFollowUpHtml(l, attempt),
+    });
+  } finally {
+    await client.close();
+  }
+}
+
+// Optional: also send the reminder over WhatsApp via the Meta WhatsApp Cloud API.
+// Business-initiated messages OUTSIDE the 24h service window require a PRE-APPROVED
+// template, so we send a template (not free text). Skipped unless configured.
+//   WHATSAPP_TOKEN          permanent access token of the WhatsApp system user
+//   WHATSAPP_PHONE_ID       phone-number id of your WABA sender
+//   WHATSAPP_TEMPLATE       approved template name (e.g. "relance_devis")
+//   WHATSAPP_TEMPLATE_LANG  template language code (default "fr")
+function normalizeWa(phone: string): string {
+  return String(phone ?? "").replace(/[^\d]/g, "");
+}
+async function sendFollowUpWhatsApp(l: any): Promise<{ sent: boolean; skipped?: string; error?: string }> {
+  const token = Deno.env.get("WHATSAPP_TOKEN");
+  const phoneId = Deno.env.get("WHATSAPP_PHONE_ID");
+  const template = Deno.env.get("WHATSAPP_TEMPLATE");
+  if (!token || !phoneId || !template) return { sent: false, skipped: "not_configured" };
+  const to = normalizeWa(l.phone);
+  if (!to) return { sent: false, skipped: "no_phone" };
+  const lang = Deno.env.get("WHATSAPP_TEMPLATE_LANG") ?? "fr";
+  try {
+    const res = await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to,
+        type: "template",
+        template: { name: template, language: { code: lang } },
+      }),
+    });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      return { sent: false, error: `wa_${res.status}: ${detail.slice(0, 200)}` };
+    }
+    return { sent: true };
+  } catch (e) {
+    return { sent: false, error: String((e as any)?.message ?? e) };
+  }
+}
+
+// Cron: send all due follow-ups (secret-guarded, no admin session).
+app.post(`${P}/leads/follow-up`, async (c) => {
+  if (!CRON_SECRET) return c.json({ error: "dispatch disabled" }, 503);
+  if (c.req.header("x-cron-secret") !== CRON_SECRET) return c.json({ error: "forbidden" }, 403);
+  const cfg = followUpConfig();
+  const now = Date.now();
+  const leads = ((await kv.getByPrefix("lead:")) as any[]) ?? [];
+  const due = leads.filter((l) => followUpDue(l, now, cfg));
+  const processed: any[] = [];
+  for (const l of due) {
+    const attempt = Number(l.meta?.followUpCount ?? 0) + 1;
+    const entry: any = { id: l.id, attempt };
+    try {
+      await sendFollowUpEmail(l, attempt);
+      entry.email = "sent";
+    } catch (e) {
+      entry.email = `error: ${String((e as any)?.message ?? e)}`;
+    }
+    const wa = await sendFollowUpWhatsApp(l);
+    entry.whatsapp = wa.sent ? "sent" : wa.error ? `error: ${wa.error}` : `skipped: ${wa.skipped}`;
+    // Record the attempt only if something actually went out, so a transient
+    // failure is retried next run rather than silently consumed.
+    if (entry.email === "sent" || wa.sent) {
+      l.meta = { ...(l.meta ?? {}), followUpCount: attempt, followUpSentAt: new Date().toISOString() };
+      await kv.set(`lead:${l.id}`, l);
+    }
+    processed.push(entry);
+  }
+  return c.json({ ok: true, count: processed.length, processed });
+});
+
+// Admin: preview which leads are currently eligible for a follow-up.
+app.get(`${P}/leads/follow-up/preview`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const cfg = followUpConfig();
+  const now = Date.now();
+  const leads = ((await kv.getByPrefix("lead:")) as any[]) ?? [];
+  const eligible = leads
+    .filter((l) => followUpDue(l, now, cfg))
+    .map((l) => ({
+      id: l.id,
+      name: l.name,
+      email: l.email,
+      source: l.source,
+      total: l.total,
+      currency: l.currency,
+      createdAt: l.createdAt,
+      followUpCount: Number(l.meta?.followUpCount ?? 0),
+    }))
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  return c.json({ config: cfg, eligible });
+});
+
+// Admin: send a follow-up now for one lead (manual trigger).
+app.post(`${P}/leads/:id/follow-up`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const id = c.req.param("id");
+  const l = await kv.get(`lead:${id}`);
+  if (!l) return c.json({ error: "not found" }, 404);
+  if (!isEmail(l.email)) return c.json({ error: "client has no valid email" }, 400);
+  const attempt = Number(l.meta?.followUpCount ?? 0) + 1;
+  try {
+    await sendFollowUpEmail(l, attempt);
+  } catch (e) {
+    return c.json({ error: `email failed: ${String((e as any)?.message ?? e)}` }, 502);
+  }
+  const wa = await sendFollowUpWhatsApp(l);
+  l.meta = { ...(l.meta ?? {}), followUpCount: attempt, followUpSentAt: new Date().toISOString() };
+  await kv.set(`lead:${id}`, l);
+  return c.json({ ok: true, sentTo: l.email, attempt, whatsapp: wa });
+});
+
 // ── Admin: settings ───────────────────────────────────────────────────────────────
 // Admin GET /settings is served by the public route above (returns the same
 // object); only writes need the admin guard.
@@ -1002,11 +1370,97 @@ app.put(`${P}/settings`, async (c) => {
     servicesAdded: cleanServices(b?.servicesAdded),
     albumsRemoved: cleanIdList(b?.albumsRemoved, "str"),
     albumsAdded: cleanAlbums(b?.albumsAdded),
+    worksRemoved: cleanWorksRemoved(b?.worksRemoved),
+    worksAdded: cleanWorksAdded(b?.worksAdded),
     blogsRemoved: cleanIdList(b?.blogsRemoved, "str"),
     blogsAdded: cleanBlogs(b?.blogsAdded),
   };
   await kv.set("settings", settings);
   return c.json({ ok: true, settings });
+});
+
+// ── Admin: AI assistant (Google Gemini, free tier) ─────────────────────────────
+// A private helper for the owner: drafts client replies, quotes, follow-ups,
+// summaries and translations. Uses the free Gemini API. The key is read from the
+// GEMINI_API_KEY secret and never leaves the server. Optionally grounds answers
+// in a compact snapshot of recent leads when the admin asks for it.
+const GEMINI_MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-2.0-flash";
+
+const ASSISTANT_SYSTEM = `Tu es l'assistant privé de l'espace administrateur d'INOV Digital Services,
+un studio de branding et design 100% en ligne basé en Haïti (logos, identité, packaging,
+affiches, motion design, montage vidéo, retouche photo, sites vitrines).
+Tu aides UNIQUEMENT le propriétaire (jamais les clients directement).
+Tu sais : rédiger des réponses clients chaleureuses et professionnelles, générer des devis,
+rédiger des relances, résumer des demandes (leads), proposer des plannings de rendez-vous,
+et traduire dans les 8 langues du site (fr, en, es, ht, pt, it, de, ar).
+Réponds par défaut en français, de façon concise et actionnable. Le numéro WhatsApp est +509 3625 5920.`;
+
+// Builds a small, privacy-conscious snapshot of the most recent leads so the
+// assistant can answer questions like "résume mes dernières demandes". Only
+// coarse fields are included; never raw attachments or full message bodies.
+async function recentLeadsSnapshot(limit = 15): Promise<string> {
+  const leads = ((await kv.getByPrefix("lead:")) as any[])
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+    .slice(0, limit);
+  if (!leads.length) return "Aucune demande enregistrée.";
+  return leads
+    .map((l) => {
+      const total = typeof l.total === "number" ? `${l.total} ${l.currency ?? ""}`.trim() : "—";
+      const msg = typeof l.message === "string" ? l.message.slice(0, 160) : "";
+      return `- [${l.status}] ${l.name || "?"} (${l.source}) · ${new Date(l.createdAt).toLocaleDateString("fr-FR")} · total ${total}${msg ? ` · « ${msg} »` : ""}`;
+    })
+    .join("\n");
+}
+
+app.post(`${P}/assistant`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  if (!(await rateLimit(c, "assistant", 30))) return c.json({ error: "rate_limited" }, 429);
+  const key = Deno.env.get("GEMINI_API_KEY");
+  if (!key) return c.json({ error: "gemini_not_configured" }, 503);
+
+  const b = await c.req.json().catch(() => ({} as any));
+  const msgs = Array.isArray(b?.messages) ? b.messages.slice(-20) : [];
+  const contents = msgs
+    .filter((m: any) => m && typeof m.content === "string" && m.content.trim())
+    .map((m: any) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: String(m.content).slice(0, 8000) }],
+    }));
+  if (!contents.length) return c.json({ error: "empty" }, 400);
+
+  // Optional grounding in recent leads (only when the admin opts in).
+  let sys = ASSISTANT_SYSTEM;
+  if (b?.withLeads) {
+    sys += `\n\nContexte — dernières demandes reçues :\n${await recentLeadsSnapshot()}`;
+  }
+
+  const url =
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(key)}`;
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: sys }] },
+        contents,
+        generationConfig: { temperature: 0.7, maxOutputTokens: 2048 },
+      }),
+    });
+    if (!res.ok) {
+      const detail = (await res.text()).slice(0, 500);
+      console.error("[assistant] gemini error:", res.status, detail);
+      return c.json({ error: "gemini_failed", status: res.status }, 502);
+    }
+    const data = await res.json();
+    const reply =
+      data?.candidates?.[0]?.content?.parts?.map((p: any) => p?.text ?? "").join("").trim() ?? "";
+    if (!reply) return c.json({ error: "empty_reply" }, 502);
+    return c.json({ ok: true, reply });
+  } catch (e) {
+    console.error("[assistant] request failed:", e);
+    return c.json({ error: "assistant_failed" }, 502);
+  }
 });
 
 Deno.serve(app.fetch);
