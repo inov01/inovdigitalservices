@@ -1,0 +1,33 @@
+name: Leads follow-up
+
+# Sends automatic follow-ups (relances) to quote/proforma leads that never got a
+# concrete reply. Runs once a day; the edge function decides who is actually due
+# (delay, interval and cap are enforced server-side, so running more often is
+# harmless). Requires the repository secret CRON_SECRET (must match the Supabase
+# env var of the same name) and optionally SUPABASE_PROJECT_ID (defaults below).
+
+on:
+  schedule:
+    - cron: "0 13 * * *" # every day at 13:00 UTC (~09:00 in Haiti)
+  workflow_dispatch: {}
+
+jobs:
+  follow-up:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger due follow-ups
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          PID="${PROJECT_ID:-enwbfsbcxoqqnbkrngyb}"
+          if [ -z "$CRON_SECRET" ]; then
+            echo "CRON_SECRET is not set — add it as a repository secret."
+            exit 1
+          fi
+          code=$(curl -s -o /tmp/out.json -w "%{http_code}" \
+            -X POST "https://${PID}.supabase.co/functions/v1/make-server-df4bb120/leads/follow-up" \
+            -H "x-cron-secret: ${CRON_SECRET}")
+          echo "HTTP ${code}"
+          cat /tmp/out.json
+          [ "$code" = "200" ]
