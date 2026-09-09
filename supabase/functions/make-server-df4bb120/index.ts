@@ -1384,7 +1384,7 @@ app.put(`${P}/settings`, async (c) => {
 // summaries and translations. Uses the free Gemini API. The key is read from the
 // GEMINI_API_KEY secret and never leaves the server. Optionally grounds answers
 // in a compact snapshot of recent leads when the admin asks for it.
-const GEMINI_MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-2.0-flash";
+const GEMINI_MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-2.5-flash";
 
 const ASSISTANT_SYSTEM = `Tu es l'assistant privé de l'espace administrateur d'INOV Digital Services,
 un studio de branding et design 100% en ligne basé en Haïti (logos, identité, packaging,
