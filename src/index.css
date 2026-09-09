@@ -1,0 +1,621 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@import 'tailwindcss';
+
+:root {
+  --header-h: 64px;
+  /* Fluid horizontal gutter shared by every section wrapper (mobile → tablet → PC) */
+  --section-px: 18px;
+
+  /* Radius scale — the ONLY radii to use. `--r-full` for pills/rounded ends. */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 24px;
+  --r-full: 100px;
+}
+@media (min-width: 768px) {
+  :root { --header-h: 96px; --section-px: 28px; }
+}
+@media (min-width: 1025px) {
+  :root { --section-px: 32px; }
+}
+
+@theme {
+  /* Brand */
+  --color-orange: var(--ds-accent);
+  --color-orange-light: var(--ds-accent-hover);
+  --color-orange-text: var(--ds-accent-text);
+  --color-brand-dark: #1A1A1A;
+
+  /* Fonts — ONLY these two faces are used throughout the project */
+  --font-outfit: 'Outfit', sans-serif;
+  --font-space: 'Space Grotesk', sans-serif;
+}
+
+/* ── Design system semantic tokens (light mode) ─────────────────────────── */
+:root {
+  --ds-bg:           #ffffff;
+  --ds-bg-sec:       #F6F6F9;
+  --ds-bg-card:      #ffffff;
+  --ds-bg-card-hover:#F0F0F5;
+  --ds-bg-inverse:   #1A1A1A;
+
+  --ds-text:         #000000;
+  --ds-text-sec:     #4A4A58;
+  --ds-text-muted:   #5F5F6B;
+  --ds-text-faint:   #5C5C68;
+  --ds-text-inverse: #ffffff;
+
+  --ds-border:       rgba(0,0,0,0.10);
+  --ds-border-strong:rgba(0,0,0,0.20);
+
+  --ds-accent:       #f7601b;
+  --ds-accent-hover: #ec3317;
+  --ds-accent-text:  #C24400;
+  /* Lighter accent — for gradient end-stops / decorative highlights */
+  --ds-accent-light: #FF8A4C;
+
+  /* Accent as an RGB triplet so any arbitrary-alpha orange overlay can be
+     written rgba(var(--ds-accent-rgb), <a>) — one source of truth. */
+  --ds-accent-rgb:   247, 96, 27;
+  /* The single orange button/tile gradient, factored out of inline copies. */
+  --ds-accent-grad:  linear-gradient(135deg, var(--ds-accent), var(--ds-accent-hover));
+  /* Deeper orange ramp for SOLID buttons carrying white text — both stops meet
+     WCAG AA (>=4.5:1 with #fff): #cf4710 ~=4.6:1, #b83a0c ~=5.8:1. */
+  --ds-accent-btn-grad: linear-gradient(135deg, #cf4710, #b83a0c);
+
+  --ds-focus:        #f7601b;
+
+  /* Stable dark surface (footer, dark CTA cards) — identical in both themes
+     so these intentionally-dark blocks never lose their contrast. */
+  --ds-ink:          #1A1A1A;
+  --ds-ink-text:     #ffffff;
+  /* Frosted-glass base surface (cards sitting over imagery/colour). */
+  --ds-surface-dark: #1c1c22;
+
+  /* Semantic feedback — success / danger. Theme-aware: the alpha tints derive
+     from the base via color-mix, so overriding the base in .dark recolours
+     everything and keeps contrast on dark cards. */
+  --ds-success:      #16A34A;
+  --ds-success-a12:  color-mix(in srgb, var(--ds-success) 12%, transparent);
+  --ds-danger:       #CC0000;
+  --ds-danger-a10:   color-mix(in srgb, var(--ds-danger) 10%, transparent);
+  --ds-danger-a15:   color-mix(in srgb, var(--ds-danger) 15%, transparent);
+  --ds-danger-a40:   color-mix(in srgb, var(--ds-danger) 40%, transparent);
+
+  /* Feedback colours for text sitting on a FIXED-dark surface (the ink footer,
+     the always-dark pricing cart) — theme-independent light hues so they stay
+     legible even in light mode, where --ds-danger/-success are dark. */
+  --ds-danger-on-dark:      #FF8A7A;
+  --ds-danger-on-dark-a12:  color-mix(in srgb, var(--ds-danger-on-dark) 12%, transparent);
+  --ds-danger-on-dark-a40:  color-mix(in srgb, var(--ds-danger-on-dark) 40%, transparent);
+  --ds-success-on-dark:     #4ADE80;
+
+  /* Subtle accent-tinted card wash — one source of truth for the feature-card
+     backgrounds previously hand-written as a two-stop color-mix everywhere. */
+  --ds-accent-tint-grad: linear-gradient(135deg,
+      color-mix(in srgb, var(--ds-accent) 8%, var(--ds-bg-card)) 0%,
+      color-mix(in srgb, var(--ds-accent) 4%, var(--ds-bg-card)) 100%);
+
+  /* Accent tint scale — one source of truth for the orange overlays that were
+     previously hand-written as rgba(247,96,27,x) all over the codebase. */
+  --ds-accent-a08:   color-mix(in srgb, var(--ds-accent) 8%,  transparent);
+  --ds-accent-a10:   color-mix(in srgb, var(--ds-accent) 10%, transparent);
+  --ds-accent-a12:   color-mix(in srgb, var(--ds-accent) 12%, transparent);
+  --ds-accent-a14:   color-mix(in srgb, var(--ds-accent) 14%, transparent);
+  --ds-accent-a15:   color-mix(in srgb, var(--ds-accent) 15%, transparent);
+  --ds-accent-a16:   color-mix(in srgb, var(--ds-accent) 16%, transparent);
+  --ds-accent-a18:   color-mix(in srgb, var(--ds-accent) 18%, transparent);
+  --ds-accent-a20:   color-mix(in srgb, var(--ds-accent) 20%, transparent);
+  --ds-accent-a25:   color-mix(in srgb, var(--ds-accent) 25%, transparent);
+  --ds-accent-a28:   color-mix(in srgb, var(--ds-accent) 28%, transparent);
+  --ds-accent-a30:   color-mix(in srgb, var(--ds-accent) 30%, transparent);
+  --ds-accent-a32:   color-mix(in srgb, var(--ds-accent) 32%, transparent);
+  --ds-accent-a35:   color-mix(in srgb, var(--ds-accent) 35%, transparent);
+  --ds-accent-a45:   color-mix(in srgb, var(--ds-accent) 45%, transparent);
+
+  /* Light glassmorphism — only used on surfaces sitting over colour/imagery */
+  --ds-glass-bg:     color-mix(in srgb, var(--ds-bg-card) 68%, transparent);
+  --ds-glass-border: rgba(255,255,255,0.55);
+  --ds-glass-blur:   blur(14px) saturate(1.4);
+  --ds-glass-shadow: 0 8px 32px rgba(0,0,0,0.10);
+}
+
+/* ── Dark mode palette — activated by `.dark` on <html> ──────────────────── */
+.dark {
+  --ds-bg:           #0B0B0F;
+  --ds-bg-sec:       #131319;
+  --ds-bg-card:      #16161D;
+  --ds-bg-card-hover:#1F1F29;
+  --ds-bg-inverse:   #F6F6F9;
+
+  --ds-text:         #FFFFFF;
+  --ds-text-sec:     #C9C9D3;
+  --ds-text-muted:   #A2A2AE;
+  --ds-text-faint:   #8B8B97;
+  --ds-text-inverse: #0B0B0F;
+
+  --ds-border:       rgba(255,255,255,0.12);
+  --ds-border-strong:rgba(255,255,255,0.24);
+
+  --ds-accent:       #f7601b;
+  --ds-accent-hover: #ec3317;
+  --ds-accent-text:  #FF8A4C;
+  --ds-accent-light: #FFA76F;
+
+  --ds-focus:        #f7601b;
+
+  /* Lighter feedback hues so success/error text stays legible on dark cards. */
+  --ds-success:      #4ADE80;
+  --ds-danger:       #FF7A7A;
+
+  /* Glass reads far better on dark: more translucency, a faint light rim */
+  --ds-glass-bg:     color-mix(in srgb, var(--ds-bg-card) 55%, transparent);
+  --ds-glass-border: rgba(255,255,255,0.14);
+  --ds-glass-blur:   blur(16px) saturate(1.6);
+  --ds-glass-shadow: 0 8px 34px rgba(0,0,0,0.5);
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+/* Smooth scrolling is handled in JS (src/lib/smoothScroll.ts) with a fixed,
+   short duration — the native `scroll-behavior: smooth` felt too slow on long jumps. */
+
+body {
+  font-family: var(--font-outfit);
+  color: var(--ds-text);
+  background: var(--ds-bg);
+  overflow-x: hidden;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* Progress bar */
+#progress-bar {
+  position: fixed;
+  top: 0;
+  inset-inline-start: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ds-accent), var(--ds-accent-hover));
+  z-index: 9999;
+  transition: width 0.2s ease;
+}
+/* In RTL the reading progress fills from the right edge. */
+[dir="rtl"] #progress-bar { transform: scaleX(-1); transform-origin: right; }
+
+/* Dot pulse animation */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.75); }
+}
+
+.dot-pulse {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ds-accent-grad);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+  margin-inline-end: 8px;
+  flex-shrink: 0;
+}
+
+/* Section tag / badge */
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border: 1.5px solid var(--ds-text);
+  border-radius: var(--r-full);
+  background: var(--ds-bg);
+  font-family: var(--font-outfit);
+  font-size: 12.8px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ds-text);
+}
+
+/* Keyboard focus — visible ring for accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--ds-focus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Skip-to-content link — visually hidden until focused */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  inset-inline-start: 8px;
+  z-index: 10000;
+  transform: translateY(-150%);
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: var(--ds-accent);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  transition: transform 0.18s ease;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 3px solid var(--ds-focus);
+  outline-offset: 2px;
+}
+
+/* Buttons */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 32px;
+  background: var(--ds-text);
+  color: var(--ds-bg);
+  border-radius: var(--r-full);
+  font-family: var(--font-outfit);
+  font-size: 15.2px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  transition: all 0.25s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary:hover {
+  background: var(--ds-text-sec);
+  box-shadow: 0 14px 35px rgba(0,0,0,0.35);
+  transform: translateY(-3px);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 32px;
+  background: var(--ds-bg);
+  color: var(--ds-text);
+  border-radius: var(--r-full);
+  font-family: var(--font-outfit);
+  font-size: 15.2px;
+  font-weight: 700;
+  border: 2px solid var(--ds-text);
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  transition: all 0.25s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-secondary:hover {
+  background: var(--ds-text);
+  color: var(--ds-bg);
+  transform: translateY(-3px);
+}
+
+/* ── Glassmorphism (light, localized) ─────────────────────────────────────
+   Fallback first: an OPAQUE card background so text stays readable where
+   backdrop-filter is unsupported. When it IS supported, we switch to the
+   translucent frosted background + blur. */
+.glass {
+  background: var(--ds-bg-card);
+  border: 1px solid var(--ds-border);
+  box-shadow: var(--ds-glass-shadow);
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: var(--ds-glass-bg);
+    border-color: var(--ds-glass-border);
+    -webkit-backdrop-filter: var(--ds-glass-blur);
+    backdrop-filter: var(--ds-glass-blur);
+  }
+}
+/* Frosted variant for dark surfaces sitting over imagery/colour */
+.glass-dark {
+  background: var(--ds-surface-dark);
+  border: 1px solid rgba(var(--ds-accent-rgb),0.32);
+  box-shadow: var(--ds-glass-shadow);
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-dark {
+    background: color-mix(in srgb, #1c1c22 62%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.5);
+    backdrop-filter: blur(14px) saturate(1.5);
+  }
+}
+
+/* Card base */
+.card {
+  background: var(--ds-bg-card);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--ds-border);
+  transition: all 0.3s ease;
+}
+.card:hover {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  transform: translateY(-4px);
+}
+
+/* FAQ accordion */
+.faq-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+.faq-content.open {
+  max-height: 400px;
+}
+
+/* Portfolio lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.lightbox.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Accordion list */
+.accordion-list {
+  max-height: 280px;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+.accordion-list.open {
+  max-height: 3000px;
+}
+
+/* Pricing stepper */
+.qty-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1.5px solid var(--ds-border-strong);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+.qty-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ds-text);
+  transition: background 0.15s;
+}
+.qty-btn:hover {
+  background: var(--ds-border);
+}
+.qty-val {
+  min-width: 28px;
+  text-align: center;
+  font-family: var(--font-outfit);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ds-text);
+}
+
+/* Tarifs row selected */
+.tarifs-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: var(--r-lg);
+  border: 1.5px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.tarifs-row:hover {
+  background: var(--ds-bg-sec);
+  border-color: var(--ds-border);
+}
+.tarifs-row.selected {
+  background: var(--ds-bg-card);
+  border-color: var(--ds-text);
+}
+
+/* Scrollbar hide globally */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
+
+/* Scrollbar visible in the pricing services list */
+.services-scroll::-webkit-scrollbar { width: 6px; }
+.services-scroll::-webkit-scrollbar-track { background: var(--ds-bg-sec); border-radius: 6px; }
+.services-scroll::-webkit-scrollbar-thumb { background: var(--ds-accent); border-radius: 6px; }
+.services-scroll::-webkit-scrollbar-thumb:hover { background: var(--ds-accent-hover); }
+
+/* Orange gradient text */
+.text-gradient-orange {
+  color: var(--ds-accent-text); /* fallback if background-clip: text is unsupported */
+  background: linear-gradient(90deg, var(--ds-accent), var(--ds-accent-hover));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Nav links — hover/focus via CSS so states also work for keyboard & touch */
+.nav-link {
+  color: var(--ds-text-sec);
+  transition: color 0.2s, background 0.2s;
+}
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: var(--ds-text);
+  background: var(--ds-border);
+}
+.btn-order {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+  box-shadow: 0 4px 14px rgba(var(--ds-accent-rgb), 0.28);
+}
+.btn-order:hover,
+.btn-order:focus-visible {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: 0 8px 22px rgba(var(--ds-accent-rgb), 0.4);
+}
+.btn-orange {
+  background: var(--ds-accent-btn-grad);
+  transition: filter 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.btn-orange:hover,
+.btn-orange:focus-visible {
+  filter: brightness(1.06);
+}
+.footer-link {
+  color: rgba(255,255,255,0.72);
+  transition: color 0.2s;
+}
+.footer-link:hover,
+.footer-link:focus-visible {
+  color: #fff;
+}
+
+/* Hero title — fluid across all devices (min covers 320px phones) */
+.hero-title {
+  font-family: var(--font-outfit);
+  font-size: clamp(1.95rem, 6.2vw, 4.2rem);
+  font-weight: 900;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--ds-text);
+}
+
+/* Section titles — fluid across all devices */
+.section-title {
+  font-family: var(--font-outfit);
+  font-size: clamp(1.8rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--ds-text);
+}
+
+/* Mobile menu */
+.mobile-menu {
+  max-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition: max-height 0.35s ease, visibility 0s linear 0.35s;
+  background: color-mix(in srgb, var(--ds-bg) 97%, transparent);
+}
+.mobile-menu.open {
+  max-height: 600px;
+  visibility: visible;
+  transition: max-height 0.35s ease, visibility 0s;
+}
+
+/* Loader */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spin { animation: spin 0.8s linear infinite; }
+@keyframes halo-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.2); opacity: 0.3; }
+}
+
+/* Skeleton shimmer — used by SectionFallback in Home.tsx */
+@keyframes sk-shimmer {
+  0% { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+.sk {
+  background: linear-gradient(90deg, var(--ds-bg-card-hover) 25%, #E4E4EC 50%, var(--ds-bg-card-hover) 75%);
+  background-size: 1200px 100%;
+  animation: sk-shimmer 1.6s ease-in-out infinite;
+}
+/* Match the app's actual theme (.dark class), not the OS setting — otherwise a
+   user in the site's light mode on a dark-OS device gets dark skeletons. */
+.dark .sk {
+  background: linear-gradient(90deg, #1e1e2a 25%, #28283a 50%, #1e1e2a 75%);
+  background-size: 1200px 100%;
+}
+
+/* Respect users who prefer reduced motion — freeze looping/decorative animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Sticky cart on desktop */
+@media (min-width: 992px) {
+  .cart-sticky {
+    position: sticky;
+    top: 100px;
+  }
+}
+
+/* Responsive grid helpers */
+@media (max-width: 768px) {
+  /* Titles stay fluid (clamp above) — no fixed override, so they scale smoothly */
+  /* Uniform, reduced vertical rhythm on mobile (Hero keeps its own header-aware padding) */
+  #services, #why-us, #pricing, #testimonials, #faq, #contact, #promo-en-ligne, #blog {
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
+  }
+  .tarifs-row {
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+  }
+  .tarifs-price-col {
+    grid-column: 1 / -1;
+    text-align: right;
+  }
+  /* Vertical page-nav is not useful on small screens and collides with the WhatsApp FAB */
+  .page-nav { display: none !important; }
+}
+
+/* ---- Tablet layer (768–1024px): the zone the binary mobile/desktop split missed ---- */
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* Reduced desktop vertical rhythm so tablet sections aren't oversized */
+  #services, #why-us, #pricing, #testimonials, #faq, #contact, #promo-en-ligne, #blog {
+    padding-top: 72px !important;
+    padding-bottom: 72px !important;
+  }
+}
+
+/* ---- Floating WhatsApp FAB: shrink on phones so it never crowds content ---- */
+@media (max-width: 640px) {
+  .whatsapp-fab { width: 52px !important; height: 52px !important; inset-inline-end: 16px !important; bottom: 20px !important; }
+  .whatsapp-fab svg { width: 26px !important; height: 26px !important; }
+}
+
+/* ---- Payment page: stack the paired fields on phones ---- */
+@media (max-width: 560px) {
+  .pay-row { grid-template-columns: 1fr !important; }
+}

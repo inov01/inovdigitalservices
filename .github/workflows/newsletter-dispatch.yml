@@ -1,0 +1,32 @@
+name: Newsletter dispatch
+
+# Fires scheduled newsletter campaigns. Runs every 15 minutes and asks the
+# edge function to send any campaigns whose scheduledAt time has passed.
+# Requires the repository secrets CRON_SECRET (must match the Supabase env var
+# of the same name) and optionally SUPABASE_PROJECT_ID (defaults below).
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger due campaigns
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          PID="${PROJECT_ID:-enwbfsbcxoqqnbkrngyb}"
+          if [ -z "$CRON_SECRET" ]; then
+            echo "CRON_SECRET is not set — add it as a repository secret."
+            exit 1
+          fi
+          code=$(curl -s -o /tmp/out.json -w "%{http_code}" \
+            -X POST "https://${PID}.supabase.co/functions/v1/make-server-df4bb120/newsletter/dispatch" \
+            -H "x-cron-secret: ${CRON_SECRET}")
+          echo "HTTP ${code}"
+          cat /tmp/out.json
+          [ "$code" = "200" ]

@@ -1,0 +1,12 @@
+{
+  "name": "INOV Digital Services",
+  "short_name": "INOV",
+  "description": "Studio de branding et design : logos, packaging, affiches, motion design et sites vitrines.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0B0F",
+  "theme_color": "#f7601b",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Guide INOV — 7 erreurs de branding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --orange: #f7601b;
+    --red: #ec3317;
+    --ink: #16161c;
+    --black: #0b0b0f;
+    --muted: #4a4a58;
+    --soft: #f6f6f9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #e9e9ef; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    color: var(--ink);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    padding: 24px;
+  }
+
+  /* Toolbar (screen only) */
+  .toolbar {
+    max-width: 794px; margin: 0 auto 18px; display: flex; gap: 12px; align-items: center;
+    justify-content: space-between; flex-wrap: wrap;
+  }
+  .toolbar p { font-size: 13px; color: #5f5f6b; }
+  .toolbar button {
+    font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; color: #fff; cursor: pointer;
+    border: none; border-radius: 10px; padding: 11px 20px;
+    background: linear-gradient(135deg, var(--orange), var(--red));
+  }
+
+  /* A4 page */
+  .page {
+    width: 794px;            /* ~ A4 at 96dpi */
+    height: 1123px;
+    margin: 0 auto 24px;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.14);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand-logo { height: 58px; width: auto; max-width: 280px; object-fit: contain; display: block; }
+  .content-logo { height: 30px; width: auto; max-width: 180px; object-fit: contain; display: block; }
+  .icon { width: 17px; height: 17px; vertical-align: -3px; flex-shrink: 0; }
+  .row { display: inline-flex; align-items: center; gap: 9px; }
+
+  /* ── Cover ── */
+  .cover {
+    background:
+      radial-gradient(120% 85% at 100% 0%, rgba(247,96,27,0.30) 0%, rgba(247,96,27,0) 55%),
+      var(--black);
+    color: #fff;
+    padding: 76px 64px 60px;
+    flex: 1;
+  }
+  .cover .num {
+    position: absolute; right: -30px; top: 20px; font-size: 440px; font-weight: 900;
+    color: rgba(247,96,27,0.15); line-height: 1; pointer-events: none;
+  }
+  .accent-line { width: 64px; height: 5px; border-radius: 5px; background: linear-gradient(135deg, var(--orange), var(--red)); }
+  .cover .kicker {
+    font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange);
+  }
+  .cover h1 { font-size: 58px; font-weight: 900; line-height: 1.03; letter-spacing: -0.02em; max-width: 13ch; }
+  .cover .lead { font-size: 18px; font-weight: 500; line-height: 1.6; color: rgba(255,255,255,0.78); max-width: 48ch; }
+
+  .toc { border-top: 1px solid rgba(255,255,255,0.14); }
+  .toc-title { font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 16px; }
+  .toc ol { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 11px 40px; }
+  .toc li { display: flex; align-items: baseline; gap: 12px; font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.9); }
+  .toc li b { color: var(--orange); font-weight: 800; font-family: 'Space Grotesk', sans-serif; }
+
+  .stats { display: flex; gap: 34px; }
+  .stats .s b { display: block; font-size: 30px; font-weight: 900; color: var(--orange); line-height: 1; }
+  .stats .s span { font-size: 12.5px; color: rgba(255,255,255,0.6); font-weight: 500; }
+
+  .cover-foot { display: flex; gap: 26px; flex-wrap: wrap; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.8); }
+
+  /* ── Error page ── */
+  .err { padding: 56px 64px 40px; flex: 1; display: flex; flex-direction: column; }
+  .err-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; }
+  .err-pill {
+    font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: var(--orange);
+    background: rgba(247,96,27,0.10); border: 1px solid rgba(247,96,27,0.28);
+    padding: 6px 14px; border-radius: 100px; letter-spacing: 0.04em;
+  }
+  .err-num { position: absolute; right: 30px; top: 96px; font-size: 300px; font-weight: 900; color: rgba(247,96,27,0.06); line-height: 1; pointer-events: none; }
+  .err-kicker { font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--orange); margin-bottom: 10px; }
+  .err h2 { font-size: 38px; font-weight: 900; line-height: 1.08; letter-spacing: -0.015em; max-width: 15ch; margin-bottom: 36px; }
+
+  .block { margin-bottom: 26px; position: relative; z-index: 1; }
+  .block .label { font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); margin-bottom: 8px; }
+  .block .label.cost { color: var(--red); }
+  .block p { font-size: 16px; line-height: 1.68; color: var(--muted); max-width: 60ch; }
+
+  .solution { background: var(--soft); border-left: 4px solid var(--orange); border-radius: 0 12px 12px 0; padding: 20px 24px; margin-bottom: 22px; position: relative; z-index: 1; }
+  .solution .label { color: var(--orange); }
+  .solution p { color: var(--ink); font-weight: 600; }
+
+  .tip { margin-top: auto; background: var(--black); color: #fff; border-radius: 14px; padding: 22px 26px; display: flex; gap: 16px; align-items: flex-start; }
+  .tip .bulb { font-size: 22px; line-height: 1.2; }
+  .tip .label { font-size: 11.5px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); margin-bottom: 5px; }
+  .tip p { font-size: 14.5px; line-height: 1.6; color: rgba(255,255,255,0.82); }
+
+  .err-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 26px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.08); font-size: 12px; color: #8a8a96; font-weight: 500; }
+
+  /* ── Final CTA page ── */
+  .final { background: var(--black); color: #fff; flex: 1; padding: 90px 64px; display: flex; flex-direction: column; }
+  .final .num { position: absolute; left: -40px; bottom: -60px; font-size: 420px; font-weight: 900; color: rgba(247,96,27,0.10); line-height: 1; pointer-events: none; }
+  .final h3 { font-size: 46px; font-weight: 900; line-height: 1.06; letter-spacing: -0.02em; margin-bottom: 20px; max-width: 16ch; }
+  .final h3 span { background: linear-gradient(135deg, var(--orange), #ff8a4c); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  .final .lead { font-size: 18px; line-height: 1.65; color: rgba(255,255,255,0.78); max-width: 52ch; margin-bottom: 34px; }
+  .final .services { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 40px; }
+  .final .chip { font-size: 14px; font-weight: 600; color: #fff; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); padding: 9px 16px; border-radius: 100px; }
+  .final .contacts { display: flex; flex-direction: column; gap: 14px; font-size: 17px; font-weight: 700; }
+  .final .contacts span { color: #ff8a4c; }
+  .final-foot { margin-top: auto; font-size: 13px; color: rgba(255,255,255,0.5); }
+
+  @page { size: A4; margin: 0; }
+  @media print {
+    body { padding: 0; background: #fff; }
+    .toolbar { display: none; }
+    .page { box-shadow: none; margin: 0; width: 100%; height: 100vh; page-break-after: always; }
+    .page:last-child { page-break-after: auto; }
+  }
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <p>Astuce : clique sur le bouton, choisis « Enregistrer en PDF », active « Graphiques d'arrière-plan », puis renomme le fichier <strong>guide-branding.pdf</strong>.</p>
+    <button onclick="window.print()">Imprimer / Enregistrer en PDF</button>
+  </div>
+
+  <!-- PAGE 1 — COVER -->
+  <section class="page">
+    <div class="cover" style="display:flex; flex-direction:column;">
+      <div class="num">7</div>
+      <img class="brand-logo" src="guide-logo-light.webp" alt="INOV Digital Services" />
+
+      <div style="margin-top:56px;">
+        <div class="accent-line" style="margin-bottom:22px;"></div>
+        <div class="kicker" style="margin-bottom:16px;">Guide gratuit</div>
+        <h1>7 erreurs de branding qui font fuir vos clients</h1>
+        <p class="lead" style="margin-top:22px;">Le guide concret pour bâtir une marque qui inspire confiance — et qui vend, dès le premier regard.</p>
+      </div>
+
+      <div class="stats" style="margin-top:40px;">
+        <div class="s"><b>20+</b><span>marques accompagnées</span></div>
+        <div class="s"><b>80+</b><span>visuels livrés</span></div>
+        <div class="s"><b>48h</b><span>délai de livraison</span></div>
+      </div>
+
+      <div class="toc" style="margin-top:44px; padding-top:28px;">
+        <div class="toc-title">Au sommaire</div>
+        <ol>
+          <li><b>01</b> Un logo trop compliqué</li>
+          <li><b>02</b> Des couleurs au hasard</li>
+          <li><b>03</b> Un style incohérent</li>
+          <li><b>04</b> Copier ses concurrents</li>
+          <li><b>05</b> Des visuels de mauvaise qualité</li>
+          <li><b>06</b> Oublier l'émotion</li>
+          <li><b>07</b> Pas d'identité écrite</li>
+        </ol>
+      </div>
+
+      <div class="cover-foot" style="margin-top:auto; padding-top:40px;">
+        <span class="row">
+          <svg class="icon" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          +509 3625-5920
+        </span>
+        <span class="row">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          @inov_digital_services
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ERROR 1 -->
+  <section class="page">
+    <div class="err">
+      <div class="err-num">01</div>
+      <div class="err-head">
+        <img class="content-logo" src="guide-logo-dark.webp" alt="INOV Digital Services" />
+        <div class="err-pill">Erreur 01 / 07</div>
+      </div>
+      <div class="err-kicker">Le logo</div>
+      <h2>Un logo qui essaie de tout dire</h2>
+      <div class="block"><div class="label">Le problème</div><p>Trop de détails, trop de texte, dégradés compliqués… Beaucoup de marques veulent que leur logo « raconte toute l'entreprise » en une image. Résultat : il devient illisible dès qu'on le réduit (photo de profil, tampon, étiquette).</p></div>
+      <div class="block"><div class="label cost">Pourquoi ça vous coûte des clients</div><p>Un logo confus donne une impression d'amateurisme et ne se retient pas. Si votre audience ne peut pas l'identifier en une seconde, elle ne se souviendra pas de vous — et la mémorisation, c'est le début de la confiance.</p></div>
+      <div class="solution"><div class="label">La solution</div><p>Visez la simplicité : un logo doit rester net et reconnaissable même à 16 pixels. Testez-le en tout petit et en noir & blanc avant de le valider.</p></div>
+      <div class="tip"><div class="bulb">💡</div><div><div class="label">Astuce concrète</div><p>Réduisez votre logo à la taille d'une icône d'application sur votre téléphone. Si on ne le reconnaît plus, simplifiez-le.</p></div></div>
+      <div class="err-foot"><span>INOV Digital Services — Guide branding</span><span>01</span></div>
+    </div>
+  </section>
+
+  <!-- ERROR 2 -->
+  <section class="page">
+    <div class="err">
+      <div class="err-num">02</div>
+      <div class="err-head">
+        <img class="content-logo" src="guide-logo-dark.webp" alt="INOV Digital Services" />
+        <div class="err-pill">Erreur 02 / 07</div>
+      </div>
+      <div class="err-kicker">Les couleurs</div>
+      <h2>Des couleurs choisies « parce qu'on les aime »</h2>
+      <div class="block"><div class="label">Le problème</div><p>Les couleurs sont choisies par goût personnel, sans logique, et changent d'une publication à l'autre. Or chaque couleur envoie un message inconscient : confiance, luxe, énergie, sérieux…</p></div>
+      <div class="block"><div class="label cost">Pourquoi ça vous coûte des clients</div><p>Des couleurs incohérentes brouillent votre image et envoient le mauvais signal émotionnel. Une marque de soin qui utilise des couleurs agressives, par exemple, fait fuir avant même qu'on lise le message.</p></div>
+      <div class="solution"><div class="label">La solution</div><p>Définissez une palette de 2 à 3 couleurs (une principale, une secondaire, une neutre) et utilisez-les partout, sans exception.</p></div>
+      <div class="tip"><div class="bulb">💡</div><div><div class="label">Astuce concrète</div><p>Choisissez vos couleurs selon l'émotion recherchée, pas selon vos préférences. Notez leurs codes exacts (ex. #f7601b) pour ne jamais improviser.</p></div></div>
+      <div class="err-foot"><span>INOV Digital Services — Guide branding</span><span>02</span></div>
+    </div>
+  </section>
+
+  <!-- ERROR 3 -->
+  <section class="page">
+    <div class="err">
+      <div class="err-num">03</div>
+      <div class="err-head">
+        <img class="content-logo" src="guide-logo-dark.webp" alt="INOV Digital Services" />
+        <div class="err-pill">Erreur 03 / 07</div>
+      </div>
+      <div class="err-kicker">La cohérence</div>
+      <h2>Changer de style à chaque publication</h2>
+      <div class="block"><div class="label">Le problème</div><p>Une police ici, un autre filtre là, une mise en page différente à chaque fois. Chaque visuel semble venir d'une marque différente.</p></div>
+      <div class="block"><div class="label cost">Pourquoi ça vous coûte des clients</div><p>Sans cohérence, votre audience ne vous reconnaît pas dans son fil d'actualité. La répétition d'un même univers visuel est exactement ce qui crée le sentiment de « marque sérieuse et installée ».</p></div>
+      <div class="solution"><div class="label">La solution</div><p>Créez des gabarits (templates) réutilisables : mêmes polices, mêmes couleurs, mêmes marges. Vous gagnez du temps ET de la crédibilité.</p></div>
+      <div class="tip"><div class="bulb">💡</div><div><div class="label">Astuce concrète</div><p>Regardez vos 9 dernières publications en grille. Si elles n'ont pas l'air d'une même famille, il est temps d'unifier votre style.</p></div></div>
+      <div class="err-foot"><span>INOV Digital Services — Guide branding</span><span>03</span></div>
+    </div>
+  </section>
+
+  <!-- ERROR 4 -->
+  <section class="page">
+    <div class="err">
+      <div class="err-num">04</div>
+      <div class="err-head">
+        <img class="content-logo" src="guide-logo-dark.webp" alt="INOV Digital Services" />
+        <div class="err-pill">Erreur 04 / 07</div>
+      </div>
+      <div class="err-kicker">La différenciation</div>
+      <h2>Copier ses concurrents</h2>
+      <div class="block"><div class="label">Le problème</div><p>On regarde ce que fait « le leader du marché » et on l'imite, en pensant faire un choix sûr. On finit par ressembler à tout le monde.</p></div>
+      <div class="block"><div class="label cost">Pourquoi ça vous coûte des clients</div><p>Quand toutes les marques se ressemblent, aucune ne se remarque. Vous devenez interchangeable — et le client choisit alors uniquement le moins cher. Votre différence est votre meilleur argument de vente.</p></div>
+      <div class="solution"><div class="label">La solution</div><p>Identifiez ce qui vous rend unique (votre histoire, votre ton, votre spécialité) et mettez-le en avant sans complexe.</p></div>
+      <div class="tip"><div class="bulb">💡</div><div><div class="label">Astuce concrète</div><p>Complétez cette phrase : « Contrairement aux autres, nous… ». La réponse est le cœur de votre positionnement.</p></div></div>
+      <div class="err-foot"><span>INOV Digital Services — Guide branding</span><span>04</span></div>
+    </div>
+  </section>
+
+  <!-- ERROR 5 -->
+  <section class="page">
+    <div class="err">
+      <div class="err-num">05</div>
+      <div class="err-head">
+        <img class="content-logo" src="guide-logo-dark.webp" alt="INOV Digital Services" />
+        <div class="err-pill">Erreur 05 / 07</div>
+      </div>
+      <div class="err-kicker">La qualité</div>
+      <h2>Négliger la qualité des visuels</h2>
+      <div class="block"><div class="label">Le problème</div><p>Photos floues, captures pixelisées, montages bâclés faits à la va-vite. « Ça fera l'affaire »… mais ça ne fait jamais l'affaire.</p></div>
+      <div class="block"><div class="label cost">Pourquoi ça vous coûte des clients</div><p>Le client juge la qualité de votre produit ou service à la qualité de vos images. Un visuel négligé donne l'impression d'une offre négligée — et fait douter avant même l'achat.</p></div>
+      <div class="solution"><div class="label">La solution</div><p>Investissez dans des visuels soignés et en haute résolution. C'est votre vitrine : elle travaille pour vous 24h/24.</p></div>
+      <div class="tip"><div class="bulb">💡</div><div><div class="label">Astuce concrète</div><p>Mieux vaut 3 visuels excellents que 10 visuels moyens. La qualité prime toujours sur la quantité.</p></div></div>
+      <div class="err-foot"><span>INOV Digital Services — Guide branding</span><span>05</span></div>
+    </div>
+  </section>
+
+  <!-- ERROR 6 -->
+  <section class="page">
+    <div class="err">
+      <div class="err-num">06</div>
+      <div class="err-head">
+        <img class="content-logo" src="guide-logo-dark.webp" alt="INOV Digital Services" />
+        <div class="err-pill">Erreur 06 / 07</div>
+      </div>
+      <div class="err-kicker">L'émotion</div>
+      <h2>Oublier l'émotion et l'histoire</h2>
+      <div class="block"><div class="label">Le problème</div><p>La communication ne parle que de produits, de prix et de caractéristiques. Aucune histoire, aucune émotion, aucun « pourquoi ».</p></div>
+      <div class="block"><div class="label cost">Pourquoi ça vous coûte des clients</div><p>Les gens n'achètent pas un produit : ils achètent ce qu'il représente et ce qu'ils ressentent. Une marque sans récit reste froide et oubliable — donc facile à remplacer.</p></div>
+      <div class="solution"><div class="label">La solution</div><p>Racontez le « pourquoi » de votre marque : son origine, sa mission, les personnes derrière. C'est ce qui crée l'attachement.</p></div>
+      <div class="tip"><div class="bulb">💡</div><div><div class="label">Astuce concrète</div><p>Partagez régulièrement les coulisses : le fondateur, la fabrication, un client heureux. L'humain crée la connexion.</p></div></div>
+      <div class="err-foot"><span>INOV Digital Services — Guide branding</span><span>06</span></div>
+    </div>
+  </section>
+
+  <!-- ERROR 7 -->
+  <section class="page">
+    <div class="err">
+      <div class="err-num">07</div>
+      <div class="err-head">
+        <img class="content-logo" src="guide-logo-dark.webp" alt="INOV Digital Services" />
+        <div class="err-pill">Erreur 07 / 07</div>
+      </div>
+      <div class="err-kicker">La charte</div>
+      <h2>Ne pas avoir d'identité écrite</h2>
+      <div class="block"><div class="label">Le problème</div><p>Aucun document ne fixe les règles de la marque. Chaque nouveau visuel, chaque nouveau prestataire repart de zéro et interprète à sa façon.</p></div>
+      <div class="block"><div class="label cost">Pourquoi ça vous coûte des clients</div><p>Sans cadre, votre image se dilue au fil du temps et perd de sa force. Vous perdez aussi un temps précieux à re-expliquer votre univers à chaque collaboration.</p></div>
+      <div class="solution"><div class="label">La solution</div><p>Créez une mini-charte graphique : logo et ses variantes, couleurs exactes, polices, ton de communication. Un seul document qui protège votre cohérence pour des années.</p></div>
+      <div class="tip"><div class="bulb">💡</div><div><div class="label">Astuce concrète</div><p>Même une charte d'une seule page suffit pour démarrer. L'essentiel est qu'elle existe et que tout le monde la suive.</p></div></div>
+      <div class="err-foot"><span>INOV Digital Services — Guide branding</span><span>07</span></div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="page">
+    <div class="final">
+      <div class="num">✓</div>
+      <img class="brand-logo" src="guide-logo-light.webp" alt="INOV Digital Services" style="margin-bottom:56px;" />
+      <div class="accent-line" style="margin-bottom:24px;"></div>
+      <h3>Prêt à corriger ces <span>erreurs&nbsp;?</span></h3>
+      <p class="lead">INOV Digital Services accompagne les marques dans leur branding, de A à Z. On s'occupe de tout — vous vous concentrez sur votre activité.</p>
+      <div class="services">
+        <span class="chip">Logos & identité</span>
+        <span class="chip">Packaging</span>
+        <span class="chip">Affiches & flyers</span>
+        <span class="chip">Motion design</span>
+        <span class="chip">Sites vitrines</span>
+        <span class="chip">Promotion en ligne</span>
+      </div>
+      <div class="contacts">
+        <span class="row">
+          <svg class="icon" style="width:20px;height:20px;" viewBox="0 0 24 24" fill="#ff8a4c" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp <span>&nbsp;+509 3625-5920</span>
+        </span>
+        <span class="row">
+          <svg class="icon" style="width:20px;height:20px;" viewBox="0 0 24 24" fill="none" stroke="#ff8a4c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          Instagram <span>&nbsp;@inov_digital_services</span>
+        </span>
+      </div>
+      <div class="final-foot">© INOV Digital Services — Merci de votre confiance.</div>
+    </div>
+  </section>
+</body>
+</html>
