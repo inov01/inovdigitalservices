@@ -1463,4 +1463,59 @@ app.post(`${P}/assistant`, async (c) => {
   }
 });
 
+// ── WhatsApp Cloud API webhook ────────────────────────────────────────────────
+// GET  — Meta verification challenge (hub.verify_token must match CRON_SECRET)
+// POST — Incoming messages from users (stored + admin notification email)
+app.get(`${P}/webhook/whatsapp`, (c) => {
+  const mode      = c.req.query("hub.mode");
+  const token     = c.req.query("hub.verify_token");
+  const challenge = c.req.query("hub.challenge");
+  const secret    = Deno.env.get("CRON_SECRET");
+  if (mode === "subscribe" && token === secret && challenge) {
+    return new Response(challenge, { status: 200 });
+  }
+  return c.json({ error: "forbidden" }, 403);
+});
+
+app.post(`${P}/webhook/whatsapp`, async (c) => {
+  try {
+    const body = await c.req.json().catch(() => ({}));
+    const entry = body?.entry?.[0];
+    const change = entry?.changes?.[0];
+    const msg = change?.value?.messages?.[0];
+    if (msg) {
+      const from    = msg.from ?? "";
+      const text    = msg?.text?.body ?? msg?.type ?? "(non-text)";
+      const contact = change?.value?.contacts?.[0]?.profile?.name ?? from;
+      console.log(`[whatsapp] message from ${from} (${contact}): ${text}`);
+      // Notify admin by email
+      const notifyTo = ADMIN_EMAILS[0];
+      if (notifyTo) {
+        const gmailUser = Deno.env.get("GMAIL_USER");
+        const gmailPass = Deno.env.get("GMAIL_APP_PASSWORD");
+        if (gmailUser && gmailPass) {
+          const { SMTPClient } = await import("https://deno.land/x/denomailer@1.6.0/mod.ts");
+          const client = new SMTPClient({
+            connection: { hostname: "smtp.gmail.com", port: 465, tls: true, auth: { username: gmailUser, password: gmailPass } },
+          });
+          try {
+            await client.send({
+              from: `INOV Digital Services <${gmailUser}>`,
+              to: notifyTo,
+              subject: `💬 Réponse WhatsApp de ${contact}`,
+              content: `Message reçu de ${contact} (+${from}):\n\n${text}\n\nRépondez directement sur WhatsApp : https://wa.me/${from}`,
+              html: `<p><strong>Message WhatsApp reçu</strong></p><p><strong>De :</strong> ${contact} (+${from})</p><p><strong>Message :</strong></p><blockquote>${text}</blockquote><p><a href="https://wa.me/${from}">Répondre sur WhatsApp →</a></p>`,
+            });
+          } finally {
+            await client.close().catch(() => {});
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.error("[whatsapp-webhook] error:", e);
+  }
+  return c.json({ ok: true });
+});
+
 Deno.serve(app.fetch);
