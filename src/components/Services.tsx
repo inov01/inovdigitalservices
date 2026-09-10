@@ -14,6 +14,7 @@ import logo1 from "@/imports/logo-1.webp"
 import socialFlyer from "@/imports/social_flyer.webp"
 import packagingAnana from "@/imports/packaging_anana.webp"
 import etiquetteSimple from "@/imports/INOV_Digital_Services__64_.webp"
+import dielinesPackaging from "@/imports/INOV_Digital_Services__1_.jpg"
 
 // Visual/price data; localized title + desc come from the dictionary (t.services.cards) by `card` index.
 // Only services with a preview image/gif are shown; the others are hidden until visuals are provided.
@@ -23,6 +24,24 @@ const serviceMeta: { icon: LucideIcon; price: number; card: number; preview?: st
   { icon: Tag, price: 27, card: 5, preview: etiquetteSimple },
   { icon: ImageIcon, price: 36, card: 6, preview: socialFlyer },
 ]
+
+// Extra "Packaging & Dielines" service, kept with its own localized copy here so
+// it doesn't require touching every language dictionary. Shown after the cards above.
+const dielinesCard: { icon: LucideIcon; price: number; preview: string; copy: Record<string, { title: string; desc: string }> } = {
+  icon: Package,
+  price: 54,
+  preview: dielinesPackaging,
+  copy: {
+    fr: { title: "Emballage & Dielines", desc: "Gabarit de découpe, boîte, sac cadeau et mockup 3D — un emballage structurel prêt à imprimer pour sublimer votre produit." },
+    en: { title: "Packaging & Dielines", desc: "Cut template, box, gift bag and 3D mockup — print-ready structural packaging to make your product shine." },
+    es: { title: "Packaging & Dielines", desc: "Plantilla de corte, caja, bolsa de regalo y mockup 3D — packaging estructural listo para imprimir para lucir tu producto." },
+    ht: { title: "Anbalaj & Dielines", desc: "Modèl koupe, bwat, sak kado ak mockup 3D — yon anbalaj estriktirèl ki pare pou enprime pou mete pwodwi ou an valè." },
+    pt: { title: "Embalagem & Dielines", desc: "Molde de corte, caixa, sacola e mockup 3D — embalagem estrutural pronta para impressão para valorizar o seu produto." },
+    it: { title: "Packaging & Dielines", desc: "Fustella, scatola, shopper e mockup 3D — packaging strutturale pronto per la stampa per valorizzare il tuo prodotto." },
+    de: { title: "Verpackung & Stanzformen", desc: "Stanzkontur, Schachtel, Geschenktüte und 3D-Mockup — druckfertige Verpackung, die Ihr Produkt hervorhebt." },
+    ar: { title: "التغليف والقوالب (Dielines)", desc: "قالب القص وعلبة وحقيبة هدايا ومعاينة ثلاثية الأبعاد — تغليف هيكلي جاهز للطباعة لإبراز منتجك." },
+  },
+}
 
 function ServiceCard({ icon: Icon, title, desc, preview, orderLabel, waHref }: { icon: LucideIcon; title: string; desc: string; preview?: string; orderLabel: string; waHref: string }) {
   return (
@@ -112,21 +131,38 @@ export default function Services() {
         </div>
 
         <AutoCarousel visibleCount={3} mobileVisibleCount={1} interval={3500} burst>
-          {serviceMeta.map((m, i) => {
-            const title = t.services.cards[m.card].title
-            const msg = t.services.orderText.replace("{service}", title)
-            return (
-              <ServiceCard
-                key={i}
-                icon={m.icon}
-                preview={m.preview}
-                title={title}
-                desc={t.services.cards[m.card].desc}
-                orderLabel={t.services.order}
-                waHref={`https://wa.me/50936255920?text=${encodeURIComponent(msg)}`}
-              />
-            )
-          })}
+          {[
+            ...serviceMeta.map((m, i) => {
+              const title = t.services.cards[m.card].title
+              const msg = t.services.orderText.replace("{service}", title)
+              return (
+                <ServiceCard
+                  key={i}
+                  icon={m.icon}
+                  preview={m.preview}
+                  title={title}
+                  desc={t.services.cards[m.card].desc}
+                  orderLabel={t.services.order}
+                  waHref={`https://wa.me/50936255920?text=${encodeURIComponent(msg)}`}
+                />
+              )
+            }),
+            (() => {
+              const c = dielinesCard.copy[lang] ?? dielinesCard.copy.fr
+              const msg = t.services.orderText.replace("{service}", c.title)
+              return (
+                <ServiceCard
+                  key="dielines"
+                  icon={dielinesCard.icon}
+                  preview={dielinesCard.preview}
+                  title={c.title}
+                  desc={c.desc}
+                  orderLabel={t.services.order}
+                  waHref={`https://wa.me/50936255920?text=${encodeURIComponent(msg)}`}
+                />
+              )
+            })(),
+          ]}
         </AutoCarousel>
 
         <div style={{ textAlign: "center", marginTop: 40 }}>

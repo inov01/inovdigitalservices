@@ -8,6 +8,18 @@ import { api } from "../lib/api"
 
 const BUDGET_BREAKS_USD = [100, 300, 500, 1000]
 
+// WhatsApp number field copy — local so the 8 translation files stay untouched.
+const WA_LABELS: Record<string, { label: string; placeholder: string }> = {
+  fr: { label: "Numéro WhatsApp (optionnel)", placeholder: "+509 3625 5920" },
+  en: { label: "WhatsApp number (optional)", placeholder: "+1 555 012 3456" },
+  es: { label: "Número de WhatsApp (opcional)", placeholder: "+34 612 345 678" },
+  ht: { label: "Nimewo WhatsApp (opsyonèl)", placeholder: "+509 3625 5920" },
+  pt: { label: "Número de WhatsApp (opcional)", placeholder: "+351 912 345 678" },
+  it: { label: "Numero WhatsApp (facoltativo)", placeholder: "+39 345 123 4567" },
+  de: { label: "WhatsApp-Nummer (optional)", placeholder: "+49 151 23456789" },
+  ar: { label: "رقم واتساب (اختياري)", placeholder: "+509 3625 5920" },
+}
+
 export default function Contact() {
   const { t, fmt, priceFor, lang, region, currency } = useSettings()
   const budgets = useMemo(() => [
@@ -16,7 +28,7 @@ export default function Contact() {
     `+ ${fmt(priceFor(BUDGET_BREAKS_USD[BUDGET_BREAKS_USD.length - 1]))}`,
   ], [fmt, priceFor])
   const services = t.contact.serviceList
-  const [form, setForm] = useState({ name: "", email: "", budget: "", message: "" })
+  const [form, setForm] = useState({ name: "", email: "", phone: "", budget: "", message: "" })
   const [selectedServices, setSelectedServices] = useState<string[]>([])
   const [serviceOpen, setServiceOpen] = useState(false)
   const serviceRef = useRef<HTMLDivElement>(null)
@@ -57,6 +69,7 @@ export default function Contact() {
         source: "contact",
         name: form.name,
         email: form.email,
+        phone: form.phone,
         lang, region, currency,
         budget: form.budget,
         message: form.message,
@@ -143,6 +156,15 @@ export default function Contact() {
                     />
                     <ValidationError field="email" errors={fsState.errors} style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, color: "var(--ds-danger)", marginTop: 4, display: "block" }} />
                   </div>
+                </div>
+                <div>
+                  <label htmlFor="contact-phone" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: "var(--ds-text)", display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                    <SiWhatsapp size={14} aria-hidden="true" /> {(WA_LABELS[lang] ?? WA_LABELS.fr).label}
+                  </label>
+                  <input id="contact-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" value={form.phone ?? ""} onChange={(e) => set("phone", e.target.value)} placeholder={(WA_LABELS[lang] ?? WA_LABELS.fr).placeholder} style={inputStyle}
+                    onFocus={(e) => e.target.style.borderColor = "var(--ds-text)"}
+                    onBlur={(e) => e.target.style.borderColor = "var(--ds-border)"}
+                  />
                 </div>
                 <div role="group" aria-labelledby="contact-service-label">
                   <span id="contact-service-label" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: "var(--ds-text)", display: "block", marginBottom: 6 }}>{t.contact.serviceWanted}</span>

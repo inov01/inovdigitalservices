@@ -206,6 +206,7 @@ export const api = {
   requestProforma(payload: {
     name: string
     email: string
+    phone?: string
     lang: string
     currency: string
     region: string

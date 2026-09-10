@@ -296,6 +296,7 @@ const en: Dict = {
       { q: "Can I order the same service several times?", a: "Absolutely. Our Pricing section lets you choose the quantity you want for each service. Need 3 logos for different brands? Just set the quantity to 3 and enjoy the tiered discounts." },
       { q: "Are there discounts for large orders?", a: "Yes, we offer a 10% discount from 5 service units ordered, and a 30% discount from 10 units. These discounts are calculated automatically in the cart." },
       { q: "What file formats do you deliver?", a: "We deliver all source files (AI, PSD, Figma) plus the final versions in high resolution (PNG, SVG, PDF) and optimized web formats. For videos: MP4 H.264 in 1080p minimum." },
+      { q: "Do you do photography, video or printing?", a: "No, and it's important to be clear: we don't shoot photos but we do photo retouching (light, colors, cut-outs, staging, mockups); we don't film but we do the editing of your footage; we don't print but we design the print-ready files, which you then send to the printer of your choice." },
     ],
   },
   contact: {
@@ -633,6 +634,7 @@ const es: Dict = {
       { q: "¿Puedo pedir varias veces el mismo servicio?", a: "Por supuesto. Nuestra sección de Precios te permite elegir la cantidad deseada para cada servicio. ¿Necesitas 3 logos para distintas marcas? Solo añade la cantidad 3 y aprovecha los descuentos por volumen." },
       { q: "¿Hay descuentos para pedidos grandes?", a: "Sí, ofrecemos un 10% de descuento a partir de 5 unidades de servicios pedidas, y un 30% a partir de 10 unidades. Estos descuentos se calculan automáticamente en el carrito." },
       { q: "¿Qué formatos de archivo entregan?", a: "Entregamos todos los archivos fuente (AI, PSD, Figma) más las versiones finales en alta resolución (PNG, SVG, PDF) y los formatos web optimizados. Para vídeos: MP4 H.264 en 1080p mínimo." },
+      { q: "¿Hacen fotografía, vídeo o impresión?", a: "No, y es importante aclararlo: no hacemos tomas fotográficas sino retoque fotográfico (luz, colores, recorte, puesta en escena, mockups); no grabamos sino que hacemos el montaje (editing) de tu material; no imprimimos sino que diseñamos los archivos listos para imprimir, que luego llevas a la imprenta de tu elección." },
     ],
   },
   contact: {
@@ -970,6 +972,7 @@ const ht: Dict = {
       { q: "Èske m ka kòmande menm sèvis la plizyè fwa?", a: "Absoliman. Seksyon Tarif nou an pèmèt ou chwazi kantite ou vle pou chak sèvis. Ou bezwen 3 logo pou diferan mak? Senpleman ajoute kantite 3 epi pwofite rediksyon pa palye yo." },
       { q: "Èske gen rediksyon pou gwo kòmand?", a: "Wi, nou ofri 10% rediksyon apati 5 inite sèvis kòmande, ak 30% rediksyon apati 10 inite. Rediksyon sa yo kalkile otomatikman nan panye a." },
       { q: "Ki fòma fichye w livre?", a: "Nou livre tout fichye sous (AI, PSD, Figma) plis vèsyon final yo an wo rezolisyon (PNG, SVG, PDF) ak fòma web optimize. Pou videyo: MP4 H.264 an 1080p minimòm." },
+      { q: "Èske nou fè fotografi, videyo oswa enprime?", a: "Non, e li enpòtan pou presize: nou pa pran foto men nou fè retouch foto (limyè, koulè, dekoupe, mizansèn, mockup); nou pa filme men nou fè montaj (editing) rush ou yo; nou pa enprime men nou fè konsepsyon fichye ki pare pou enprime, ke ou pote apre nan enprimri chwa ou." },
     ],
   },
   contact: {

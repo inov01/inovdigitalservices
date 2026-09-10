@@ -10,7 +10,7 @@ import { useSettings } from "../context/AppSettings"
 import { smoothScrollToId } from "../lib/smoothScroll"
 
 import { albums as staticAlbums, ytThumb, workPoster, onThumbError, type Work, type Album } from "../data/portfolio"
-import { api, type AdminAlbum } from "../lib/api"
+import { api, type AdminAlbum, type AdminWork } from "../lib/api"
 
 const AUTOPLAY_MS = 4200
 
@@ -59,6 +59,9 @@ export default function Portfolio() {
   // Admin-managed overrides (hidden built-ins + added albums), fetched once.
   const [addedAlbums, setAddedAlbums] = useState<Album[]>([])
   const [removedIds, setRemovedIds] = useState<string[]>([])
+  // Per-work overrides: hidden works (keyed `${albumId}#${index}`) + appended works (by album id).
+  const [worksRemoved, setWorksRemoved] = useState<string[]>([])
+  const [worksAdded, setWorksAdded] = useState<Record<string, AdminWork[]>>({})
   useEffect(() => {
     api.getSettings()
       .then((r) => {
@@ -66,14 +69,27 @@ export default function Portfolio() {
         if (!s) return
         if (Array.isArray(s.albumsRemoved)) setRemovedIds(s.albumsRemoved)
         if (Array.isArray(s.albumsAdded)) setAddedAlbums(s.albumsAdded.map(adminToAlbum))
+        if (Array.isArray(s.worksRemoved)) setWorksRemoved(s.worksRemoved)
+        if (s.worksAdded && typeof s.worksAdded === "object") setWorksAdded(s.worksAdded)
       })
       .catch(() => {})
   }, [])
 
   const albums = useMemo(() => {
     const removed = new Set(removedIds)
-    return [...staticAlbums.filter((a) => !removed.has(a.id)), ...addedAlbums]
-  }, [addedAlbums, removedIds])
+    const hidden = new Set(worksRemoved)
+    // Hide individual works, then append any admin-added works, per album.
+    const withWorks = (a: Album): Album => {
+      const kept = a.works.filter((_, i) => !hidden.has(`${a.id}#${i}`))
+      const extra = (worksAdded[a.id] ?? []).map((w) => ({
+        img: w.img, videoId: w.videoId, title: w.title, category: w.category, desc: w.desc,
+      }))
+      return kept.length === a.works.length && extra.length === 0 ? a : { ...a, works: [...kept, ...extra] }
+    }
+    const merged = [...staticAlbums.filter((a) => !removed.has(a.id)), ...addedAlbums].map(withWorks)
+    // An album left with zero visible works is dropped from the carousel entirely.
+    return merged.filter((a) => a.works.length > 0)
+  }, [addedAlbums, removedIds, worksRemoved, worksAdded])
   const logoAlbums = useMemo(() => albums.filter((a) => a.logo), [albums])
   const otherAlbums = useMemo(() => albums.filter((a) => !a.logo), [albums])
   const total = logoAlbums.length

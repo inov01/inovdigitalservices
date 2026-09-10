@@ -111,13 +111,20 @@ export default function ArticleAudio({ text, lang }: { text: string; lang: strin
     // (that's what produced an English voice reading French text).
     const sameLang = voices.filter((v) => norm(v.lang).startsWith(pref))
     if (!sameLang.length) return null
-    // Prefer the exact locale, and a local/offline voice for a natural accent.
-    return (
-      sameLang.find((v) => norm(v.lang) === loc && v.localService) ??
-      sameLang.find((v) => norm(v.lang) === loc) ??
-      sameLang.find((v) => v.localService) ??
-      sameLang[0]
-    )
+    // Rank by how human the voice sounds. Modern neural/cloud voices (Google,
+    // Microsoft "Natural"/"Neural", Apple "Siri"/"Premium/Enhanced") are far more
+    // lifelike than the built-in "localService" robots we used to prefer — so we
+    // now score those UP and use localService only as a last-resort tiebreaker.
+    const HUMAN = ["natural", "neural", "wavenet", "premium", "enhanced", "siri", "google", "multilingual", "studio", "journey"]
+    const score = (v: SpeechSynthesisVoice): number => {
+      const name = v.name.toLowerCase()
+      let s = 0
+      if (norm(v.lang) === loc) s += 6                       // exact locale match
+      for (const kw of HUMAN) if (name.includes(kw)) { s += 5; break } // lifelike engine
+      if (!v.localService) s += 2                            // cloud voices are usually richer
+      return s
+    }
+    return [...sameLang].sort((a, b) => score(b) - score(a))[0] ?? sameLang[0]
   }
 
   function speakNext() {
@@ -132,12 +139,15 @@ export default function ArticleAudio({ text, lang }: { text: string; lang: strin
     const v = pickVoice()
     if (v) u.voice = v
     u.lang = LOCALE[voiceLang] ?? "en-US"
-    u.rate = 1
-    u.pitch = 1
+    // Slightly slower than default with a natural pitch reads as calmer and more
+    // human than the robotic full-speed monotone.
+    u.rate = 0.96
+    u.pitch = 1.02
     u.onend = () => {
       if (stoppedRef.current) return
       idxRef.current += 1
-      speakNext()
+      // A short breath between sentences mimics natural speech pacing.
+      setTimeout(() => { if (!stoppedRef.current) speakNext() }, 140)
     }
     u.onerror = () => {
       if (stoppedRef.current) return

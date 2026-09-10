@@ -275,6 +275,7 @@ const fr = {
       { q: "Puis-je commander plusieurs fois le même service ?", a: "Absolument. Notre section Tarifs vous permet de choisir la quantité souhaitée pour chaque service. Besoin de 3 logos pour différentes marques ? Ajoutez simplement la quantité 3 et bénéficiez des réductions par palier." },
       { q: "Y a-t-il des réductions pour les grandes commandes ?", a: "Oui, nous offrons 10% de réduction à partir de 5 unités de services commandées, et 30% de réduction à partir de 10 unités. Ces réductions sont calculées automatiquement dans le panier." },
       { q: "Quel format de fichiers livrez-vous ?", a: "Nous livrons tous les fichiers sources (AI, PSD, Figma) plus les versions finales en haute résolution (PNG, SVG, PDF) et les formats web optimisés. Pour les vidéos : MP4 H.264 en 1080p minimum." },
+      { q: "Faites-vous de la photographie, de la vidéo ou de l'impression ?", a: "Non, et c'est important de le préciser : nous ne faisons pas de prise de vue photo mais de la retouche photo (lumière, couleurs, détourage, mise en scène, mockups) ; nous ne filmons pas mais nous faisons le montage (editing) de vos rushes ; nous n'imprimons pas mais nous faisons la conception des fichiers prêts à imprimer, que vous confiez ensuite à l'imprimeur de votre choix." },
     ],
   },
   contact: {

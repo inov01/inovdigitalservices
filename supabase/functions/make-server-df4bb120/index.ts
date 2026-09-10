@@ -474,19 +474,53 @@ function buildReceiptHtml(l: any): string {
 </body></html>`;
 }
 
-async function sendReceiptEmail(lead: any): Promise<void> {
+// ── Unified transactional email sender ────────────────────────────────────────
+// Prefers Resend (HTTP API — reliable and already configured) and only falls back
+// to Gmail SMTP when Resend is not set up. Gmail app passwords are fragile: once
+// revoked they return "535 BadCredentials" and every send fails — which is why
+// Resend is the primary transport here.
+async function sendMail(opts: { to: string | string[]; subject: string; html: string; text?: string }): Promise<void> {
+  const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
+  const resendKey = Deno.env.get("RESEND_API_KEY");
+  const resendFrom = Deno.env.get("RESEND_FROM");
+  if (resendKey && resendFrom) {
+    const from = resendFrom.includes("<") ? resendFrom : `${displayName} <${resendFrom}>`;
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from,
+        to: Array.isArray(opts.to) ? opts.to : [opts.to],
+        subject: opts.subject,
+        html: opts.html,
+        ...(opts.text ? { text: opts.text } : {}),
+      }),
+    });
+    if (!res.ok) throw new Error(`Resend ${res.status}: ${await res.text()}`);
+    return;
+  }
+  // Fallback: Gmail SMTP.
   const user = Deno.env.get("GMAIL_USER");
   const pass = Deno.env.get("GMAIL_APP_PASSWORD");
-  if (!user || !pass) throw new Error("GMAIL_USER / GMAIL_APP_PASSWORD not configured");
-  const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
+  if (!user || !pass) throw new Error("No email transport configured (set RESEND_API_KEY/RESEND_FROM or GMAIL_USER/GMAIL_APP_PASSWORD)");
   const client = new SMTPClient({
-    connection: {
-      hostname: "smtp.gmail.com",
-      port: 465,
-      tls: true,
-      auth: { username: user, password: pass },
-    },
+    connection: { hostname: "smtp.gmail.com", port: 465, tls: true, auth: { username: user, password: pass } },
   });
+  try {
+    await client.send({
+      from: `${displayName} <${user}>`,
+      to: opts.to,
+      subject: opts.subject,
+      content: opts.text ?? "Cet e-mail contient du contenu HTML. Activez l'affichage HTML pour le voir.",
+      html: opts.html,
+    });
+  } finally {
+    await client.close();
+  }
+}
+
+async function sendReceiptEmail(lead: any): Promise<void> {
+  const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
   const first = String(lead.name ?? "").trim().split(/\s+/)[0] || "";
   const hello = first ? `Bonjour ${first},` : "Bonjour,";
   const amountStr =
@@ -505,34 +539,18 @@ async function sendReceiptEmail(lead: any): Promise<void> {
     `À très vite,`,
     `L'équipe ${displayName}`,
   ];
-  try {
-    await client.send({
-      from: `${displayName} <${user}>`,
-      to: lead.email,
-      subject: `Merci ${first ? first + " " : ""}! Voici votre reçu ${receiptNo(lead)}`,
-      content: textLines.join("\n"),
-      html: buildReceiptHtml(lead),
-    });
-  } finally {
-    await client.close();
-  }
+  await sendMail({
+    to: lead.email,
+    subject: `Merci ${first ? first + " " : ""}! Voici votre reçu ${receiptNo(lead)}`,
+    text: textLines.join("\n"),
+    html: buildReceiptHtml(lead),
+  });
 }
 
 // Emails the client the proforma they requested (same HTML rendered on the site),
 // and notifies the team. French-only copy, matching the receipt email's tone.
 async function sendProformaEmail(p: any): Promise<void> {
-  const user = Deno.env.get("GMAIL_USER");
-  const pass = Deno.env.get("GMAIL_APP_PASSWORD");
-  if (!user || !pass) throw new Error("GMAIL_USER / GMAIL_APP_PASSWORD not configured");
   const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
-  const client = new SMTPClient({
-    connection: {
-      hostname: "smtp.gmail.com",
-      port: 465,
-      tls: true,
-      auth: { username: user, password: pass },
-    },
-  });
   const first = String(p.name ?? "").trim().split(/\s+/)[0] || "";
   const hello = first ? `Bonjour ${first},` : "Bonjour,";
   const no = String(p.proformaNo ?? "").trim();
@@ -551,47 +569,30 @@ async function sendProformaEmail(p: any): Promise<void> {
     "À très vite,",
     `L'équipe ${displayName}`,
   ];
-  try {
-    await client.send({
-      from: `${displayName} <${user}>`,
-      to: p.email,
-      subject: `Votre facture proforma${no ? ` n° ${no}` : ""} — ${displayName}`,
-      content: textLines.join("\n"),
-      html: p.html,
-    });
-    // Notify the team (best-effort; never fails the client send).
-    const notifyTo = ADMIN_EMAILS[0];
-    if (notifyTo) {
-      try {
-        await client.send({
-          from: `${displayName} <${user}>`,
-          to: notifyTo,
-          subject: `Nouvelle demande de proforma — ${p.name || p.email}${totalStr ? ` (${totalStr})` : ""}`,
-          content: `Client : ${p.name || "—"}\nE-mail : ${p.email}\nProforma : ${no || "—"}\nTotal : ${totalStr || "—"}\nLangue : ${p.lang || "—"}\nRégion : ${p.region || "—"}`,
-          html: p.html,
-        });
-      } catch (_) { /* team copy is best-effort */ }
-    }
-  } finally {
-    await client.close();
+  await sendMail({
+    to: p.email,
+    subject: `Votre facture proforma${no ? ` n° ${no}` : ""} — ${displayName}`,
+    text: textLines.join("\n"),
+    html: p.html,
+  });
+  // Notify the team (best-effort; never fails the client send).
+  const notifyTo = ADMIN_EMAILS[0];
+  if (notifyTo) {
+    try {
+      await sendMail({
+        to: notifyTo,
+        subject: `Nouvelle demande de proforma — ${p.name || p.email}${totalStr ? ` (${totalStr})` : ""}`,
+        text: `Client : ${p.name || "—"}\nE-mail : ${p.email}\nWhatsApp : ${p.phone || "—"}\nProforma : ${no || "—"}\nTotal : ${totalStr || "—"}\nLangue : ${p.lang || "—"}\nRégion : ${p.region || "—"}`,
+        html: p.html,
+      });
+    } catch (_) { /* team copy is best-effort */ }
   }
 }
 
 // Emails the client their delivery note (bon de livraison) with the rendered
 // HTML sheet, and notifies the team. French-only copy, matching the tone above.
 async function sendDeliveryEmail(p: any): Promise<void> {
-  const user = Deno.env.get("GMAIL_USER");
-  const pass = Deno.env.get("GMAIL_APP_PASSWORD");
-  if (!user || !pass) throw new Error("GMAIL_USER / GMAIL_APP_PASSWORD not configured");
   const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
-  const client = new SMTPClient({
-    connection: {
-      hostname: "smtp.gmail.com",
-      port: 465,
-      tls: true,
-      auth: { username: user, password: pass },
-    },
-  });
   const first = String(p.name ?? "").trim().split(/\s+/)[0] || "";
   const hello = first ? `Bonjour ${first},` : "Bonjour,";
   const no = String(p.deliveryNo ?? "").trim();
@@ -608,28 +609,22 @@ async function sendDeliveryEmail(p: any): Promise<void> {
     "Merci de votre confiance,",
     `L'équipe ${displayName}`,
   ];
-  try {
-    await client.send({
-      from: `${displayName} <${user}>`,
-      to: p.email,
-      subject: `Votre bon de livraison${no ? ` n° ${no}` : ""} — ${displayName}`,
-      content: textLines.join("\n"),
-      html: p.html,
-    });
-    const notifyTo = ADMIN_EMAILS[0];
-    if (notifyTo) {
-      try {
-        await client.send({
-          from: `${displayName} <${user}>`,
-          to: notifyTo,
-          subject: `Bon de livraison envoyé — ${p.name || p.email}`,
-          content: `Bon de livraison${no ? ` n° ${no}` : ""} envoyé à ${p.email}.`,
-          html: p.html,
-        });
-      } catch (_) { /* team copy is best-effort */ }
-    }
-  } finally {
-    await client.close();
+  await sendMail({
+    to: p.email,
+    subject: `Votre bon de livraison${no ? ` n° ${no}` : ""} — ${displayName}`,
+    text: textLines.join("\n"),
+    html: p.html,
+  });
+  const notifyTo = ADMIN_EMAILS[0];
+  if (notifyTo) {
+    try {
+      await sendMail({
+        to: notifyTo,
+        subject: `Bon de livraison envoyé — ${p.name || p.email}`,
+        text: `Bon de livraison${no ? ` n° ${no}` : ""} envoyé à ${p.email}.`,
+        html: p.html,
+      });
+    } catch (_) { /* team copy is best-effort */ }
   }
 }
 
@@ -641,34 +636,16 @@ async function sendNewsletterEmail(
   html: string,
   recipients: string[],
 ): Promise<{ sent: number; failed: number; errors: string[] }> {
-  const user = Deno.env.get("GMAIL_USER");
-  const pass = Deno.env.get("GMAIL_APP_PASSWORD");
-  if (!user || !pass) throw new Error("GMAIL_USER / GMAIL_APP_PASSWORD not configured");
-  const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
-  const client = new SMTPClient({
-    connection: { hostname: "smtp.gmail.com", port: 465, tls: true, auth: { username: user, password: pass } },
-  });
   let sent = 0, failed = 0;
   const errors: string[] = [];
-  try {
-    for (const to of recipients) {
-      try {
-        await client.send({
-          from: `${displayName} <${user}>`,
-          to,
-          subject,
-          // Plain-text fallback keeps deliverability high for HTML campaigns.
-          content: "Cet e-mail contient du contenu HTML. Activez l'affichage HTML pour le voir.",
-          html,
-        });
-        sent++;
-      } catch (e) {
-        failed++;
-        if (errors.length < 5) errors.push(`${to}: ${String((e as any)?.message ?? e)}`);
-      }
+  for (const to of recipients) {
+    try {
+      await sendMail({ to, subject, html });
+      sent++;
+    } catch (e) {
+      failed++;
+      if (errors.length < 5) errors.push(`${to}: ${String((e as any)?.message ?? e)}`);
     }
-  } finally {
-    await client.close();
   }
   return { sent, failed, errors };
 }
@@ -805,7 +782,7 @@ app.post(`${P}/proforma`, async (c) => {
     source: "proforma",
     name: typeof b.name === "string" ? b.name.slice(0, 200) : "",
     email,
-    phone: "",
+    phone: typeof b.phone === "string" ? b.phone.slice(0, 60) : "",
     lang: typeof b.lang === "string" ? b.lang.slice(0, 8) : "",
     currency: typeof b.currency === "string" ? b.currency.slice(0, 8) : "",
     region: typeof b.region === "string" ? b.region.slice(0, 80) : "",
@@ -1213,29 +1190,18 @@ function buildFollowUpHtml(l: any, attempt: number): string {
 }
 
 async function sendFollowUpEmail(l: any, attempt: number): Promise<void> {
-  const user = Deno.env.get("GMAIL_USER");
-  const pass = Deno.env.get("GMAIL_APP_PASSWORD");
-  if (!user || !pass) throw new Error("GMAIL_USER / GMAIL_APP_PASSWORD not configured");
   const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
-  const client = new SMTPClient({
-    connection: { hostname: "smtp.gmail.com", port: 465, tls: true, auth: { username: user, password: pass } },
-  });
   const first = String(l.name ?? "").trim().split(/\s+/)[0] || "";
   const subject =
     attempt <= 1
       ? `${first ? first + ", v" : "V"}otre devis vous attend — ${displayName}`
       : `Dernière relance concernant votre devis — ${displayName}`;
-  try {
-    await client.send({
-      from: `${displayName} <${user}>`,
-      to: l.email,
-      subject,
-      content: followUpText(l, attempt),
-      html: buildFollowUpHtml(l, attempt),
-    });
-  } finally {
-    await client.close();
-  }
+  await sendMail({
+    to: l.email,
+    subject,
+    text: followUpText(l, attempt),
+    html: buildFollowUpHtml(l, attempt),
+  });
 }
 
 // Optional: also send the reminder over WhatsApp via the Meta WhatsApp Cloud API.
@@ -1488,28 +1454,17 @@ app.post(`${P}/webhook/whatsapp`, async (c) => {
       const text    = msg?.text?.body ?? msg?.type ?? "(non-text)";
       const contact = change?.value?.contacts?.[0]?.profile?.name ?? from;
       console.log(`[whatsapp] message from ${from} (${contact}): ${text}`);
-      // Notify admin by email
+      // Notify admin by email (best-effort).
       const notifyTo = ADMIN_EMAILS[0];
       if (notifyTo) {
-        const gmailUser = Deno.env.get("GMAIL_USER");
-        const gmailPass = Deno.env.get("GMAIL_APP_PASSWORD");
-        if (gmailUser && gmailPass) {
-          const { SMTPClient } = await import("https://deno.land/x/denomailer@1.6.0/mod.ts");
-          const client = new SMTPClient({
-            connection: { hostname: "smtp.gmail.com", port: 465, tls: true, auth: { username: gmailUser, password: gmailPass } },
+        try {
+          await sendMail({
+            to: notifyTo,
+            subject: `💬 Réponse WhatsApp de ${contact}`,
+            text: `Message reçu de ${contact} (+${from}):\n\n${text}\n\nRépondez directement sur WhatsApp : https://wa.me/${from}`,
+            html: `<p><strong>Message WhatsApp reçu</strong></p><p><strong>De :</strong> ${contact} (+${from})</p><p><strong>Message :</strong></p><blockquote>${text}</blockquote><p><a href="https://wa.me/${from}">Répondre sur WhatsApp →</a></p>`,
           });
-          try {
-            await client.send({
-              from: `INOV Digital Services <${gmailUser}>`,
-              to: notifyTo,
-              subject: `💬 Réponse WhatsApp de ${contact}`,
-              content: `Message reçu de ${contact} (+${from}):\n\n${text}\n\nRépondez directement sur WhatsApp : https://wa.me/${from}`,
-              html: `<p><strong>Message WhatsApp reçu</strong></p><p><strong>De :</strong> ${contact} (+${from})</p><p><strong>Message :</strong></p><blockquote>${text}</blockquote><p><a href="https://wa.me/${from}">Répondre sur WhatsApp →</a></p>`,
-            });
-          } finally {
-            await client.close().catch(() => {});
-          }
-        }
+        } catch (_) { /* notification is best-effort */ }
       }
     }
   } catch (e) {

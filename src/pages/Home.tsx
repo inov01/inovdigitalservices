@@ -3,6 +3,7 @@ import Hero from "../components/Hero"
 import Services from "../components/Services"
 import WhyUs from "../components/WhyUs"
 import Pricing from "../components/Pricing"
+import BriefLinks from "../components/BriefLinks"
 import Contact from "../components/Contact"
 import RevealSection from "../components/RevealSection"
 import PageNav from "../components/PageNav"
@@ -57,6 +58,10 @@ export default function Home() {
 
       <RevealSection delay={0}>
         <Pricing />
+      </RevealSection>
+
+      <RevealSection delay={0}>
+        <BriefLinks />
       </RevealSection>
 
       {region === "HT" && (

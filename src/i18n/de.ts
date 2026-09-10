@@ -275,6 +275,7 @@ const de: Dict = {
       { q: "Kann ich dieselbe Leistung mehrfach bestellen?", a: "Absolut. In unserem Preisbereich können Sie für jede Leistung die gewünschte Menge wählen. Brauchen Sie 3 Logos für verschiedene Marken? Fügen Sie einfach die Menge 3 hinzu und profitieren Sie von den Staffelrabatten." },
       { q: "Gibt es Rabatte für große Bestellungen?", a: "Ja, wir gewähren 10 % Rabatt ab 5 bestellten Leistungseinheiten und 30 % Rabatt ab 10 Einheiten. Diese Rabatte werden automatisch im Warenkorb berechnet." },
       { q: "In welchem Dateiformat liefern Sie?", a: "Wir liefern alle Quelldateien (AI, PSD, Figma) plus die finalen Versionen in hoher Auflösung (PNG, SVG, PDF) und die optimierten Webformate. Für Videos: MP4 H.264 in mindestens 1080p." },
+      { q: "Machen Sie Fotografie, Video oder Druck?", a: "Nein, und das ist wichtig zu betonen: Wir fotografieren nicht, sondern machen die Fotoretusche (Licht, Farben, Freistellen, Inszenierung, Mockups); wir filmen nicht, sondern machen den Schnitt (Editing) Ihres Materials; wir drucken nicht, sondern erstellen die druckfertigen Dateien, die Sie dann an die Druckerei Ihrer Wahl geben." },
     ],
   },
   contact: {

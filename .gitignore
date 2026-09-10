@@ -11,3 +11,12 @@ logs/
 *.log
 .claude-replay.*
 .tmp-*
+
+# Local secret scratch files — never commit
+token_guithub_et_supabase_.html
+new-file.html
+clef_API_gratui.html
+api_whatsapp.tsx
+
+# Local secrets — never commit
+interessting.tsx

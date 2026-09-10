@@ -275,6 +275,7 @@ const it: Dict = {
       { q: "Posso ordinare più volte lo stesso servizio?", a: "Assolutamente. La nostra sezione Tariffe ti permette di scegliere la quantità desiderata per ogni servizio. Ti servono 3 loghi per brand diversi? Aggiungi semplicemente la quantità 3 e approfitta degli sconti a scaglioni." },
       { q: "Ci sono sconti per grandi ordini?", a: "Sì, offriamo il 10% di sconto a partire da 5 unità di servizi ordinate, e il 30% di sconto a partire da 10 unità. Questi sconti sono calcolati automaticamente nel carrello." },
       { q: "Quale formato di file consegnate?", a: "Consegniamo tutti i file sorgente (AI, PSD, Figma) più le versioni finali in alta risoluzione (PNG, SVG, PDF) e i formati web ottimizzati. Per i video: MP4 H.264 in 1080p minimo." },
+      { q: "Fate fotografia, video o stampa?", a: "No, ed è importante precisarlo: non facciamo riprese fotografiche ma il ritocco fotografico (luce, colori, scontorno, messa in scena, mockup); non giriamo video ma facciamo il montaggio (editing) del vostro materiale; non stampiamo ma realizziamo i file pronti per la stampa, che affidate poi alla tipografia che preferite." },
     ],
   },
   contact: {

@@ -42,6 +42,19 @@ const UX_LABELS: Record<Lang, Record<UxKey, string>> = {
   ar: { popular: "الأكثر طلبًا", premiumValue: "بريميوم", youSave: "وفّر ~{amt}", trustDeposit: "دفعة 70%، والباقي عند التسليم", trustRevisions: "تعديلات مشمولة", trustSatisfaction: "راضٍ أو نعدّل لك", reply24h: "ردّ خلال 24 ساعة", socialProof: "أكثر من 20 علامة تجارية · راضٍ أو نعدّل لك" },
 }
 
+// WhatsApp number field copy — kept local (like TIER_LABELS) so the 8 translation
+// files stay untouched. Optional field so it never blocks the proforma flow.
+const WA_LABELS: Record<Lang, { label: string; placeholder: string }> = {
+  fr: { label: "Numéro WhatsApp (optionnel)", placeholder: "+509 3625 5920" },
+  en: { label: "WhatsApp number (optional)", placeholder: "+1 555 012 3456" },
+  es: { label: "Número de WhatsApp (opcional)", placeholder: "+34 612 345 678" },
+  ht: { label: "Nimewo WhatsApp (opsyonèl)", placeholder: "+509 3625 5920" },
+  pt: { label: "Número de WhatsApp (opcional)", placeholder: "+351 912 345 678" },
+  it: { label: "Numero WhatsApp (facoltativo)", placeholder: "+39 345 123 4567" },
+  de: { label: "WhatsApp-Nummer (optional)", placeholder: "+49 151 23456789" },
+  ar: { label: "رقم واتساب (اختياري)", placeholder: "+509 3625 5920" },
+}
+
 export default function Pricing() {
   const { t, fmt, currency, setCurrency, rates, lang, priceFor, region } = useSettings()
   const [services, setServices] = useState<PricingService[]>(pricingServices)
@@ -58,6 +71,7 @@ export default function Pricing() {
   const [nameError, setNameError] = useState(false)
   const [clientEmail, setClientEmail] = useState("")
   const [emailError, setEmailError] = useState(false)
+  const [clientPhone, setClientPhone] = useState("")
   const [cartError, setCartError] = useState(false)
   const nameInputRef = useRef<HTMLInputElement>(null)
   const emailInputRef = useRef<HTMLInputElement>(null)
@@ -341,6 +355,7 @@ export default function Pricing() {
     api.submitLead({
       source: "quote",
       name: clientName,
+      phone: clientPhone.trim(),
       lang, currency, region,
       total: t2,
       deposit,
@@ -375,6 +390,7 @@ export default function Pricing() {
       await api.requestProforma({
         name: clientName.trim(),
         email: clientEmail.trim(),
+        phone: clientPhone.trim(),
         lang, currency, region,
         proformaNo,
         total: t2,
@@ -385,7 +401,10 @@ export default function Pricing() {
       track("proforma_request", { value: t2, currency, items: selectedServices.length })
       setSentOk(true)
       setPreviewOpen(false)
-    } catch {
+    } catch (e) {
+      // Surface the real reason (CORS/origin, email_failed, rate limit…) so a
+      // failed proforma is diagnosable instead of a silent generic error.
+      console.error("[proforma] request failed:", e)
       setSentErr(true)
     } finally {
       setSending(false)
@@ -843,6 +862,31 @@ export default function Pricing() {
                     {t.pricing.clientEmailRequired}
                   </p>
                 )}
+              </div>
+
+              {/* Client WhatsApp — optional, lets INOV follow up on the quote fast */}
+              <div style={{ marginBottom: 16 }}>
+                <label htmlFor="pricing-client-phone" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.55)", display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                  <SiWhatsapp size={13} aria-hidden="true" /> {(WA_LABELS[lang] ?? WA_LABELS.fr).label}
+                </label>
+                <input
+                  id="pricing-client-phone"
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  value={clientPhone ?? ""}
+                  onChange={(e) => setClientPhone(e.target.value)}
+                  placeholder={(WA_LABELS[lang] ?? WA_LABELS.fr).placeholder}
+                  style={{
+                    width: "100%", padding: "11px 14px", borderRadius: "var(--r-md)",
+                    border: "1.5px solid rgba(255,255,255,0.15)",
+                    fontFamily: "'Outfit', sans-serif", fontSize: 14,
+                    background: "rgba(255,255,255,0.07)", color: "#fff",
+                    outline: "none", transition: "border 0.2s",
+                  }}
+                  onFocus={(e) => { e.target.style.borderColor = "rgba(255,255,255,0.5)" }}
+                  onBlur={(e) => { e.target.style.borderColor = "rgba(255,255,255,0.15)" }}
+                />
               </div>
 
               {/* Reassurance strip — reduces purchase friction (risk reversal) */}

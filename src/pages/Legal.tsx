@@ -18,6 +18,12 @@ const PRIVACY: Record<string, Doc> = {
     intro: "Chez INOV Digital Services, nous respectons votre vie privée. Cette politique explique quelles données nous collectons, pourquoi, avec quels outils, et quels sont vos droits. En utilisant ce site, vous acceptez les pratiques décrites ci-dessous.",
     sections: [
       { h: "Responsable du traitement", p: ["INOV Digital Services est responsable des données collectées sur ce site.", "Contact : inov01contact@gmail.com — +509 3625-5920."] },
+      { h: "Nature de nos services", p: [
+        "Pour éviter tout malentendu, nous précisons le périmètre exact de nos prestations : INOV Digital Services est un studio de communication visuelle et de conception graphique.",
+        "Nous ne proposons pas de service de photographie : nous réalisons de la retouche photo (correction de la lumière et des couleurs, détourage, mise en scène, mockups) à partir de vos images existantes.",
+        "Nous ne proposons pas de service de vidéographie : nous réalisons le montage (editing) de vos rushes — coupe, sous-titres, habillage, transitions et export optimisé.",
+        "Nous ne proposons pas de service d'impression : nous réalisons la conception des fichiers prêts à imprimer, que vous confiez ensuite à l'imprimeur de votre choix.",
+      ] },
       { h: "Données que nous collectons", p: [
         "Formulaires (devis, contact, guide gratuit) : nom, adresse e-mail, téléphone (facultatif) et le contenu de votre message.",
         "Compte client : lorsque vous créez un compte, votre e-mail et votre nom sont enregistrés de façon sécurisée pour vous authentifier et suivre vos demandes.",
@@ -47,6 +53,12 @@ const PRIVACY: Record<string, Doc> = {
     intro: "At INOV Digital Services, we respect your privacy. This policy explains what data we collect, why, with which tools, and what your rights are. By using this site, you agree to the practices described below.",
     sections: [
       { h: "Data controller", p: ["INOV Digital Services is responsible for the data collected on this site.", "Contact: inov01contact@gmail.com — +509 3625-5920."] },
+      { h: "Nature of our services", p: [
+        "To avoid any misunderstanding, we state the exact scope of our work: INOV Digital Services is a visual communication and graphic design studio.",
+        "We do not offer photography services: we do photo retouching (light and color correction, cut-outs, staging, mockups) from your existing images.",
+        "We do not offer videography services: we do the editing of your footage — cuts, subtitles, graphics, transitions and optimized export.",
+        "We do not offer printing services: we design the print-ready files, which you then send to the printer of your choice.",
+      ] },
       { h: "Data we collect", p: [
         "Forms (quote, contact, free guide): name, email address, phone (optional) and the content of your message.",
         "Client account: when you create an account, your email and name are stored securely to authenticate you and track your requests.",

@@ -513,15 +513,25 @@ export default function Payer() {
                       const qty = cart[s.id] ?? 0
                       const quote = s.quoteOnly || s.price <= 0
                       return (
-                        <div key={s.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 10px", borderRadius: "var(--r-sm)", background: qty > 0 ? "var(--ds-accent-a08)" : "transparent", border: qty > 0 ? "1px solid var(--ds-accent-a15)" : "1px solid transparent" }}>
+                        // The whole row is clickable to add the service (qty 0 → 1);
+                        // the +/- controls fine-tune the quantity without toggling.
+                        <div
+                          key={s.id}
+                          role="button"
+                          tabIndex={0}
+                          aria-pressed={qty > 0}
+                          onClick={() => { if (qty === 0) setQty(s.id, 1) }}
+                          onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && qty === 0) { e.preventDefault(); setQty(s.id, 1) } }}
+                          style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 10px", borderRadius: "var(--r-sm)", cursor: qty === 0 ? "pointer" : "default", background: qty > 0 ? "var(--ds-accent-a08)" : "transparent", border: qty > 0 ? "1px solid var(--ds-accent-a15)" : "1px solid transparent" }}
+                        >
                           <div style={{ minWidth: 0, flex: 1 }}>
                             <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700, color: "var(--ds-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{svcName(s)}</div>
                             <div style={{ fontFamily: "var(--font-space), monospace", fontSize: 12.5, color: "var(--ds-text-muted)" }}>{quote ? p.quote : fmt(priceFor(s.price))}</div>
                           </div>
                           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-                            <button type="button" aria-label="−" onClick={() => setQty(s.id, -1)} disabled={qty === 0} style={{ ...stepBtn, opacity: qty === 0 ? 0.4 : 1, cursor: qty === 0 ? "default" : "pointer" }}><Minus size={15} /></button>
+                            <button type="button" aria-label="−" onClick={(e) => { e.stopPropagation(); setQty(s.id, -1) }} disabled={qty === 0} style={{ ...stepBtn, opacity: qty === 0 ? 0.4 : 1, cursor: qty === 0 ? "default" : "pointer" }}><Minus size={15} /></button>
                             <span style={{ fontFamily: "var(--font-space), monospace", fontSize: 14, fontWeight: 700, color: "var(--ds-text)", minWidth: 16, textAlign: "center" }}>{qty}</span>
-                            <button type="button" aria-label="+" onClick={() => setQty(s.id, 1)} style={{ ...stepBtn, cursor: "pointer" }}><Plus size={15} /></button>
+                            <button type="button" aria-label="+" onClick={(e) => { e.stopPropagation(); setQty(s.id, 1) }} style={{ ...stepBtn, cursor: "pointer" }}><Plus size={15} /></button>
                           </div>
                         </div>
                       )

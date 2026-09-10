@@ -275,6 +275,7 @@ const pt: Dict = {
       { q: "Posso pedir o mesmo serviço mais de uma vez?", a: "Com certeza. Nossa seção de Preços permite escolher a quantidade desejada de cada serviço. Precisa de 3 logotipos para marcas diferentes? Basta adicionar a quantidade 3 e aproveitar os descontos por faixa." },
       { q: "Há descontos para pedidos grandes?", a: "Sim, oferecemos 10% de desconto a partir de 5 unidades de serviços pedidas, e 30% de desconto a partir de 10 unidades. Esses descontos são calculados automaticamente no carrinho." },
       { q: "Que formato de arquivos vocês entregam?", a: "Entregamos todos os arquivos-fonte (AI, PSD, Figma) mais as versões finais em alta resolução (PNG, SVG, PDF) e os formatos web otimizados. Para os vídeos: MP4 H.264 em 1080p no mínimo." },
+      { q: "Vocês fazem fotografia, vídeo ou impressão?", a: "Não, e é importante deixar claro: não fazemos captação de fotos, mas retoque fotográfico (luz, cores, recorte, encenação, mockups); não filmamos, mas fazemos a montagem (editing) do seu material; não imprimimos, mas fazemos a criação dos arquivos prontos para impressão, que você leva à gráfica de sua escolha." },
     ],
   },
   contact: {

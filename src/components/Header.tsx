@@ -248,7 +248,7 @@ export default function Header() {
             {/* CTA */}
             <Link
               to="/devis"
-              className="btn-primary"
+              className="btn-primary cta-quote"
               onClick={() => track("quote_cta_click", { source: "header" })}
               style={{ padding: "10px 22px", fontSize: 13, display: "inline-flex", alignItems: "center", gap: 7 }}
             >
@@ -328,7 +328,11 @@ export default function Header() {
       <style>{`
         .site-logo { height: 32px; margin: 6px 8px 6px 0; }
         .lang-btn-mobile { display: none !important; }
+        /* Breathing room around the "Demander un devis" CTA on tablet + desktop */
+        .cta-quote { margin-inline: 8px 6px; }
         @media (max-width: 768px) {
+          /* On mobile the CTA sits next to the burger — no extra side margin */
+          .cta-quote { margin-inline: 0 !important; }
           .site-header {
             background: color-mix(in srgb, var(--ds-bg) 96%, transparent) !important;
             border-bottom: 1px solid var(--ds-border-strong) !important;
@@ -338,6 +342,7 @@ export default function Header() {
             border: 1.5px solid var(--ds-border-strong) !important;
             border-radius: 10px !important;
             padding: 8px !important;
+            margin-inline: 6px 4px !important;
           }
           .hidden-mobile { display: none !important; }
           .burger-btn { display: flex !important; }
