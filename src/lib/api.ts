@@ -39,6 +39,30 @@ async function auth<T>(path: string, init: RequestInit = {}): Promise<T> {
   return res.json() as Promise<T>
 }
 
+// Authenticated call WITHOUT the step-up gate. Used only for the AI assistant,
+// which never mutates site data — it just relays a chat to Gemini via the server.
+// The admin token is still required (the server enforces the admin allowlist).
+async function authChat<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const { data } = await supabase.auth.getSession()
+  const token = data.session?.access_token
+  if (!token) throw new Error("Not authenticated")
+  const res = await fetch(`${BASE}${path}`, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      ...(init.headers ?? {}),
+    },
+  })
+  if (!res.ok) throw new Error(`${res.status} ${await res.text()}`)
+  return res.json() as Promise<T>
+}
+
+export interface AssistantMessage {
+  role: "user" | "assistant"
+  content: string
+}
+
 // ── Types ────────────────────────────────────────────────────────────────────
 export interface LeadItem {
   name: string
@@ -150,6 +174,10 @@ export interface SiteSettings {
   albumsRemoved?: string[]
   /** Extra portfolio albums the admin added from the dashboard. */
   albumsAdded?: AdminAlbum[]
+  /** Individual works hidden inside an album, keyed as `${albumId}#${index}`. */
+  worksRemoved?: string[]
+  /** Extra works appended to an album, keyed by album id. */
+  worksAdded?: Record<string, AdminWork[]>
   /** Ids of built-in blog articles the admin has hidden. */
   blogsRemoved?: string[]
   /** Extra blog articles the admin wrote from the dashboard. */
@@ -318,6 +346,14 @@ export const adminApi = {
   sendReceipt(id: string) {
     return auth<{ ok: boolean; sentTo: string }>(`/receipt/${id}/send`, {
       method: "POST",
+    })
+  },
+  // AI assistant (Gemini). Sends the running conversation; optionally grounds the
+  // answer in a snapshot of recent leads. No step-up: it does not change any data.
+  assistant(messages: AssistantMessage[], withLeads = false) {
+    return authChat<{ ok: boolean; reply: string }>("/assistant", {
+      method: "POST",
+      body: JSON.stringify({ messages, withLeads }),
     })
   },
 }
