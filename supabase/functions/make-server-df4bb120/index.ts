@@ -474,35 +474,14 @@ function buildReceiptHtml(l: any): string {
 </body></html>`;
 }
 
-// ── Unified transactional email sender ────────────────────────────────────────
-// Prefers Resend (HTTP API — reliable and already configured) and only falls back
-// to Gmail SMTP when Resend is not set up. Gmail app passwords are fragile: once
-// revoked they return "535 BadCredentials" and every send fails — which is why
-// Resend is the primary transport here.
+// ── Unified transactional email sender (Gmail SMTP) ───────────────────────────
+// Uses Gmail SMTP with an app password. Configure GMAIL_USER and
+// GMAIL_APP_PASSWORD as Supabase function secrets.
 async function sendMail(opts: { to: string | string[]; subject: string; html: string; text?: string }): Promise<void> {
   const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
-  const resendKey = Deno.env.get("RESEND_API_KEY");
-  const resendFrom = Deno.env.get("RESEND_FROM");
-  if (resendKey && resendFrom) {
-    const from = resendFrom.includes("<") ? resendFrom : `${displayName} <${resendFrom}>`;
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        from,
-        to: Array.isArray(opts.to) ? opts.to : [opts.to],
-        subject: opts.subject,
-        html: opts.html,
-        ...(opts.text ? { text: opts.text } : {}),
-      }),
-    });
-    if (!res.ok) throw new Error(`Resend ${res.status}: ${await res.text()}`);
-    return;
-  }
-  // Fallback: Gmail SMTP.
   const user = Deno.env.get("GMAIL_USER");
   const pass = Deno.env.get("GMAIL_APP_PASSWORD");
-  if (!user || !pass) throw new Error("No email transport configured (set RESEND_API_KEY/RESEND_FROM or GMAIL_USER/GMAIL_APP_PASSWORD)");
+  if (!user || !pass) throw new Error("Email non configuré : définir GMAIL_USER et GMAIL_APP_PASSWORD dans les secrets Supabase");
   const client = new SMTPClient({
     connection: { hostname: "smtp.gmail.com", port: 465, tls: true, auth: { username: user, password: pass } },
   });
