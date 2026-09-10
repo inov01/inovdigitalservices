@@ -7,8 +7,11 @@ name: Deploy Supabase Edge Functions
 # Required repository secrets (Settings → Secrets and variables → Actions):
 #   SUPABASE_ACCESS_TOKEN  — a Supabase personal access token (sbp_...)
 #   SUPABASE_PROJECT_ID    — the project ref (enwbfsbcxoqqnbkrngyb)
-# Optional (only if you want CI to also set the Gemini key):
+#   GMAIL_USER             — adresse Gmail pour l'envoi d'e-mails
+#   GMAIL_APP_PASSWORD     — mot de passe d'application Gmail (sans espaces)
+# Optional:
 #   GEMINI_API_KEY         — your Google AI Studio key
+#   CRON_SECRET            — secret for cron endpoints
 
 on:
   push:
@@ -37,14 +40,25 @@ jobs:
             echo "Missing SUPABASE_ACCESS_TOKEN or SUPABASE_PROJECT_ID repository secret."
             exit 1
           fi
-          # verify_jwt stays false so public routes (anon key) and the cron
-          # dispatch (x-cron-secret, no Authorization header) keep working.
           supabase functions deploy make-server-df4bb120 \
             --project-ref "$PROJECT_ID" \
             --no-verify-jwt
 
-      # Note: the `secrets` context is NOT allowed in step `if:` conditions, so
-      # the emptiness check is done inside the run step via an env var instead.
+      - name: Set GMAIL secrets in Supabase
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: |
+          if [ -n "$GMAIL_USER" ] && [ -n "$GMAIL_APP_PASSWORD" ]; then
+            supabase secrets set \
+              "GMAIL_USER=$GMAIL_USER" \
+              "GMAIL_APP_PASSWORD=$GMAIL_APP_PASSWORD" \
+              --project-ref "$PROJECT_ID"
+            echo "Gmail secrets configured."
+          else
+            echo "GMAIL_USER or GMAIL_APP_PASSWORD not set — skipping."
+          fi
+
       - name: Set GEMINI_API_KEY secret (optional)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
