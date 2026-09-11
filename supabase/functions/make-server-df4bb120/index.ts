@@ -1521,4 +1521,282 @@ app.post(`${P}/webhook/whatsapp`, async (c) => {
   return c.json({ ok: true });
 });
 
+// ══════════════════════════════════════════════════════════════════════════════
+// FORMATIONS (espace Formation — catalogue public + gestion admin + inscriptions)
+// ══════════════════════════════════════════════════════════════════════════════
+// KV: formation:<id> — a training course (published flag gates public visibility).
+// Enrollments are stored as regular leads (source "formation") so they flow into
+// the existing dashboard with full payment tracking (status → won auto-sends the
+// receipt). The admin Formation tab manages the catalogue; enrollments are read
+// back via /formations/enrollments (leads filtered by source).
+
+function cleanFormation(b: any) {
+  const syllabus = Array.isArray(b?.syllabus)
+    ? b.syllabus.slice(0, 40).map((s: any) => str(s, 200)).filter(Boolean)
+    : [];
+  const free = !!b?.free;
+  return {
+    published: !!b?.published,
+    title: str(b?.title, 160).trim(),
+    summary: str(b?.summary, 400).trim(),
+    description: str(b?.description, 4000),
+    level: ["debutant", "intermediaire", "avance"].includes(b?.level) ? b.level : "debutant",
+    format: ["en-ligne", "presentiel", "hybride"].includes(b?.format) ? b.format : "en-ligne",
+    durationHours: num(b?.durationHours, 0),
+    free,
+    price: free ? 0 : num(b?.price, 0),
+    image: str(b?.image, 600) || undefined,
+    instructor: str(b?.instructor, 120) || undefined,
+    startDate: str(b?.startDate, 40) || undefined,
+    seats: num(b?.seats, 0),
+    syllabus,
+    order: num(b?.order, 0),
+  };
+}
+
+// Public shape (a published formation, no admin-only noise).
+const publicFormation = (f: any) => ({
+  id: f.id, title: f.title, summary: f.summary, description: f.description,
+  level: f.level, format: f.format, durationHours: f.durationHours,
+  free: f.free, price: f.price, image: f.image, instructor: f.instructor,
+  startDate: f.startDate, seats: f.seats, syllabus: f.syllabus, order: f.order,
+});
+
+// Public: list published formations (soonest / lowest order first).
+app.get(`${P}/formations`, async (c) => {
+  const all = ((await kv.getByPrefix("formation:")) as any[]) ?? [];
+  const published = all
+    .filter((f) => f.published)
+    .sort((a, b) => (a.order - b.order) || (a.createdAt < b.createdAt ? 1 : -1))
+    .map(publicFormation);
+  return c.json({ formations: published });
+});
+
+// Public: enroll in a formation. Stored as a lead (payment tracking reuse).
+app.post(`${P}/formations/enroll`, async (c) => {
+  if (!(await rateLimit(c, "formation-enroll", 10))) return c.json({ error: "rate_limited" }, 429);
+  const b = await c.req.json().catch(() => ({} as any));
+  const name = str(b.name, 200).trim();
+  const email = String(b.email ?? "").trim().toLowerCase();
+  const formationId = str(b.formationId, 80);
+  if (name.length < 2 || !isEmail(email) || !formationId) return c.json({ error: "invalid" }, 400);
+  const f: any = await kv.get(`formation:${formationId}`);
+  if (!f || !f.published) return c.json({ error: "not found" }, 404);
+  const id = newId();
+  const lead = {
+    id,
+    createdAt: new Date().toISOString(),
+    status: "new",
+    source: "formation",
+    name,
+    email,
+    phone: str(b.phone, 60),
+    lang: str(b.lang, 8),
+    currency: str(b.currency, 8),
+    region: str(b.region, 80),
+    total: f.free ? 0 : (typeof f.price === "number" ? f.price : null),
+    deposit: null,
+    items: [{ name: f.title, tier: f.free ? "Gratuite" : "Payante", qty: 1, price: f.price ?? 0 }],
+    budget: "",
+    message: str(b.message, 2000),
+    meta: {
+      formationId,
+      formationTitle: f.title,
+      formationFree: f.free,
+      ...(b.meta && typeof b.meta === "object" ? b.meta : {}),
+    },
+  };
+  await kv.set(`lead:${id}`, lead);
+  // Notify the team (best-effort).
+  const notifyTo = ADMIN_EMAILS[0];
+  if (notifyTo) {
+    try {
+      await sendMail({
+        to: notifyTo,
+        subject: `Nouvelle inscription formation — ${f.title}`,
+        text: `Formation : ${f.title} (${f.free ? "gratuite" : "payante"})\nNom : ${name}\nE-mail : ${email}\nWhatsApp : ${b.phone || "—"}\nMessage : ${b.message || "—"}`,
+        html: `<p><strong>Nouvelle inscription — ${escH(f.title)}</strong></p><p>Nom : ${escH(name)}<br>E-mail : ${escH(email)}<br>WhatsApp : ${escH(b.phone || "—")}</p>`,
+      });
+    } catch (_) { /* best-effort */ }
+  }
+  return c.json({ ok: true, id, free: f.free });
+});
+
+// Admin: all formations (published + drafts).
+app.get(`${P}/formations/all`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const all = ((await kv.getByPrefix("formation:")) as any[]) ?? [];
+  all.sort((a, b) => (a.order - b.order) || (a.createdAt < b.createdAt ? 1 : -1));
+  return c.json({ formations: all });
+});
+
+// Admin: create or update a formation. An id in the body updates in place.
+app.post(`${P}/formations`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const b = await c.req.json().catch(() => ({} as any));
+  const clean = cleanFormation(b);
+  if (!clean.title) return c.json({ error: "missing title" }, 400);
+  const id = str(b?.id, 80) || newId();
+  const existing: any = await kv.get(`formation:${id}`);
+  const formation = {
+    id,
+    createdAt: existing?.createdAt ?? new Date().toISOString(),
+    ...clean,
+  };
+  await kv.set(`formation:${id}`, formation);
+  return c.json({ ok: true, formation });
+});
+
+app.delete(`${P}/formations/:id`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  await kv.del(`formation:${c.req.param("id")}`);
+  return c.json({ ok: true });
+});
+
+// Admin: enrollments (leads with source "formation"), newest first.
+app.get(`${P}/formations/enrollments`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const leads = ((await kv.getByPrefix("lead:")) as any[]) ?? [];
+  const enrollments = leads
+    .filter((l) => l.source === "formation")
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  return c.json({ enrollments });
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// COLLABORATEURS (espace Collaborateur — candidature publique + validation admin)
+// ══════════════════════════════════════════════════════════════════════════════
+// KV: collaborateur:<id> — a professional's promotional listing. Submitted as
+// "pending"; only admin-approved listings appear in the public gallery. The promo
+// card is rendered on the client from these fields, in INOV's brand colours.
+// Photos go to a PUBLIC bucket so approved cards can display them on the site.
+
+const COLLAB_BUCKET = "collab-photos";
+const COLLAB_MAX_BYTES = 8 * 1024 * 1024; // 8 MB — a profile photo / logo.
+let collabBucketReady = false;
+async function ensureCollabBucket(): Promise<void> {
+  if (collabBucketReady) return;
+  const { data } = await admin.storage.getBucket(COLLAB_BUCKET);
+  if (!data) {
+    await admin.storage.createBucket(COLLAB_BUCKET, {
+      public: true,
+      fileSizeLimit: COLLAB_MAX_BYTES,
+      allowedMimeTypes: ["image/png", "image/jpeg", "image/webp", "image/svg+xml"],
+    }).catch(() => { /* concurrent create — ignore */ });
+  }
+  collabBucketReady = true;
+}
+
+function cleanCollab(b: any) {
+  return {
+    name: str(b?.name, 120).trim(),
+    profession: str(b?.profession, 120).trim(),
+    service: str(b?.service, 200).trim(),
+    description: str(b?.description, 800).trim(),
+    price: str(b?.price, 80).trim(),
+    city: str(b?.city, 80).trim(),
+    photoUrl: str(b?.photoUrl, 600) || undefined,
+    phone: str(b?.phone, 60).trim(),
+    email: String(b?.email ?? "").trim().toLowerCase().slice(0, 200),
+    whatsapp: str(b?.whatsapp, 60).trim(),
+    instagram: str(b?.instagram, 120).trim(),
+    website: str(b?.website, 200).trim(),
+    accent: str(b?.accent, 20) || undefined,
+  };
+}
+
+// Public shape — contact channels for reaching the pro, but never the raw email.
+const publicCollab = (x: any) => ({
+  id: x.id, name: x.name, profession: x.profession, service: x.service,
+  description: x.description, price: x.price, city: x.city, photoUrl: x.photoUrl,
+  whatsapp: x.whatsapp, instagram: x.instagram, website: x.website,
+  accent: x.accent, createdAt: x.createdAt,
+});
+
+// Public: one-shot signed upload URL for a collaborator photo (public bucket).
+app.post(`${P}/collaborateurs/upload-url`, async (c) => {
+  if (!(await rateLimit(c, "collab-upload", 20))) return c.json({ error: "rate_limited" }, 429);
+  const b = await c.req.json().catch(() => ({} as any));
+  const size = typeof b.size === "number" ? b.size : 0;
+  if (size > COLLAB_MAX_BYTES) return c.json({ error: "file_too_large" }, 413);
+  const name = safeName(typeof b.filename === "string" ? b.filename : "photo");
+  const path = `collab/${new Date().getFullYear()}/${newId()}-${name}`;
+  await ensureCollabBucket();
+  const { data, error } = await admin.storage.from(COLLAB_BUCKET).createSignedUploadUrl(path);
+  if (error || !data) return c.json({ error: "upload_url_failed" }, 500);
+  const { data: pub } = admin.storage.from(COLLAB_BUCKET).getPublicUrl(data.path);
+  return c.json({ ok: true, path: data.path, token: data.token, bucket: COLLAB_BUCKET, publicUrl: pub.publicUrl });
+});
+
+// Public: submit a collaborator application (stored pending until approved).
+app.post(`${P}/collaborateurs`, async (c) => {
+  if (!(await rateLimit(c, "collaborateurs", 5))) return c.json({ error: "rate_limited" }, 429);
+  const b = await c.req.json().catch(() => ({} as any));
+  const clean = cleanCollab(b);
+  if (clean.name.length < 2 || clean.profession.length < 2 || clean.service.length < 3) {
+    return c.json({ error: "invalid" }, 400);
+  }
+  if (!clean.whatsapp && !clean.phone && !isEmail(clean.email)) {
+    return c.json({ error: "contact_required" }, 400);
+  }
+  const id = newId();
+  const rec = { id, createdAt: new Date().toISOString(), status: "pending", ...clean };
+  await kv.set(`collaborateur:${id}`, rec);
+  const notifyTo = ADMIN_EMAILS[0];
+  if (notifyTo) {
+    try {
+      await sendMail({
+        to: notifyTo,
+        subject: `Nouvelle candidature collaborateur — ${clean.name} (${clean.profession})`,
+        text: `Nom : ${clean.name}\nMétier : ${clean.profession}\nService : ${clean.service}\nTarif : ${clean.price || "—"}\nVille : ${clean.city || "—"}\nWhatsApp : ${clean.whatsapp || clean.phone || "—"}\nE-mail : ${clean.email || "—"}\n\nÀ valider dans l'espace admin → Collaborateurs.`,
+        html: `<p><strong>Nouvelle candidature collaborateur</strong></p><p>${escH(clean.name)} — ${escH(clean.profession)}<br>Service : ${escH(clean.service)}<br>Tarif : ${escH(clean.price || "—")}</p><p>À valider dans l'espace admin → Collaborateurs.</p>`,
+      });
+    } catch (_) { /* best-effort */ }
+  }
+  return c.json({ ok: true, id });
+});
+
+// Public: approved collaborators for the public gallery, newest first.
+app.get(`${P}/collaborateurs`, async (c) => {
+  const all = ((await kv.getByPrefix("collaborateur:")) as any[]) ?? [];
+  const approved = all
+    .filter((x) => x.status === "approved")
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+    .map(publicCollab);
+  return c.json({ collaborateurs: approved });
+});
+
+// Admin: all collaborators (pending + approved) for the moderation queue.
+app.get(`${P}/collaborateurs/all`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const all = ((await kv.getByPrefix("collaborateur:")) as any[]) ?? [];
+  all.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  return c.json({ collaborateurs: all });
+});
+
+// Admin: approve a collaborator (makes the card visible in the public gallery).
+app.patch(`${P}/collaborateurs/:id/approve`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const id = c.req.param("id");
+  const rec: any = await kv.get(`collaborateur:${id}`);
+  if (!rec) return c.json({ error: "not found" }, 404);
+  rec.status = "approved";
+  await kv.set(`collaborateur:${id}`, rec);
+  return c.json({ ok: true, collaborateur: rec });
+});
+
+// Admin: delete a collaborator (pending or approved).
+app.delete(`${P}/collaborateurs/:id`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  await kv.del(`collaborateur:${c.req.param("id")}`);
+  return c.json({ ok: true });
+});
+
 Deno.serve(app.fetch);

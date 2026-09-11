@@ -16,6 +16,8 @@ const Devis = lazy(() => import("./pages/Devis"))
 const Compte = lazy(() => import("./pages/Compte"))
 const Directions = lazy(() => import("./pages/Directions"))
 const Brief = lazy(() => import("./pages/Brief"))
+const Formation = lazy(() => import("./pages/Formation"))
+const Collaborateur = lazy(() => import("./pages/Collaborateur"))
 
 // Minimal fallback — keeps layout height stable while a route chunk loads.
 const L = (node: ReactNode) => <Suspense fallback={<div style={{ minHeight: "60vh" }} />}>{node}</Suspense>
@@ -35,6 +37,8 @@ export const router = createBrowserRouter([
       { path: "paiement", element: L(<Payer />) },
       { path: "compte", element: L(<Compte />) },
       { path: "brief/:service", element: L(<Brief />) },
+      { path: "formation", element: L(<Formation />) },
+      { path: "collaborateur", element: L(<Collaborateur />) },
       { path: "mentions-legales", element: L(<Legal kind="terms" />) },
       { path: "confidentialite", element: L(<Legal kind="privacy" />) },
       { path: "*", element: L(<NotFound />) },

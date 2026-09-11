@@ -162,10 +162,10 @@ export default function Hero() {
         }
         @keyframes hero-float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-14px) } }
         @keyframes glow-pulse { 0%,100% { opacity: 0.55 } 50% { opacity: 0.85 } }
-        .hero-slide-in { animation: hero-fade-up 0.6s cubic-bezier(0.22,1,0.36,1) both; }
-        .hero-slide-in-delay { animation: hero-fade-up 0.6s cubic-bezier(0.22,1,0.36,1) 0.09s both; }
-        .hero-slide-in-delay2 { animation: hero-fade-up 0.6s cubic-bezier(0.22,1,0.36,1) 0.18s both; }
-        .hero-slide-in-delay3 { animation: hero-fade-up 0.6s cubic-bezier(0.22,1,0.36,1) 0.27s both; }
+        .hero-slide-in { animation: hero-fade-up 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+        .hero-slide-in-delay { animation: hero-fade-up 0.35s cubic-bezier(0.22,1,0.36,1) 0.06s both; }
+        .hero-slide-in-delay2 { animation: hero-fade-up 0.35s cubic-bezier(0.22,1,0.36,1) 0.12s both; }
+        .hero-slide-in-delay3 { animation: hero-fade-up 0.35s cubic-bezier(0.22,1,0.36,1) 0.18s both; }
         .hero-btn-primary {
           display: inline-flex; align-items: center; justify-content: center; gap: 9px;
           padding: 15px 30px;

@@ -207,6 +207,73 @@ export interface SiteSettings {
   blogsAdded?: AdminBlog[]
 }
 
+// ── Formations (espace Formation) ──────────────────────────────────────────────
+export interface Formation {
+  id: string
+  createdAt?: string
+  published?: boolean
+  title: string
+  summary: string
+  description: string
+  level: "debutant" | "intermediaire" | "avance"
+  format: "en-ligne" | "presentiel" | "hybride"
+  durationHours: number
+  free: boolean
+  price: number
+  image?: string
+  instructor?: string
+  startDate?: string
+  seats?: number
+  syllabus: string[]
+  order?: number
+}
+export interface EnrollInput {
+  formationId: string
+  name: string
+  email: string
+  phone?: string
+  message?: string
+  lang?: string
+  currency?: string
+  region?: string
+}
+
+// ── Collaborateurs (espace Collaborateur) ──────────────────────────────────────
+export interface Collaborateur {
+  id: string
+  createdAt: string
+  status?: "pending" | "approved"
+  name: string
+  profession: string
+  service: string
+  description: string
+  price: string
+  city?: string
+  photoUrl?: string
+  phone?: string
+  email?: string
+  whatsapp?: string
+  instagram?: string
+  website?: string
+  accent?: string
+}
+export type PublicCollaborateur = Omit<Collaborateur, "status" | "email" | "phone">
+export interface CollaborateurInput {
+  name: string
+  profession: string
+  service: string
+  description: string
+  price: string
+  city?: string
+  photoUrl?: string
+  phone?: string
+  email?: string
+  whatsapp?: string
+  instagram?: string
+  website?: string
+  accent?: string
+}
+
 // ── Public API (site → server) ────────────────────────────────────────────────
 export const api = {
   // Fire-and-forget lead capture; never blocks the user's WhatsApp/PDF flow.
@@ -279,6 +346,36 @@ export const api = {
   // then uploads the bytes directly to Storage with uploadToSignedUrl().
   briefUploadUrl(file: { filename: string; contentType: string; size: number }) {
     return pub<{ ok: boolean; path: string; token: string; bucket: string }>("/brief/upload-url", {
+      method: "POST",
+      body: JSON.stringify(file),
+    })
+  },
+  // Public: published formations for the Formation page.
+  listFormations() {
+    return pub<{ formations: Formation[] }>("/formations")
+  },
+  // Public: enroll in a formation (records it as a lead for payment tracking).
+  enrollFormation(input: EnrollInput) {
+    const ref = getStoredRef()
+    return pub<{ ok: boolean; id: string; free: boolean }>("/formations/enroll", {
+      method: "POST",
+      body: JSON.stringify(ref ? { ...input, meta: { ref } } : input),
+    })
+  },
+  // Public: approved collaborators for the public gallery.
+  listCollaborateurs() {
+    return pub<{ collaborateurs: PublicCollaborateur[] }>("/collaborateurs")
+  },
+  // Public: submit a collaborator application (stored pending until approved).
+  submitCollaborateur(input: CollaborateurInput) {
+    return pub<{ ok: boolean; id: string }>("/collaborateurs", {
+      method: "POST",
+      body: JSON.stringify(input),
+    })
+  },
+  // Public: signed upload URL for a collaborator photo (public bucket).
+  collabUploadUrl(file: { filename: string; contentType: string; size: number }) {
+    return pub<{ ok: boolean; path: string; token: string; bucket: string; publicUrl: string }>("/collaborateurs/upload-url", {
       method: "POST",
       body: JSON.stringify(file),
     })
@@ -396,6 +493,38 @@ export const adminApi = {
       body: JSON.stringify({ subject: subject ?? "" }),
     })
   },
+  // ── Formations ────────────────────────────────────────────────────────────
+  listFormations() {
+    return auth<{ formations: Formation[] }>("/formations/all")
+  },
+  // Create (no id) or update (with id) a formation.
+  saveFormation(f: Partial<Formation> & { title: string }) {
+    return auth<{ ok: boolean; formation: Formation }>("/formations", {
+      method: "POST",
+      body: JSON.stringify(f),
+    })
+  },
+  deleteFormation(id: string) {
+    return auth<{ ok: boolean }>(`/formations/${id}`, { method: "DELETE" })
+  },
+  // Enrollments = leads with source "formation" (for the "suivi des inscrits" view).
+  listEnrollments() {
+    return auth<{ enrollments: Lead[] }>("/formations/enrollments")
+  },
+
+  // ── Collaborateurs ────────────────────────────────────────────────────────
+  listCollaborateurs() {
+    return auth<{ collaborateurs: Collaborateur[] }>("/collaborateurs/all")
+  },
+  approveCollaborateur(id: string) {
+    return auth<{ ok: boolean; collaborateur: Collaborateur }>(`/collaborateurs/${id}/approve`, {
+      method: "PATCH",
+    })
+  },
+  deleteCollaborateur(id: string) {
+    return auth<{ ok: boolean }>(`/collaborateurs/${id}`, { method: "DELETE" })
+  },
+
   // AI assistant (Gemini). Sends the running conversation; optionally grounds the
   // answer in a snapshot of recent leads. No step-up: it does not change any data.
   assistant(messages: AssistantMessage[], withLeads = false) {

@@ -17,26 +17,26 @@ const socials: { label: string; icon: SvgIcon; href: string }[] = [
 ]
 
 // "Espace client" column — real internal routes (SEO + navigation).
-const CLIENT_LABELS: Record<string, { title: string; account: string; quote: string; ambassador: string; pay: string }> = {
-  fr: { title: "Espace client", account: "Mon compte", quote: "Devis gratuit", ambassador: "Programme ambassadeur", pay: "Payer en ligne" },
-  en: { title: "Client area", account: "My account", quote: "Free quote", ambassador: "Ambassador program", pay: "Pay online" },
-  es: { title: "Área de cliente", account: "Mi cuenta", quote: "Presupuesto gratis", ambassador: "Programa de embajadores", pay: "Pagar en línea" },
-  ht: { title: "Espas kliyan", account: "Kont mwen", quote: "Devi gratis", ambassador: "Pwogram anbasadè", pay: "Peye anliy" },
-  pt: { title: "Área do cliente", account: "Minha conta", quote: "Orçamento grátis", ambassador: "Programa de embaixadores", pay: "Pagar online" },
-  it: { title: "Area cliente", account: "Il mio account", quote: "Preventivo gratuito", ambassador: "Programma ambasciatori", pay: "Paga online" },
-  de: { title: "Kundenbereich", account: "Mein Konto", quote: "Kostenloses Angebot", ambassador: "Botschafter-Programm", pay: "Online bezahlen" },
-  ar: { title: "منطقة العميل", account: "حسابي", quote: "عرض سعر مجاني", ambassador: "برنامج السفراء", pay: "الدفع عبر الإنترنت" },
+const CLIENT_LABELS: Record<string, { title: string; account: string; quote: string; ambassador: string; pay: string; formation: string }> = {
+  fr: { title: "Espace client", account: "Mon compte", quote: "Devis gratuit", ambassador: "Programme ambassadeur", pay: "Payer en ligne", formation: "Formations" },
+  en: { title: "Client area", account: "My account", quote: "Free quote", ambassador: "Ambassador program", pay: "Pay online", formation: "Training" },
+  es: { title: "Área de cliente", account: "Mi cuenta", quote: "Presupuesto gratis", ambassador: "Programa de embajadores", pay: "Pagar en línea", formation: "Formación" },
+  ht: { title: "Espas kliyan", account: "Kont mwen", quote: "Devi gratis", ambassador: "Pwogram anbasadè", pay: "Peye anliy", formation: "Fòmasyon" },
+  pt: { title: "Área do cliente", account: "Minha conta", quote: "Orçamento grátis", ambassador: "Programa de embaixadores", pay: "Pagar online", formation: "Formação" },
+  it: { title: "Area cliente", account: "Il mio account", quote: "Preventivo gratuito", ambassador: "Programma ambasciatori", pay: "Paga online", formation: "Formazione" },
+  de: { title: "Kundenbereich", account: "Mein Konto", quote: "Kostenloses Angebot", ambassador: "Botschafter-Programm", pay: "Online bezahlen", formation: "Weiterbildung" },
+  ar: { title: "منطقة العميل", account: "حسابي", quote: "عرض سعر مجاني", ambassador: "برنامج السفراء", pay: "الدفع عبر الإنترنت", formation: "التدريب" },
 }
 
-const LEGAL_LABELS: Record<string, { blog: string; terms: string; privacy: string; pay: string }> = {
-  fr: { blog: "Blog", terms: "Mentions légales", privacy: "Confidentialité", pay: "Payer" },
-  en: { blog: "Blog", terms: "Legal notice", privacy: "Privacy", pay: "Pay" },
-  es: { blog: "Blog", terms: "Aviso legal", privacy: "Privacidad", pay: "Pagar" },
-  ht: { blog: "Blog", terms: "Mansyon legal", privacy: "Konfidansyalite", pay: "Peye" },
-  pt: { blog: "Blog", terms: "Aviso legal", privacy: "Privacidade", pay: "Pagar" },
-  it: { blog: "Blog", terms: "Note legali", privacy: "Privacy", pay: "Paga" },
-  de: { blog: "Blog", terms: "Impressum", privacy: "Datenschutz", pay: "Bezahlen" },
-  ar: { blog: "المدونة", terms: "إشعار قانوني", privacy: "الخصوصية", pay: "ادفع" },
+const LEGAL_LABELS: Record<string, { blog: string; terms: string; privacy: string; pay: string; collaborateur: string }> = {
+  fr: { blog: "Blog", terms: "Mentions légales", privacy: "Confidentialité", pay: "Payer", collaborateur: "Devenir collaborateur" },
+  en: { blog: "Blog", terms: "Legal notice", privacy: "Privacy", pay: "Pay", collaborateur: "Become a collaborator" },
+  es: { blog: "Blog", terms: "Aviso legal", privacy: "Privacidad", pay: "Pagar", collaborateur: "Ser colaborador" },
+  ht: { blog: "Blog", terms: "Mansyon legal", privacy: "Konfidansyalite", pay: "Peye", collaborateur: "Vin kolaboratè" },
+  pt: { blog: "Blog", terms: "Aviso legal", privacy: "Privacidade", pay: "Pagar", collaborateur: "Seja colaborador" },
+  it: { blog: "Blog", terms: "Note legali", privacy: "Privacy", pay: "Paga", collaborateur: "Diventa collaboratore" },
+  de: { blog: "Blog", terms: "Impressum", privacy: "Datenschutz", pay: "Bezahlen", collaborateur: "Kollaborateur werden" },
+  ar: { blog: "المدونة", terms: "إشعار قانوني", privacy: "الخصوصية", pay: "ادفع", collaborateur: "كن متعاوناً" },
 }
 
 export default function Footer() {
@@ -112,6 +112,7 @@ export default function Footer() {
               {[
                 { to: "/compte", label: client.account },
                 { to: "/devis", label: client.quote },
+                { to: "/formation", label: client.formation },
                 { to: "/#referral", label: client.ambassador },
                 { to: "/paiement", label: client.pay },
               ].map((l) => (
@@ -157,6 +158,7 @@ export default function Footer() {
             <Link to="/blog" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.blog}</Link>
             <Link to="/mentions-legales" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.terms}</Link>
             <Link to="/confidentialite" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.privacy}</Link>
+            <Link to="/collaborateur" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12.5, textDecoration: "none", color: "rgba(255,255,255,0.5)" }}>{legal.collaborateur}</Link>
           </div>
         </div>
       </div>

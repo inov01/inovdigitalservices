@@ -6,6 +6,7 @@ import {
   KeyRound, Smartphone, FileText, Tags, Plus, Send,
   Package, Image as ImageIcon, Eye, EyeOff, LayoutGrid, Newspaper, Link2,
   ClipboardList, CalendarClock, Sparkles, Star, MessageSquareQuote,
+  GraduationCap, Handshake, Clock, MapPin, AtSign, Globe, MessageCircle,
 } from "lucide-react"
 import {
   pricingServices, tierValues, TIER_KEYS,
@@ -54,7 +55,7 @@ import { registerStepUpVerifier } from "../lib/stepup"
 import { useAdminAuth } from "../hooks/useAdminAuth"
 import { useSessionTimeout, ADMIN_SESSION_POLICY } from "../hooks/useSessionTimeout"
 import { supabase } from "../lib/supabaseClient"
-import { adminApi, api, type Lead, type LeadItem, type Subscriber, type SiteSettings, type Campaign, type AdminService, type AdminWork, type AdminAlbum, type AdminBlog, type AssistantMessage, type Testimonial } from "../lib/api"
+import { adminApi, api, type Lead, type LeadItem, type Subscriber, type SiteSettings, type Campaign, type AdminService, type AdminWork, type AdminAlbum, type AdminBlog, type AssistantMessage, type Testimonial, type Formation, type Collaborateur } from "../lib/api"
 import { useSettings } from "../context/AppSettings"
 import logoDark from "../imports/logo_pour_fond_noir.webp"
 import logoLight from "../imports/logo.webp"
@@ -103,6 +104,18 @@ const input: React.CSSProperties = {
 const STYLE = `
   .adm-navbtn { transition: background 0.15s, color 0.15s; }
   .adm-navbtn:hover { background: var(--ds-bg-sec); }
+  /* Keyboard focus: a clear, consistent ring on every interactive admin control.
+     :focus-visible only shows for keyboard users, so mouse clicks stay clean. */
+  .adm-scope :focus-visible {
+    outline: 2px solid var(--ds-accent);
+    outline-offset: 2px;
+    border-radius: var(--r-sm, 6px);
+  }
+  .adm-scope button, .adm-scope a, .adm-scope input, .adm-scope select, .adm-scope textarea { outline-color: var(--ds-accent); }
+  /* Respect reduced-motion preferences for all admin animations. */
+  @media (prefers-reduced-motion: reduce) {
+    .adm-navbtn, .adm-row, .adm-chip, .adm-skel { transition: none !important; animation: none !important; }
+  }
   .adm-row { transition: background 0.12s; }
   .adm-row:hover { background: var(--ds-bg-sec); }
   .adm-chip { transition: all 0.12s; }
@@ -126,6 +139,8 @@ export default function Admin() {
   const [expired, setExpired] = useState(false)
   // "checking" until we know whether a 2FA step-up is required for this session.
   const [mfa, setMfa] = useState<"checking" | "ok" | "required">("checking")
+  // After mfa is "ok", verify the admin has enrolled a TOTP factor. If not, block with setup screen.
+  const [enrollState, setEnrollState] = useState<"checking" | "enrolled" | "needed">("checking")
 
   // Auto sign-out after inactivity / absolute cap (stricter for the admin).
   useSessionTimeout(!!session, ADMIN_SESSION_POLICY, () => {
@@ -149,6 +164,20 @@ export default function Admin() {
     return () => { cancelled = true }
   }, [session])
 
+  // Once the AAL check passes, verify the admin has enrolled a verified TOTP factor.
+  useEffect(() => {
+    if (mfa !== "ok" || !session) { setEnrollState("checking"); return }
+    let cancelled = false
+    supabase.auth.mfa.listFactors()
+      .then(({ data }) => {
+        if (cancelled) return
+        const has = Boolean(data?.totp?.some((f) => f.status === "verified"))
+        setEnrollState(has ? "enrolled" : "needed")
+      })
+      .catch(() => { if (!cancelled) setEnrollState("needed") })
+    return () => { cancelled = true }
+  }, [mfa, session])
+
   if (loading) {
     return (
       <div className="dark" style={{ ...shell, display: "grid", placeItems: "center" }}>
@@ -169,6 +198,18 @@ export default function Admin() {
 
   if (mfa === "required") {
     return <MfaChallengeScreen onVerified={() => setMfa("ok")} onCancel={signOut} />
+  }
+
+  if (enrollState === "checking") {
+    return (
+      <div className="dark" style={{ ...shell, display: "grid", placeItems: "center" }}>
+        <Loader2 size={28} style={{ animation: "spin 0.8s linear infinite", color: "var(--ds-accent)" }} />
+      </div>
+    )
+  }
+
+  if (enrollState === "needed") {
+    return <ForcedMfaSetupScreen onEnrolled={() => setEnrollState("enrolled")} onCancel={signOut} />
   }
 
   return <Dashboard email={email} onSignOut={signOut} />
@@ -251,6 +292,114 @@ function LoginScreen({ onSignIn, expired, onClearExpired }: { onSignIn: (e: stri
 
         <div style={{ textAlign: "center", marginTop: 18 }}>
           <a href="/" style={{ color: "var(--ds-text-muted)", fontSize: 13, textDecoration: "none" }}>← Retour au site</a>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Forced 2FA enrollment (blocks dashboard until TOTP is set up) ─────────────
+function ForcedMfaSetupScreen({ onEnrolled, onCancel }: { onEnrolled: () => void; onCancel: () => void }) {
+  const [enroll, setEnroll] = useState<{ id: string; qr: string; secret: string } | null>(null)
+  const [code, setCode] = useState("")
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState("")
+
+  useEffect(() => {
+    let cancelled = false
+    setBusy(true)
+    supabase.auth.mfa.enroll({ factorType: "totp" })
+      .then(({ data, error }) => {
+        if (cancelled) return
+        if (error) { setErr(error.message); setBusy(false); return }
+        setEnroll({ id: data.id, qr: data.totp.qr_code, secret: data.totp.secret })
+        setBusy(false)
+      })
+      .catch((e: any) => { if (!cancelled) { setErr(e?.message ?? "Erreur lors de l'initialisation."); setBusy(false) } })
+    return () => { cancelled = true }
+  }, [])
+
+  async function confirm(e: React.FormEvent) {
+    e.preventDefault()
+    if (!enroll) return
+    setErr(""); setBusy(true)
+    try {
+      const { data: ch, error: cErr } = await supabase.auth.mfa.challenge({ factorId: enroll.id })
+      if (cErr) throw cErr
+      const { error: vErr } = await supabase.auth.mfa.verify({ factorId: enroll.id, challengeId: ch.id, code: code.trim() })
+      if (vErr) throw vErr
+      onEnrolled()
+    } catch (e: any) {
+      setErr(e?.message ?? "Code invalide. Réessaie.")
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function cancel() {
+    if (enroll) { try { await supabase.auth.mfa.unenroll({ factorId: enroll.id }) } catch { /* ignore */ } }
+    onCancel()
+  }
+
+  return (
+    <div className="dark" style={{ ...shell, display: "grid", placeItems: "center", padding: 24 }}>
+      <div style={{ width: "100%", maxWidth: 440 }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, marginBottom: 28 }}>
+          <img src={logoDark} alt="INOV Digital Services" style={{ height: 52 }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 7, color: "var(--ds-text-muted)", fontSize: 13, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+            <ShieldCheck size={15} style={{ color: "var(--ds-accent)" }} /> Sécurité obligatoire
+          </div>
+        </div>
+
+        <div style={{ ...card, padding: 28, display: "flex", flexDirection: "column", gap: 18 }}>
+          <div>
+            <h1 style={{ fontSize: 20, fontWeight: 800, margin: "0 0 8px", fontFamily: "var(--font-space), sans-serif" }}>
+              Activer la vérification en 2 étapes
+            </h1>
+            <p style={{ margin: 0, fontSize: 13.5, color: "var(--ds-text-muted)", lineHeight: 1.55 }}>
+              Pour accéder à l'espace admin, vous devez configurer l'authentification à deux facteurs (2FA). C'est obligatoire pour protéger votre compte.
+            </p>
+          </div>
+
+          {err && <div style={{ color: "var(--ds-danger)", fontSize: 13.5, fontWeight: 600 }}>{err}</div>}
+
+          {busy && !enroll ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--ds-text-muted)", fontSize: 14 }}>
+              <Loader2 size={18} style={{ animation: "spin 0.8s linear infinite" }} /> Génération du QR code…
+            </div>
+          ) : enroll ? (
+            <form onSubmit={confirm} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <p style={{ margin: 0, fontSize: 13.5, color: "var(--ds-text-sec)", lineHeight: 1.5 }}>
+                <strong>1.</strong> Scanne ce QR code avec <strong>Google Authenticator</strong>, <strong>Authy</strong> ou <strong>1Password</strong>.
+              </p>
+              <div style={{ background: "#fff", borderRadius: "var(--r-md)", padding: 14, width: "fit-content" }}
+                dangerouslySetInnerHTML={{ __html: enroll.qr }} />
+              <div style={{ fontSize: 12.5, color: "var(--ds-text-muted)", lineHeight: 1.5 }}>
+                Ou saisis la clé manuellement :{" "}
+                <code style={{ fontFamily: "monospace", color: "var(--ds-text)", background: "var(--ds-bg-sec)", padding: "2px 6px", borderRadius: 6, wordBreak: "break-all" }}>{enroll.secret}</code>
+              </div>
+              <label style={{ fontSize: 13, fontWeight: 600, color: "var(--ds-text-sec)" }}>
+                <strong>2.</strong> Entre le code à 6 chiffres affiché
+                <input style={{ ...input, marginTop: 8, textAlign: "center", letterSpacing: "0.4em", fontSize: 20, fontWeight: 700 }}
+                  inputMode="numeric" autoFocus autoComplete="one-time-code" maxLength={6}
+                  value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} placeholder="••••••" />
+              </label>
+              {err && <div style={{ color: "var(--ds-danger)", fontSize: 13.5, fontWeight: 600 }}>{err}</div>}
+              <div style={{ display: "flex", gap: 10 }}>
+                <button type="submit" disabled={busy || code.length < 6}
+                  style={{ ...btnPrimary, flex: 1, justifyContent: "center", opacity: busy || code.length < 6 ? 0.7 : 1 }}>
+                  {busy ? <Loader2 size={16} style={{ animation: "spin 0.8s linear infinite" }} /> : <KeyRound size={15} />} Activer et accéder
+                </button>
+                <button type="button" onClick={cancel} style={btn}><LogOut size={15} /></button>
+              </div>
+            </form>
+          ) : null}
+        </div>
+
+        <div style={{ textAlign: "center", marginTop: 16 }}>
+          <button type="button" onClick={cancel} style={{ background: "none", border: "none", color: "var(--ds-text-muted)", fontSize: 13, cursor: "pointer", fontFamily: "inherit" }}>
+            ← Annuler et se déconnecter
+          </button>
         </div>
       </div>
     </div>
@@ -414,7 +563,7 @@ function StepUpModal({ email }: { email: string }) {
 }
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
-type Tab = "leads" | "payments" | "reviews" | "links" | "assistant" | "documents" | "reminders" | "procedures" | "pricing" | "services" | "portfolio" | "blog" | "newsletter" | "campaigns" | "settings"
+type Tab = "leads" | "payments" | "reviews" | "links" | "assistant" | "documents" | "reminders" | "procedures" | "pricing" | "services" | "portfolio" | "blog" | "formation" | "collaborateurs" | "newsletter" | "campaigns" | "settings"
 
 function Dashboard({ email, onSignOut }: { email: string; onSignOut: () => void }) {
   const [tab, setTab] = useState<Tab>("leads")
@@ -469,14 +618,23 @@ function Dashboard({ email, onSignOut }: { email: string; onSignOut: () => void 
     { key: "services", label: "Cartes de service", icon: <Package size={18} /> },
     { key: "portfolio", label: "Portfolio", icon: <LayoutGrid size={18} /> },
     { key: "blog", label: "Blog", icon: <Newspaper size={18} /> },
+    { key: "formation", label: "Formations", icon: <GraduationCap size={18} /> },
+    { key: "collaborateurs", label: "Collaborateurs", icon: <Handshake size={18} /> },
     { key: "newsletter", label: "Newsletter", icon: <Mail size={18} />, count: subs.length },
     { key: "campaigns", label: "Campagnes e-mail", icon: <Send size={18} /> },
     { key: "settings", label: "Paramètres", icon: <SettingsIcon size={18} /> },
   ]
 
   return (
-    <div className="dark" style={shell}>
+    <div className="dark adm-scope" style={shell}>
       <style>{STYLE}</style>
+      <a href="#adm-content" style={{
+        position: "absolute", left: 12, top: -60, zIndex: 50, padding: "9px 14px",
+        background: "var(--ds-accent)", color: "#fff", borderRadius: "var(--r-md)",
+        fontWeight: 700, fontSize: 14, transition: "top 0.15s",
+      }} onFocus={(e) => { e.currentTarget.style.top = "12px" }} onBlur={(e) => { e.currentTarget.style.top = "-60px" }}>
+        Aller au contenu
+      </a>
       <StepUpModal email={email} />
       {/* Top bar */}
       <header style={{
@@ -510,11 +668,12 @@ function Dashboard({ email, onSignOut }: { email: string; onSignOut: () => void 
 
         {/* Sidebar + content */}
         <div className="adm-layout">
-          <nav className="adm-nav">
+          <nav className="adm-nav" aria-label="Sections de l'administration">
             {navItems.map((n) => {
               const active = tab === n.key
               return (
                 <button key={n.key} onClick={() => setTab(n.key)} className="adm-navbtn"
+                  aria-current={active ? "page" : undefined}
                   style={{
                     display: "flex", alignItems: "center", gap: 11, cursor: "pointer",
                     border: "none", borderRadius: "var(--r-md)", padding: "11px 14px",
@@ -537,12 +696,12 @@ function Dashboard({ email, onSignOut }: { email: string; onSignOut: () => void 
                 </button>
               )
             })}
-            <button style={{ ...btn, marginTop: 8, justifyContent: "center" }} className="adm-iconbtn" onClick={refresh}>
-              <RefreshCw size={15} style={loading ? { animation: "spin 0.8s linear infinite" } : undefined} /> Actualiser
+            <button style={{ ...btn, marginTop: 8, justifyContent: "center" }} className="adm-iconbtn" onClick={refresh} aria-label="Actualiser les données">
+              <RefreshCw size={15} aria-hidden="true" style={loading ? { animation: "spin 0.8s linear infinite" } : undefined} /> Actualiser
             </button>
           </nav>
 
-          <div style={{ minWidth: 0 }}>
+          <main id="adm-content" style={{ minWidth: 0 }} aria-busy={loading}>
             {tab === "leads" && <LeadsTab leads={otherLeads} loading={loading} onChange={refresh} />}
             {tab === "payments" && <PaymentsTab leads={payLeads} loading={loading} onChange={refresh} />}
             {tab === "reviews" && <ReviewsTab reviews={reviews} loading={loading} onChange={refresh} />}
@@ -555,10 +714,12 @@ function Dashboard({ email, onSignOut }: { email: string; onSignOut: () => void 
             {tab === "services" && <ServicesTab />}
             {tab === "portfolio" && <PortfolioTab />}
             {tab === "blog" && <BlogTab />}
+            {tab === "formation" && <FormationTab />}
+            {tab === "collaborateurs" && <CollaborateursTab />}
             {tab === "newsletter" && <NewsletterTab subs={subs} loading={loading} onChange={refresh} />}
             {tab === "campaigns" && <CampaignsTab subs={subs} adminEmail={email} />}
             {tab === "settings" && <SettingsTab />}
-          </div>
+          </main>
         </div>
       </div>
     </div>
@@ -1719,6 +1880,294 @@ function ReviewsTab({ reviews, loading, onChange }: { reviews: Testimonial[]; lo
         {approved.length === 0
           ? <div style={{ padding: 34, textAlign: "center", color: "var(--ds-text-muted)" }}>Aucun avis publié pour l'instant.</div>
           : approved.map((r) => <Row key={r.id} r={r} />)}
+      </div>
+    </div>
+  )
+}
+
+// ── Formation tab: manage the training catalogue + track enrollments ──────────
+const emptyFormation: Formation = {
+  id: "", published: false, title: "", summary: "", description: "",
+  level: "debutant", format: "en-ligne", durationHours: 0, free: true, price: 0,
+  image: "", instructor: "", startDate: "", seats: 0, syllabus: [], order: 0,
+}
+const FMT_LEVEL: Record<Formation["level"], string> = { debutant: "Débutant", intermediaire: "Intermédiaire", avance: "Avancé" }
+const FMT_FORMAT: Record<Formation["format"], string> = { "en-ligne": "En ligne", presentiel: "Présentiel", hybride: "Hybride" }
+
+function FormationTab() {
+  const [items, setItems] = useState<Formation[]>([])
+  const [enrollments, setEnrollments] = useState<Lead[]>([])
+  const [loading, setLoading] = useState(true)
+  const [draft, setDraft] = useState<Formation | null>(null)
+  const [busy, setBusy] = useState(false)
+
+  async function load() {
+    setLoading(true)
+    try {
+      const [f, e] = await Promise.all([adminApi.listFormations(), adminApi.listEnrollments()])
+      setItems(f.formations); setEnrollments(e.enrollments)
+    } catch (err) { console.error(err) }
+    finally { setLoading(false) }
+  }
+  useEffect(() => { load() }, [])
+
+  async function save() {
+    if (!draft || !draft.title.trim()) return
+    setBusy(true)
+    try { await adminApi.saveFormation(draft); setDraft(null); await load() }
+    catch (e) { console.error(e); alert("Enregistrement impossible.") }
+    finally { setBusy(false) }
+  }
+  async function togglePublish(f: Formation) {
+    setBusy(true)
+    try { await adminApi.saveFormation({ ...f, published: !f.published }); await load() }
+    catch (e) { console.error(e) }
+    finally { setBusy(false) }
+  }
+  async function remove(id: string) {
+    if (!confirm("Supprimer cette formation ? Action définitive.")) return
+    setBusy(true)
+    try { await adminApi.deleteFormation(id); await load() }
+    catch (e) { console.error(e) }
+    finally { setBusy(false) }
+  }
+
+  const enrollFor = (id: string) => enrollments.filter((e) => e.meta?.formationId === id)
+
+  if (loading && items.length === 0) return <ListSkeleton />
+
+  const smallInput: React.CSSProperties = { ...input, padding: "9px 12px", fontSize: 14 }
+  const fieldLabel: React.CSSProperties = { display: "block", fontSize: 12.5, fontWeight: 700, color: "var(--ds-text-sec)", marginBottom: 5 }
+
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      {/* Editor */}
+      {draft ? (
+        <div style={{ ...card }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+            <GraduationCap size={18} color="var(--ds-accent)" />
+            <span style={{ fontWeight: 800, fontSize: 15.5 }}>{draft.id ? "Modifier la formation" : "Nouvelle formation"}</span>
+          </div>
+          <div style={{ display: "grid", gap: 14 }}>
+            <div><label style={fieldLabel}>Titre</label><input style={smallInput} value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} /></div>
+            <div><label style={fieldLabel}>Résumé (carte)</label><input style={smallInput} value={draft.summary} onChange={(e) => setDraft({ ...draft, summary: e.target.value })} /></div>
+            <div><label style={fieldLabel}>Description complète</label><textarea style={{ ...smallInput, minHeight: 90, resize: "vertical" }} value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} /></div>
+            <div className="adm-doc-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+              <div>
+                <label style={fieldLabel}>Niveau</label>
+                <select style={smallInput} value={draft.level} onChange={(e) => setDraft({ ...draft, level: e.target.value as Formation["level"] })}>
+                  {Object.entries(FMT_LEVEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={fieldLabel}>Format</label>
+                <select style={smallInput} value={draft.format} onChange={(e) => setDraft({ ...draft, format: e.target.value as Formation["format"] })}>
+                  {Object.entries(FMT_FORMAT).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                </select>
+              </div>
+              <div><label style={fieldLabel}>Durée (heures)</label><input type="number" min={0} style={smallInput} value={draft.durationHours} onChange={(e) => setDraft({ ...draft, durationHours: Number(e.target.value) })} /></div>
+            </div>
+            <div className="adm-doc-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+              <div>
+                <label style={fieldLabel}>Type</label>
+                <select style={smallInput} value={draft.free ? "free" : "paid"} onChange={(e) => setDraft({ ...draft, free: e.target.value === "free" })}>
+                  <option value="free">Gratuite</option>
+                  <option value="paid">Payante</option>
+                </select>
+              </div>
+              <div><label style={fieldLabel}>Prix (USD)</label><input type="number" min={0} disabled={draft.free} style={{ ...smallInput, opacity: draft.free ? 0.5 : 1 }} value={draft.price} onChange={(e) => setDraft({ ...draft, price: Number(e.target.value) })} /></div>
+              <div><label style={fieldLabel}>Places (0 = illimité)</label><input type="number" min={0} style={smallInput} value={draft.seats ?? 0} onChange={(e) => setDraft({ ...draft, seats: Number(e.target.value) })} /></div>
+            </div>
+            <div className="adm-doc-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+              <div><label style={fieldLabel}>Formateur</label><input style={smallInput} value={draft.instructor ?? ""} onChange={(e) => setDraft({ ...draft, instructor: e.target.value })} /></div>
+              <div><label style={fieldLabel}>Début (texte libre)</label><input style={smallInput} placeholder="Ex. 15 oct." value={draft.startDate ?? ""} onChange={(e) => setDraft({ ...draft, startDate: e.target.value })} /></div>
+              <div><label style={fieldLabel}>Ordre d'affichage</label><input type="number" style={smallInput} value={draft.order ?? 0} onChange={(e) => setDraft({ ...draft, order: Number(e.target.value) })} /></div>
+            </div>
+            <div><label style={fieldLabel}>Image (URL)</label><input style={smallInput} value={draft.image ?? ""} onChange={(e) => setDraft({ ...draft, image: e.target.value })} /></div>
+            <div>
+              <label style={fieldLabel}>Programme (une ligne par module)</label>
+              <textarea style={{ ...smallInput, minHeight: 90, resize: "vertical" }} value={(draft.syllabus ?? []).join("\n")}
+                onChange={(e) => setDraft({ ...draft, syllabus: e.target.value.split("\n").map((x) => x.trim()).filter(Boolean) })} />
+            </div>
+            <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+              <input type="checkbox" checked={draft.published} onChange={(e) => setDraft({ ...draft, published: e.target.checked })} />
+              Publier immédiatement (visible sur le site)
+            </label>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button style={btnPrimary} onClick={save} disabled={busy || !draft.title.trim()}><Check size={15} /> Enregistrer</button>
+              <button style={btn} onClick={() => setDraft(null)} disabled={busy}><X size={15} /> Annuler</button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button style={{ ...btnPrimary, alignSelf: "flex-start" }} onClick={() => setDraft({ ...emptyFormation })}>
+          <Plus size={16} /> Nouvelle formation
+        </button>
+      )}
+
+      {/* Catalogue */}
+      <div style={{ ...card, padding: 0, overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "13px 18px", borderBottom: "1px solid var(--ds-border)" }}>
+          <GraduationCap size={16} color="var(--ds-accent)" />
+          <span style={{ fontWeight: 800, fontSize: 14.5 }}>Catalogue</span>
+          <span style={{ marginLeft: "auto", fontSize: 12.5, color: "var(--ds-text-faint)", fontWeight: 600 }}>{items.length}</span>
+        </div>
+        {items.length === 0
+          ? <div style={{ padding: 34, textAlign: "center", color: "var(--ds-text-muted)" }}>Aucune formation. Crée la première ci-dessus.</div>
+          : items.map((f) => {
+            const en = enrollFor(f.id)
+            return (
+              <div key={f.id} className="adm-row" style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", borderBottom: "1px solid var(--ds-border)" }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 3 }}>
+                    <span style={{ fontWeight: 700, fontSize: 14.5 }}>{f.title}</span>
+                    <span style={{ fontSize: 11.5, fontWeight: 700, padding: "1px 8px", borderRadius: "var(--r-full)", background: f.published ? "var(--ds-accent-a12)" : "var(--ds-bg-sec)", color: f.published ? "var(--ds-accent-text)" : "var(--ds-text-faint)" }}>
+                      {f.published ? "Publiée" : "Brouillon"}
+                    </span>
+                    <span style={{ fontSize: 11.5, fontWeight: 700, padding: "1px 8px", borderRadius: "var(--r-full)", background: "var(--ds-bg-sec)", color: f.free ? "var(--ds-success)" : "var(--ds-text-muted)" }}>
+                      {f.free ? "Gratuite" : `$${f.price}`}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--ds-text-faint)" }}>
+                    {FMT_LEVEL[f.level]} · {FMT_FORMAT[f.format]}{f.durationHours ? ` · ${f.durationHours}h` : ""} · {en.length} inscrit{en.length > 1 ? "s" : ""}
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                  <button onClick={() => togglePublish(f)} disabled={busy} aria-label={f.published ? "Dépublier" : "Publier"} style={{ ...btn, padding: "6px 10px" }}>
+                    {f.published ? <EyeOff size={14} /> : <Eye size={14} />}
+                  </button>
+                  <button onClick={() => setDraft(f)} disabled={busy} aria-label="Modifier" style={{ ...btn, padding: "6px 10px" }}><FileText size={14} /></button>
+                  <button onClick={() => remove(f.id)} disabled={busy} aria-label="Supprimer" style={{ ...btn, padding: "6px 10px", color: "var(--ds-danger)", borderColor: "var(--ds-danger-a40)" }}><Trash2 size={14} /></button>
+                </div>
+              </div>
+            )
+          })}
+      </div>
+
+      {/* Enrollments */}
+      <div style={{ ...card, padding: 0, overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "13px 18px", borderBottom: "1px solid var(--ds-border)" }}>
+          <Users size={16} color="var(--ds-accent)" />
+          <span style={{ fontWeight: 800, fontSize: 14.5 }}>Inscrits</span>
+          <span style={{ marginLeft: "auto", fontSize: 12.5, color: "var(--ds-text-faint)", fontWeight: 600 }}>{enrollments.length}</span>
+        </div>
+        <div style={{ padding: "10px 18px", fontSize: 12, color: "var(--ds-text-faint)", borderBottom: "1px solid var(--ds-border)" }}>
+          Le suivi des paiements (reçu, statut « gagné ») se fait dans l'onglet <strong>Devis &amp; contacts</strong> — chaque inscription y apparaît comme un lead.
+        </div>
+        {enrollments.length === 0
+          ? <div style={{ padding: 34, textAlign: "center", color: "var(--ds-text-muted)" }}>Aucune inscription pour l'instant.</div>
+          : enrollments.map((e) => (
+            <div key={e.id} className="adm-row" style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 18px", borderBottom: "1px solid var(--ds-border)" }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>{e.name || "—"} <span style={{ fontWeight: 500, color: "var(--ds-text-muted)", fontSize: 12.5 }}>· {e.email}</span></div>
+                <div style={{ fontSize: 12, color: "var(--ds-text-faint)" }}>{String(e.meta?.formationTitle ?? "—")} · {new Date(e.createdAt).toLocaleDateString("fr-FR")}</div>
+              </div>
+              <span style={{ fontSize: 11.5, fontWeight: 700, padding: "2px 9px", borderRadius: "var(--r-full)", background: e.status === "won" ? "var(--ds-accent-a12)" : "var(--ds-bg-sec)", color: e.status === "won" ? "var(--ds-accent-text)" : "var(--ds-text-muted)" }}>
+                {e.status === "won" ? "Validé" : e.status === "contacted" ? "Contacté" : e.status === "lost" ? "Annulé" : "Nouveau"}
+              </span>
+            </div>
+          ))}
+      </div>
+    </div>
+  )
+}
+
+// ── Collaborateurs tab: moderate professional listings for the public gallery ──
+function CollaborateursTab() {
+  const [items, setItems] = useState<Collaborateur[]>([])
+  const [loading, setLoading] = useState(true)
+  const [busy, setBusy] = useState<string | null>(null)
+
+  async function load() {
+    setLoading(true)
+    try { const r = await adminApi.listCollaborateurs(); setItems(r.collaborateurs) }
+    catch (e) { console.error(e) }
+    finally { setLoading(false) }
+  }
+  useEffect(() => { load() }, [])
+
+  const pending = useMemo(() => items.filter((x) => x.status === "pending"), [items])
+  const approved = useMemo(() => items.filter((x) => x.status === "approved"), [items])
+
+  async function approve(id: string) {
+    setBusy(id)
+    try { await adminApi.approveCollaborateur(id); await load() }
+    catch (e) { console.error(e) }
+    finally { setBusy(null) }
+  }
+  async function remove(id: string) {
+    if (!confirm("Supprimer ce collaborateur ? Action définitive.")) return
+    setBusy(id)
+    try { await adminApi.deleteCollaborateur(id); await load() }
+    catch (e) { console.error(e) }
+    finally { setBusy(null) }
+  }
+
+  if (loading && items.length === 0) return <ListSkeleton />
+
+  const Row = ({ x }: { x: Collaborateur }) => {
+    const accent = x.accent || "#F7931E"
+    const initials = (x.name || "IN").trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase()
+    return (
+      <div className="adm-row" style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "14px 18px", borderBottom: "1px solid var(--ds-border)" }}>
+        <div style={{ width: 46, height: 46, borderRadius: "var(--r-full)", flexShrink: 0, overflow: "hidden",
+          background: x.photoUrl ? `center/cover no-repeat url(${x.photoUrl})` : `linear-gradient(135deg, ${accent}, #FF6B35)`,
+          display: "grid", placeItems: "center", color: "#fff", fontWeight: 800, fontSize: 16 }}>
+          {!x.photoUrl && initials}
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 3 }}>
+            <span style={{ fontWeight: 700, fontSize: 14.5 }}>{x.name}</span>
+            <span style={{ fontSize: 12.5, color: "var(--ds-text-muted)" }}>· {x.profession}</span>
+            {x.city && <span style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: 12, color: "var(--ds-text-faint)" }}><MapPin size={11} /> {x.city}</span>}
+          </div>
+          <p style={{ margin: "0 0 5px", fontSize: 13.5, color: "var(--ds-text-sec)", lineHeight: 1.5 }}>
+            <strong>{x.service}</strong>{x.description ? ` — ${x.description}` : ""}{x.price ? ` · ${x.price}` : ""}
+          </p>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", fontSize: 12, color: "var(--ds-text-faint)" }}>
+            {x.whatsapp && <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><MessageCircle size={12} /> {x.whatsapp}</span>}
+            {x.email && <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Mail size={12} /> {x.email}</span>}
+            {x.instagram && <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><AtSign size={12} /> {x.instagram}</span>}
+            {x.website && <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Globe size={12} /> {x.website}</span>}
+          </div>
+          <div style={{ fontSize: 11.5, color: "var(--ds-text-faint)", marginTop: 5 }}>{new Date(x.createdAt).toLocaleString("fr-FR")}</div>
+        </div>
+        <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+          {x.status === "pending" && (
+            <button onClick={() => approve(x.id)} disabled={busy === x.id} style={{ ...btn, padding: "6px 12px", color: "var(--ds-accent-text)", borderColor: "var(--ds-accent-a45)" }}>
+              <Check size={14} /> Valider
+            </button>
+          )}
+          <button onClick={() => remove(x.id)} disabled={busy === x.id} aria-label="Supprimer" style={{ ...btn, padding: "6px 10px", color: "var(--ds-danger)", borderColor: "var(--ds-danger-a40)" }}>
+            <Trash2 size={14} />
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <div style={{ ...card, padding: 0, overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "13px 18px", borderBottom: "1px solid var(--ds-border)" }}>
+          <Bell size={16} color="var(--ds-accent)" />
+          <span style={{ fontWeight: 800, fontSize: 14.5 }}>Candidatures à valider</span>
+          <span style={{ marginLeft: "auto", fontSize: 12.5, color: "var(--ds-text-faint)", fontWeight: 600 }}>{pending.length}</span>
+        </div>
+        {pending.length === 0
+          ? <div style={{ padding: 34, textAlign: "center", color: "var(--ds-text-muted)" }}>Aucune candidature en attente.</div>
+          : pending.map((x) => <Row key={x.id} x={x} />)}
+      </div>
+
+      <div style={{ ...card, padding: 0, overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "13px 18px", borderBottom: "1px solid var(--ds-border)" }}>
+          <Handshake size={16} color="var(--ds-accent)" />
+          <span style={{ fontWeight: 800, fontSize: 14.5 }}>Collaborateurs publiés</span>
+          <span style={{ marginLeft: "auto", fontSize: 12.5, color: "var(--ds-text-faint)", fontWeight: 600 }}>{approved.length}</span>
+        </div>
+        {approved.length === 0
+          ? <div style={{ padding: 34, textAlign: "center", color: "var(--ds-text-muted)" }}>Aucun collaborateur publié pour l'instant.</div>
+          : approved.map((x) => <Row key={x.id} x={x} />)}
       </div>
     </div>
   )
@@ -3655,7 +4104,7 @@ function ScriptRow({ a, lang }: { a: ScriptSource; lang: Lang }) {
         <pre style={{
           marginTop: 10, whiteSpace: "pre-wrap", wordBreak: "break-word",
           fontFamily: "var(--font-space), monospace", fontSize: 12.5, lineHeight: 1.6,
-          background: "var(--ds-surface-2, #f6f5f2)", color: "var(--ds-text)",
+          background: "var(--ds-bg-sec)", color: "var(--ds-text)",
           border: "1px solid var(--ds-border)", borderRadius: 10, padding: 14, maxHeight: 340, overflow: "auto",
         }}>{buildScriptText(a, lang)}</pre>
       )}

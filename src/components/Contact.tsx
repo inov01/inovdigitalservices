@@ -1,12 +1,61 @@
 import { useState, useEffect, useRef, useMemo } from "react"
 import { useForm, ValidationError } from "@formspree/react"
-import { CheckCircle2, ArrowRight, Mail, ChevronDown, X } from "lucide-react"
+import { CheckCircle2, ArrowRight, Mail, ChevronDown, X, FileText } from "lucide-react"
 import { SiWhatsapp, SiInstagram } from "./SocialIcons"
 import { useSettings } from "../context/AppSettings"
 import { track } from "../lib/analytics"
 import { api } from "../lib/api"
 
 const BUDGET_BREAKS_USD = [100, 300, 500, 1000]
+
+// Maps serviceList index (same order in all languages) to a brief slug.
+// null means no dedicated brief form for that service.
+const SERVICE_BRIEF_SLUGS: (string | null)[] = [
+  "branding", // 0: Branding & Identity
+  "logo",     // 1: Logo Design
+  "motion",   // 2: Logo Animation
+  "video",    // 3: Video Editing
+  "motion",   // 4: Motion Design
+  null,       // 5: Packaging Design
+  null,       // 6: Online Promotion
+  null,       // 7: Digital Marketing
+  null,       // 8: Flyers & Posters
+  null,       // 9: Social Media Posts
+  "other",    // 10: Other
+]
+
+const BRIEF_LABELS: Record<string, Record<string, string>> = {
+  fr: { branding: "Branding & identité", logo: "Création de logo", motion: "Motion design", video: "Montage vidéo", other: "Autre projet" },
+  en: { branding: "Branding & identity", logo: "Logo design", motion: "Motion design", video: "Video editing", other: "Other project" },
+  es: { branding: "Branding e identidad", logo: "Diseño de logo", motion: "Motion design", video: "Edición de vídeo", other: "Otro proyecto" },
+  ht: { branding: "Branding & idantite", logo: "Kreyasyon logo", motion: "Motion design", video: "Montaj videyo", other: "Lòt pwojè" },
+  pt: { branding: "Branding & identidade", logo: "Design de logo", motion: "Motion design", video: "Edição de vídeo", other: "Outro projeto" },
+  it: { branding: "Branding & identità", logo: "Design del logo", motion: "Motion design", video: "Montaggio video", other: "Altro progetto" },
+  de: { branding: "Branding & Identität", logo: "Logo-Design", motion: "Motion design", video: "Videobearbeitung", other: "Anderes Projekt" },
+  ar: { branding: "الهوية البصرية", logo: "تصميم الشعار", motion: "موشن جرافيك", video: "مونتاج فيديو", other: "مشروع آخر" },
+}
+
+const BRIEF_NEXT_STEP_LABEL: Record<string, string> = {
+  fr: "Complétez votre brief pour démarrer plus vite",
+  en: "Fill in your brief to get started faster",
+  es: "Completa tu brief para empezar más rápido",
+  ht: "Ranpli brief ou pou nou ka kòmanse pi vit",
+  pt: "Preencha seu brief para começar mais rápido",
+  it: "Compila il brief per iniziare più velocemente",
+  de: "Füllen Sie Ihr Brief aus, um schneller zu starten",
+  ar: "أكمل الملخص للبدء بشكل أسرع",
+}
+
+const BRIEF_CTA_LABEL: Record<string, string> = {
+  fr: "Remplir le formulaire",
+  en: "Fill in the form",
+  es: "Rellenar el formulario",
+  ht: "Ranpli fòmilè a",
+  pt: "Preencher o formulário",
+  it: "Compila il modulo",
+  de: "Formular ausfüllen",
+  ar: "ملء النموذج",
+}
 
 // WhatsApp number field copy — local so the 8 translation files stay untouched.
 const WA_LABELS: Record<string, { label: string; placeholder: string }> = {
@@ -127,14 +176,51 @@ export default function Contact() {
           {/* Form */}
           <div style={{ background: "var(--ds-bg-card)", borderRadius: "var(--r-xl)", padding: 40, border: "1px solid var(--ds-border)" }}>
             {fsState.succeeded ? (
-              <div style={{ textAlign: "center", padding: "40px 0" }}>
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
-                  <CheckCircle2 size={56} color="var(--ds-accent)" strokeWidth={2} />
+              <div style={{ display: "flex", flexDirection: "column", gap: 28, padding: "32px 0 8px" }}>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+                    <CheckCircle2 size={56} color="var(--ds-accent)" strokeWidth={2} />
+                  </div>
+                  <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 22, fontWeight: 800, color: "var(--ds-text)", marginBottom: 12 }}>{t.contact.successTitle}</h3>
+                  <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, color: "var(--ds-text-sec)", lineHeight: 1.6 }}>
+                    {t.contact.successBody}
+                  </p>
                 </div>
-                <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 22, fontWeight: 800, color: "var(--ds-text)", marginBottom: 12 }}>{t.contact.successTitle}</h3>
-                <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, color: "var(--ds-text-sec)", lineHeight: 1.6 }}>
-                  {t.contact.successBody}
-                </p>
+                {(() => {
+                  const labels = BRIEF_LABELS[lang] ?? BRIEF_LABELS.fr
+                  const slugs = Array.from(new Set(
+                    selectedServices
+                      .map((s) => SERVICE_BRIEF_SLUGS[services.indexOf(s)])
+                      .filter((s): s is string => s !== null)
+                  ))
+                  if (slugs.length === 0) return null
+                  return (
+                    <div style={{ borderTop: "1px solid var(--ds-border)", paddingTop: 24, display: "flex", flexDirection: "column", gap: 14 }}>
+                      <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700, color: "var(--ds-text)", margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
+                        <FileText size={16} style={{ color: "var(--ds-accent)" }} />
+                        {BRIEF_NEXT_STEP_LABEL[lang] ?? BRIEF_NEXT_STEP_LABEL.fr}
+                      </p>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                        {slugs.map((slug) => (
+                          <a
+                            key={slug}
+                            href={`/brief/${slug}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "13px 16px", borderRadius: "var(--r-md)", border: "1.5px solid var(--ds-border)", background: "var(--ds-bg-sec)", textDecoration: "none", transition: "border-color 0.15s" }}
+                            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--ds-accent)")}
+                            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--ds-border)")}
+                          >
+                            <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700, color: "var(--ds-text)" }}>{labels[slug] ?? slug}</span>
+                            <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: "var(--ds-accent)", whiteSpace: "nowrap" }}>
+                              {BRIEF_CTA_LABEL[lang] ?? BRIEF_CTA_LABEL.fr} →
+                            </span>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })()}
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>

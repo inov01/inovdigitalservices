@@ -184,7 +184,7 @@ export default function Portfolio() {
         @keyframes pf-progress { from { transform: scaleX(0) } to { transform: scaleX(1) } }
         @keyframes pf-pop { 0% { opacity: 0; transform: scale(0.92) } 100% { opacity: 1; transform: scale(1) } }
         @keyframes pf-slideup { 0% { opacity: 0; transform: translateY(100%) } 100% { opacity: 1; transform: translateY(0) } }
-        .pf-reveal { animation: pf-rise 0.7s cubic-bezier(0.22,1,0.36,1) both }
+        .pf-reveal { animation: pf-rise 0.35s cubic-bezier(0.22,1,0.36,1) both }
       `}</style>
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: isMobile ? "0 16px" : "0 32px" }}>
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Link, useParams } from "react-router"
-import { ArrowLeft, Paperclip, X, CheckCircle2, Send } from "lucide-react"
+import { ArrowLeft, Paperclip, X, CheckCircle2, Send, Link2, Plus } from "lucide-react"
 import { useSettings } from "../context/AppSettings"
 import { applyPageMeta } from "../lib/seo"
 import { track } from "../lib/analytics"
@@ -28,6 +28,9 @@ export default function Brief() {
   const [answers, setAnswers] = useState<Record<string, Answer>>({})
   const [contact, setContact] = useState({ name: "", email: "", whatsapp: "" })
   const [files, setFiles] = useState<File[]>([])
+  const [driveLinks, setDriveLinks] = useState<string[]>([])
+  const [driveInput, setDriveInput] = useState("")
+  const [driveError, setDriveError] = useState("")
   const [busy, setBusy] = useState(false)
   const [phase, setPhase] = useState<"idle" | "uploading" | "sending">("idle")
   const [error, setError] = useState("")
@@ -63,6 +66,16 @@ export default function Brief() {
       const cur = Array.isArray(p[id]) ? (p[id] as string[]) : []
       return { ...p, [id]: cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v] }
     })
+
+  function addDriveLink() {
+    const url = driveInput.trim()
+    setDriveError("")
+    if (!url) return
+    if (!url.startsWith("https://")) { setDriveError(t("ui.driveLinksInvalid")); return }
+    setDriveLinks((p) => [...p, url])
+    setDriveInput("")
+  }
+  const removeDriveLink = (i: number) => setDriveLinks((p) => p.filter((_, x) => x !== i))
 
   const addFiles = (list: FileList | null) => {
     if (!list) return
@@ -120,7 +133,7 @@ export default function Brief() {
         phone: contact.whatsapp.trim(),
         lang,
         message: rendered,
-        meta: { brief: { service: svc.slug, serviceName: svcName, answers }, attachments },
+        meta: { brief: { service: svc.slug, serviceName: svcName, answers }, attachments, driveLinks },
       })
       track("brief_submit", { service: svc.slug, files: attachments.length })
       setDone(true)
@@ -179,6 +192,41 @@ export default function Brief() {
                     <span style={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "'Outfit', sans-serif", fontSize: 13, color: "var(--ds-text)" }}>{file.name}</span>
                     <span style={{ fontFamily: "'Space Grotesk', monospace", fontSize: 12, color: "var(--ds-text-sec)" }}>{humanSize(file.size)}</span>
                     <button type="button" aria-label={t("ui.remove")} onClick={() => removeFile(i)} style={{ display: "inline-flex", padding: 4, border: "none", background: "transparent", color: "var(--ds-text-sec)", cursor: "pointer" }}><X size={15} /></button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Drive links */}
+          <div style={{ display: "grid", gap: 8 }}>
+            <label style={labelStyle}>{t("ui.driveLinks")} <span style={optStyle}>· {t("ui.optional")}</span></label>
+            <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: "var(--ds-text-sec)", margin: 0 }}>{t("ui.driveLinksHelp")}</p>
+            <div style={{ display: "flex", gap: 8 }}>
+              <input
+                type="url"
+                value={driveInput}
+                onChange={(e) => { setDriveInput(e.target.value); setDriveError("") }}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addDriveLink() } }}
+                placeholder={t("ui.driveLinksPlaceholder")}
+                style={{ ...inputStyle, flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={addDriveLink}
+                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "11px 16px", borderRadius: 10, border: "1px solid var(--ds-border)", background: "var(--ds-bg)", fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700, color: "var(--ds-text)", cursor: "pointer", whiteSpace: "nowrap" }}
+              >
+                <Plus size={15} /> {t("ui.driveLinksAdd")}
+              </button>
+            </div>
+            {driveError && <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: "#dc2626", margin: 0 }}>{driveError}</p>}
+            {driveLinks.length > 0 && (
+              <ul style={{ listStyle: "none", padding: 0, margin: "4px 0 0", display: "grid", gap: 6 }}>
+                {driveLinks.map((link, i) => (
+                  <li key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 10, background: "var(--ds-bg-sec)", border: "1px solid var(--ds-border)" }}>
+                    <Link2 size={14} style={{ color: "var(--ds-accent)", flexShrink: 0 }} />
+                    <a href={link} target="_blank" rel="noreferrer" style={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "'Outfit', sans-serif", fontSize: 13, color: "var(--ds-text)", textDecoration: "none" }}>{link}</a>
+                    <button type="button" aria-label={t("ui.remove")} onClick={() => removeDriveLink(i)} style={{ display: "inline-flex", padding: 4, border: "none", background: "transparent", color: "var(--ds-text-sec)", cursor: "pointer" }}><X size={15} /></button>
                   </li>
                 ))}
               </ul>
