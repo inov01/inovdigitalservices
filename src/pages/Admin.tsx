@@ -759,6 +759,34 @@ function waReply(l: Lead): string {
   return `https://wa.me/${l.phone.replace(/[^\d]/g, "")}?text=${encodeURIComponent(text)}`
 }
 
+// ── Pre-recorded WhatsApp messages, per requested service ─────────────────────
+// Builds a warm, ready-to-send opener that names the exact service(s) the lead
+// asked for, in the lead's own language. The wa.me link targets the client's own
+// number so it opens straight into that conversation. The admin can still edit
+// the text in WhatsApp before sending.
+const WA_SERVICE: Record<
+  string,
+  { hi: (f: string) => string; one: (s: string) => string; many: (s: string) => string; close: string; sig: string }
+> = {
+  fr: { hi: (f) => (f ? `Bonjour ${f} ! 👋` : "Bonjour ! 👋"), one: (s) => `Merci pour votre demande concernant *${s}*. Nous serions ravis de la réaliser pour vous. 🎨`, many: (s) => `Merci pour votre demande (${s}). Nous serions ravis de la réaliser pour vous. 🎨`, close: "Pour démarrer, dites-nous simplement quelques détails sur votre projet et nous vous envoyons le devis. On s'occupe de tout !", sig: "— L'équipe INOV Digital Services" },
+  en: { hi: (f) => (f ? `Hi ${f}! 👋` : "Hello! 👋"), one: (s) => `Thanks for your request about *${s}*. We'd love to create it for you. 🎨`, many: (s) => `Thanks for your request (${s}). We'd love to create it for you. 🎨`, close: "To get started, just share a few details about your project and we'll send the quote. We'll handle the rest!", sig: "— The INOV Digital Services team" },
+  es: { hi: (f) => (f ? `¡Hola ${f}! 👋` : "¡Hola! 👋"), one: (s) => `Gracias por tu solicitud sobre *${s}*. Nos encantaría crearlo para ti. 🎨`, many: (s) => `Gracias por tu solicitud (${s}). Nos encantaría crearlo para ti. 🎨`, close: "Para empezar, cuéntanos algunos detalles de tu proyecto y te enviamos el presupuesto. ¡Nosotros nos encargamos!", sig: "— El equipo de INOV Digital Services" },
+  ht: { hi: (f) => (f ? `Bonjou ${f} ! 👋` : "Bonjou ! 👋"), one: (s) => `Mèsi pou demann ou sou *${s}*. Nou ta renmen reyalize l pou ou. 🎨`, many: (s) => `Mèsi pou demann ou (${s}). Nou ta renmen reyalize l pou ou. 🎨`, close: "Pou kòmanse, jis di nou kèk detay sou pwojè w la epi n ap voye devi a ba ou. N ap okipe tout bagay!", sig: "— Ekip INOV Digital Services" },
+  pt: { hi: (f) => (f ? `Olá ${f}! 👋` : "Olá! 👋"), one: (s) => `Obrigado pelo seu pedido sobre *${s}*. Teríamos todo o gosto em criá-lo para si. 🎨`, many: (s) => `Obrigado pelo seu pedido (${s}). Teríamos todo o gosto em criá-lo para si. 🎨`, close: "Para começar, conte-nos alguns detalhes do seu projeto e enviamos o orçamento. Tratamos de tudo!", sig: "— A equipa INOV Digital Services" },
+  it: { hi: (f) => (f ? `Ciao ${f}! 👋` : "Ciao! 👋"), one: (s) => `Grazie per la tua richiesta su *${s}*. Saremmo felici di realizzarla per te. 🎨`, many: (s) => `Grazie per la tua richiesta (${s}). Saremmo felici di realizzarla per te. 🎨`, close: "Per iniziare, raccontaci qualche dettaglio sul tuo progetto e ti inviamo il preventivo. Pensiamo a tutto noi!", sig: "— Il team INOV Digital Services" },
+  de: { hi: (f) => (f ? `Hallo ${f}! 👋` : "Hallo! 👋"), one: (s) => `Vielen Dank für Ihre Anfrage zu *${s}*. Wir würden es gerne für Sie umsetzen. 🎨`, many: (s) => `Vielen Dank für Ihre Anfrage (${s}). Wir würden es gerne für Sie umsetzen. 🎨`, close: "Für den Start nennen Sie uns einfach ein paar Details zu Ihrem Projekt und wir senden Ihnen das Angebot. Wir kümmern uns um den Rest!", sig: "— Ihr INOV Digital Services Team" },
+  ar: { hi: (f) => (f ? `مرحبًا ${f}! 👋` : "مرحبًا! 👋"), one: (s) => `شكرًا لطلبك بخصوص *${s}*. يسعدنا تنفيذه لك. 🎨`, many: (s) => `شكرًا لطلبك (${s}). يسعدنا تنفيذه لك. 🎨`, close: "للبدء، أخبرنا ببعض التفاصيل عن مشروعك وسنرسل لك عرض السعر. سنتكفّل بكل شيء!", sig: "— فريق INOV Digital Services" },
+}
+function waServiceReply(l: Lead): string {
+  const t = WA_SERVICE[l.lang] ?? WA_SERVICE.fr
+  const names = (l.items || []).map((i) => i.name).filter(Boolean)
+  const lines = [t.hi(firstName(l)), ""]
+  if (names.length === 1) lines.push(t.one(names[0]))
+  else if (names.length > 1) lines.push(t.many(names.join(", ")))
+  lines.push("", t.close, "", t.sig)
+  return `https://wa.me/${l.phone.replace(/[^\d]/g, "")}?text=${encodeURIComponent(lines.join("\n"))}`
+}
+
 function buildReceiptHtml(l: Lead): string {
   const meta = (l.meta ?? {}) as Record<string, unknown>
   const method = (meta.paymentMethodLabel as string) || (meta.paymentMethod as string) || "—"
@@ -1248,7 +1276,7 @@ function LeadsTab({ leads, loading, onChange }: { leads: Lead[]; loading: boolea
                       </a>
                     )}
                     {l.phone && (
-                      <a href={`https://wa.me/${l.phone.replace(/[^\d]/g, "")}`} target="_blank" rel="noreferrer" style={{ ...btn, padding: "5px 11px", fontSize: 12.5, textDecoration: "none" }}>
+                      <a href={waServiceReply(l)} target="_blank" rel="noreferrer" title="Ouvre WhatsApp avec un message pré-rempli selon le service demandé" style={{ ...btn, padding: "5px 11px", fontSize: 12.5, textDecoration: "none" }}>
                         <Phone size={13} /> WhatsApp
                       </a>
                     )}
@@ -1362,9 +1390,14 @@ function PaymentsTab({ leads, loading, onChange }: { leads: Lead[]; loading: boo
 
   async function sendReceipt(l: Lead) {
     if (!l.email) { flash(l.id, false, "Ce client n'a pas d'adresse email."); return }
+    // Objet auto-généré, modifiable avant envoi.
+    const first = firstName(l)
+    const autoSubject = `Merci ${first ? first + " " : ""}! Voici votre reçu ${receiptNo(l)}`
+    const subject = window.prompt("Objet de l'e-mail (généré automatiquement — modifiez-le si vous voulez) :", autoSubject)
+    if (subject === null) return // annulé
     setSendingId(l.id)
     try {
-      const res = await adminApi.sendReceipt(l.id)
+      const res = await adminApi.sendReceipt(l.id, subject.trim())
       flash(l.id, true, `Reçu envoyé à ${res.sentTo} ✓`)
       onChange()
     } catch (e) {
@@ -3551,6 +3584,8 @@ function BlogTab() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [scriptLang, setScriptLang] = useState<Lang>("fr")
+  const [shareLang, setShareLang] = useState<Lang>("fr")
+  const [sharePhone, setSharePhone] = useState("")
 
   useEffect(() => {
     adminApi.getSettings()
@@ -3650,6 +3685,58 @@ function BlogTab() {
           ))}
         </div>
       )}
+
+      {/* Partager un article par WhatsApp avec message d'accompagnement auto */}
+      {(() => {
+        const shareList = [
+          ...(ARTICLES[shareLang] ?? ARTICLES.fr).filter((a) => !removed.includes(a.id))
+            .map((a) => ({ id: a.id, title: a.title, excerpt: a.excerpt, slug: ARTICLE_SLUG[a.id] ?? a.id })),
+          ...added.map((a) => ({ id: a.id, title: a.title, excerpt: a.excerpt, slug: a.slug || a.id })),
+        ]
+        const digits = sharePhone.replace(/[^\d]/g, "")
+        const intro = NL_INTRO[shareLang] ?? NL_INTRO.fr
+        const buildHref = (title: string, excerpt: string, slug: string) => {
+          const url = `${SITE_URL}/blog/${slug}`
+          const text = `${intro.single(title, excerpt)}\n\n${url}`
+          const base = digits ? `https://wa.me/${digits}` : "https://wa.me/"
+          return `${base}?text=${encodeURIComponent(text)}`
+        }
+        return (
+          <div style={{ ...card, display: "flex", flexDirection: "column", gap: 4 }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 8, flexWrap: "wrap" }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <h2 style={sectionTitle}>Partager par WhatsApp</h2>
+                <p style={{ margin: "6px 0 0", fontSize: 13.5, color: "var(--ds-text-muted)", lineHeight: 1.5 }}>
+                  Indiquez le numéro du client (avec l'indicatif, ex. 509…) pour ouvrir directement sa conversation. Le message d'accompagnement et le lien de l'article sont générés automatiquement dans la langue choisie — vous pouvez le modifier dans WhatsApp avant l'envoi. Laissez le numéro vide pour choisir le contact dans WhatsApp.
+                </p>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <label style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ds-text-muted)" }}>Langue</label>
+                <select style={{ ...input, width: "auto", padding: "8px 12px" }} value={shareLang} onChange={(e) => setShareLang(e.target.value as Lang)}>
+                  {LANGS.map((l) => <option key={l.code} value={l.code}>{l.flag} {l.label}</option>)}
+                </select>
+              </div>
+            </div>
+            <input
+              value={sharePhone}
+              onChange={(e) => setSharePhone(e.target.value)}
+              placeholder="Numéro du client — ex. +509 3625 5920 (optionnel)"
+              inputMode="tel"
+              style={{ ...input, marginBottom: 8 }}
+            />
+            {shareList.map((a) => (
+              <div key={a.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 0", borderTop: "1px solid var(--ds-border)" }}>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <span style={{ fontSize: 14, fontWeight: 700 }}>{a.title}</span>
+                </div>
+                <a href={buildHref(a.title, a.excerpt, a.slug)} target="_blank" rel="noreferrer" style={{ ...btn, padding: "7px 12px", textDecoration: "none" }}>
+                  <Send size={14} /> WhatsApp
+                </a>
+              </div>
+            ))}
+          </div>
+        )
+      })()}
 
       {/* Video scripts — copy or download each article formatted for narration */}
       <div style={{ ...card, display: "flex", flexDirection: "column", gap: 4 }}>

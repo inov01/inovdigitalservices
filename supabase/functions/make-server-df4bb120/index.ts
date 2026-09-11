@@ -498,7 +498,7 @@ async function sendMail(opts: { to: string | string[]; subject: string; html: st
   }
 }
 
-async function sendReceiptEmail(lead: any): Promise<void> {
+async function sendReceiptEmail(lead: any, subjectOverride?: string): Promise<void> {
   const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
   const first = String(lead.name ?? "").trim().split(/\s+/)[0] || "";
   const hello = first ? `Bonjour ${first},` : "Bonjour,";
@@ -518,9 +518,10 @@ async function sendReceiptEmail(lead: any): Promise<void> {
     `À très vite,`,
     `L'équipe ${displayName}`,
   ];
+  const subject = (subjectOverride ?? "").trim() || `Merci ${first ? first + " " : ""}! Voici votre reçu ${receiptNo(lead)}`;
   await sendMail({
     to: lead.email,
-    subject: `Merci ${first ? first + " " : ""}! Voici votre reçu ${receiptNo(lead)}`,
+    subject,
     text: textLines.join("\n"),
     html: buildReceiptHtml(lead),
   });
@@ -548,9 +549,10 @@ async function sendProformaEmail(p: any): Promise<void> {
     "À très vite,",
     `L'équipe ${displayName}`,
   ];
+  const subject = String(p.subject ?? "").trim() || `Votre facture proforma${no ? ` n° ${no}` : ""} — ${displayName}`;
   await sendMail({
     to: p.email,
-    subject: `Votre facture proforma${no ? ` n° ${no}` : ""} — ${displayName}`,
+    subject,
     text: textLines.join("\n"),
     html: p.html,
   });
@@ -588,9 +590,10 @@ async function sendDeliveryEmail(p: any): Promise<void> {
     "Merci de votre confiance,",
     `L'équipe ${displayName}`,
   ];
+  const subject = String(p.subject ?? "").trim() || `Votre bon de livraison${no ? ` n° ${no}` : ""} — ${displayName}`;
   await sendMail({
     to: p.email,
-    subject: `Votre bon de livraison${no ? ` n° ${no}` : ""} — ${displayName}`,
+    subject,
     text: textLines.join("\n"),
     html: p.html,
   });
@@ -912,11 +915,13 @@ app.post(`${P}/receipt/:id/send`, async (c) => {
   const u = await requireAdmin(c);
   if (u instanceof Response) return u;
   const id = c.req.param("id");
+  const body = await c.req.json().catch(() => ({} as any));
+  const subject = typeof body?.subject === "string" ? body.subject.slice(0, 200) : "";
   const lead = await kv.get(`lead:${id}`);
   if (!lead) return c.json({ error: "not found" }, 404);
   if (!isEmail(lead.email)) return c.json({ error: "client has no valid email" }, 400);
   try {
-    await sendReceiptEmail(lead);
+    await sendReceiptEmail(lead, subject);
   } catch (e) {
     return c.json({ error: `email failed: ${String((e as any)?.message ?? e)}` }, 502);
   }

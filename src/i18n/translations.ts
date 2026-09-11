@@ -28,7 +28,7 @@ const en: Dict = {
   loader: { loading: "Loading…" },
   hero: {
     slides: [
-      { tag: "Digital Creative Agency — Haiti", title: "Your brand deserves **exceptional** design\nthat truly sets you apart.", sub: "INOV Digital Services builds visual identities, animations and marketing strategies that propel your business into today's digital economy." },
+      { tag: "Visual Communication Studio — Haiti", title: "Your brand deserves **exceptional** design\nthat truly sets you apart.", sub: "INOV Digital Services builds visual identities, logos and communication materials that give your business a strong, consistent image." },
       { tag: "Design · Motion · Branding", title: "A logo isn't enough —\nyou need a complete **identity**.", sub: "Logo, packaging, motion design, social media… We craft every piece of your visual world so they speak with a single voice." },
       { tag: "Delivery in 48h – 1 month", title: "Visuals delivered **fast**,\nwithout sacrificing quality.", sub: "Flyer in 48h, logo in 1 week, complete branding in 1 month. Clear deadlines, always met, with 3 rounds of revisions included." },
       { tag: "20+ brands · 80+ visuals", title: "Proven results for\n**Haitian** brands.", sub: "Over 20 businesses have trusted us to build their image. Designs that work in the real world, not just on screen." },
@@ -42,7 +42,7 @@ const en: Dict = {
   services: {
     tag: "Our Services",
     title: "What we create for you",
-    subtitle: "From visual identity to digital marketing — every service is built to make your brand shine.",
+    subtitle: "From visual identity to the design of your materials — every service is built to make your brand shine.",
     from: "Starting at",
     order: "Order",
     seeExample: "See an example",
@@ -350,7 +350,7 @@ const en: Dict = {
     address: "Pétion-Ville, Haiti",
   },
   footer: {
-    brandDesc: "Digital creative agency based in Haiti. Branding, motion design and digital marketing to propel your brand.",
+    brandDesc: "Visual communication studio based in Haiti. Branding, logos, motion design and visual materials to give your brand a strong image.",
     navigation: "Navigation",
     contact: "Contact",
     location: "Pétion-Ville, Haiti\nClients in Haiti, Canada and worldwide",
@@ -366,7 +366,7 @@ const es: Dict = {
   loader: { loading: "Cargando…" },
   hero: {
     slides: [
-      { tag: "Agencia Creativa Digital — Haití", title: "Tu marca merece un diseño **excepcional**\nque de verdad te distinga.", sub: "INOV Digital Services crea identidades visuales, animaciones y estrategias de marketing que impulsan tu empresa en la economía digital de hoy." },
+      { tag: "Estudio de Comunicación Visual — Haití", title: "Tu marca merece un diseño **excepcional**\nque de verdad te distinga.", sub: "INOV Digital Services crea identidades visuales, logos y materiales de comunicación que dan a tu empresa una imagen fuerte y coherente." },
       { tag: "Diseño · Motion · Branding", title: "Un logo no basta —\nnecesitas una **identidad** completa.", sub: "Logo, packaging, motion design, redes sociales… Construimos cada pieza de tu universo visual para que hablen con una sola voz." },
       { tag: "Entrega en 48h – 1 mes", title: "Visuales entregados **rápido**,\nsin sacrificar la calidad.", sub: "Flyer en 48h, logo en 1 semana, branding completo en 1 mes. Plazos claros y cumplidos, con 3 rondas de revisiones incluidas." },
       { tag: "20+ marcas · 80+ visuales", title: "Resultados probados para\nlas marcas **haitianas**.", sub: "Más de 20 empresas han confiado en nosotros para construir su imagen. Diseños que funcionan en el terreno, no solo en pantalla." },
@@ -380,7 +380,7 @@ const es: Dict = {
   services: {
     tag: "Nuestros Servicios",
     title: "Lo que creamos para ti",
-    subtitle: "De la identidad visual al marketing digital — cada servicio está diseñado para hacer brillar tu marca.",
+    subtitle: "De la identidad visual al diseño de tus materiales — cada servicio está diseñado para hacer brillar tu marca.",
     from: "Desde",
     order: "Pedir",
     seeExample: "Ver un ejemplo",
@@ -688,7 +688,7 @@ const es: Dict = {
     address: "Pétion-Ville, Haití",
   },
   footer: {
-    brandDesc: "Agencia creativa digital con sede en Haití. Branding, motion design y marketing digital para impulsar tu marca.",
+    brandDesc: "Estudio de comunicación visual con sede en Haití. Branding, logos, motion design y materiales visuales para dar a tu marca una imagen fuerte.",
     navigation: "Navegación",
     contact: "Contacto",
     location: "Pétion-Ville, Haití\nClientes en Haití, Canadá y en todo el mundo",
@@ -704,7 +704,7 @@ const ht: Dict = {
   loader: { loading: "N ap chaje…" },
   hero: {
     slides: [
-      { tag: "Ajans Kreyatif Dijital — Ayiti", title: "Mak ou merite yon design **eksepsyonèl**\nki fè w reyèlman distenge.", sub: "INOV Digital Services kreye idantite vizyèl, animasyon ak estrateji maketing ki pouse antrepriz ou nan ekonomi dijital jodi a." },
+      { tag: "Estidyo Kominikasyon Vizyèl — Ayiti", title: "Mak ou merite yon design **eksepsyonèl**\nki fè w reyèlman distenge.", sub: "INOV Digital Services kreye idantite vizyèl, logo ak sipò kominikasyon ki bay antrepriz ou yon imaj solid e koyeran." },
       { tag: "Design · Motion · Branding", title: "Yon logo pa ase —\nou bezwen yon **idantite** konplè.", sub: "Logo, anbalaj, motion design, rezo sosyal… Nou konstwi chak moso nan inivè vizyèl ou pou yo pale ak yon sèl vwa." },
       { tag: "Livrezon 48è – 1 mwa", title: "Vizyèl livre **vit**,\nsan sakrifye kalite a.", sub: "Flyer nan 48è, logo nan 1 semèn, branding konplè nan 1 mwa. Delè klè, respekte, ak 3 wonn revizyon ki enkli." },
       { tag: "20+ mak · 80+ vizyèl", title: "Rezilta pwouve pou\nmak **ayisyen** yo.", sub: "Plis pase 20 antrepriz fè nou konfyans pou bati imaj yo. Design ki mache sou teren an, pa sèlman sou ekran." },
@@ -718,7 +718,7 @@ const ht: Dict = {
   services: {
     tag: "Sèvis Nou Yo",
     title: "Sa nou kreye pou ou",
-    subtitle: "Soti nan idantite vizyèl rive nan maketing dijital — chak sèvis fèt pou fè mak ou klere.",
+    subtitle: "Soti nan idantite vizyèl rive nan design sipò ou yo — chak sèvis fèt pou fè mak ou klere.",
     from: "Apati",
     order: "Kòmande",
     seeExample: "Gade yon egzanp",
@@ -1026,7 +1026,7 @@ const ht: Dict = {
     address: "Pétion-Ville, Ayiti",
   },
   footer: {
-    brandDesc: "Ajans kreyatif dijital ki baze an Ayiti. Branding, motion design ak maketing dijital pou pouse mak ou.",
+    brandDesc: "Estidyo kominikasyon vizyèl ki baze an Ayiti. Branding, logo, motion design ak sipò vizyèl pou bay mak ou yon imaj solid.",
     navigation: "Navigasyon",
     contact: "Kontak",
     location: "Pétion-Ville, Ayiti\nKliyan ann Ayiti, nan Kanada ak nan lemond antye",

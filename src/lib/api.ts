@@ -344,9 +344,10 @@ export const adminApi = {
     })
   },
   // Emails the branded receipt for a lead/payment to the client (Gmail SMTP).
-  sendReceipt(id: string) {
+  sendReceipt(id: string, subject?: string) {
     return auth<{ ok: boolean; sentTo: string }>(`/receipt/${id}/send`, {
       method: "POST",
+      body: JSON.stringify({ subject: subject ?? "" }),
     })
   },
   // AI assistant (Gemini). Sends the running conversation; optionally grounds the

@@ -7,7 +7,7 @@ const de: Dict = {
   loader: { loading: "Wird geladen…" },
   hero: {
     slides: [
-      { tag: "Digitale Kreativagentur — Haiti", title: "Ihre Marke verdient **außergewöhnliches** Design,\ndas Sie wirklich abhebt.", sub: "INOV Digital Services schafft visuelle Identitäten, Animationen und Marketingstrategien, die Ihr Unternehmen in die digitale Wirtschaft von heute katapultieren." },
+      { tag: "Studio für visuelle Kommunikation — Haiti", title: "Ihre Marke verdient **außergewöhnliches** Design,\ndas Sie wirklich abhebt.", sub: "INOV Digital Services schafft visuelle Identitäten, Logos und Kommunikationsmittel, die Ihrem Unternehmen ein starkes und stimmiges Image verleihen." },
       { tag: "Design · Motion · Branding", title: "Ein Logo reicht nicht —\nSie brauchen eine vollständige **Identität**.", sub: "Logo, Verpackung, Motion Design, soziale Netzwerke… Wir gestalten jedes Element Ihrer visuellen Welt, damit sie mit einer Stimme sprechen." },
       { tag: "Lieferung 48 Std. – 1 Monat", title: "Visuals **schnell** geliefert,\nohne Kompromisse bei der Qualität.", sub: "Flyer in 48 Std., Logo in 1 Woche, komplettes Branding in 1 Monat. Klare, eingehaltene Fristen mit 3 inbegriffenen Korrekturrunden." },
       { tag: "20+ Marken · 80+ Visuals", title: "Bewährte Ergebnisse für\n**haitianische** Marken.", sub: "Über 20 Unternehmen haben uns den Aufbau ihres Images anvertraut. Designs, die im echten Leben funktionieren, nicht nur auf dem Bildschirm." },
@@ -21,7 +21,7 @@ const de: Dict = {
   services: {
     tag: "Unsere Leistungen",
     title: "Was wir für Sie schaffen",
-    subtitle: "Von der visuellen Identität bis zum digitalen Marketing — jede Leistung ist darauf ausgelegt, Ihre Marke zum Strahlen zu bringen.",
+    subtitle: "Von der visuellen Identität bis zur Gestaltung Ihrer Kommunikationsmittel — jede Leistung ist darauf ausgelegt, Ihre Marke zum Strahlen zu bringen.",
     from: "Ab",
     order: "Bestellen",
     seeExample: "Beispiel ansehen",
@@ -329,7 +329,7 @@ const de: Dict = {
     address: "Pétion-Ville, Haiti",
   },
   footer: {
-    brandDesc: "Digitale Kreativagentur mit Sitz in Haiti. Branding, Motion Design und digitales Marketing, um Ihre Marke voranzubringen.",
+    brandDesc: "Studio für visuelle Kommunikation mit Sitz in Haiti. Branding, Logos, Motion Design und visuelle Kommunikationsmittel, um Ihrer Marke ein starkes Image zu verleihen.",
     navigation: "Navigation",
     contact: "Kontakt",
     location: "Pétion-Ville, Haiti\nKunden in Haiti, Kanada und international",

@@ -483,12 +483,35 @@ textarea:focus-visible {
   box-shadow: 0 8px 22px rgba(var(--ds-accent-rgb), 0.4);
 }
 .btn-orange {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  color: #fff;
   background: var(--ds-accent-btn-grad);
+  border: none;
+  border-radius: var(--r-full);
+  font-family: var(--font-outfit);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(var(--ds-accent-rgb), 0.32);
   transition: filter 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 .btn-orange:hover,
 .btn-orange:focus-visible {
   filter: brightness(1.06);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(var(--ds-accent-rgb), 0.42);
+}
+.btn-orange:disabled {
+  transform: none;
+  filter: none;
+  box-shadow: 0 6px 18px rgba(var(--ds-accent-rgb), 0.22);
 }
 .footer-link {
   color: rgba(255,255,255,0.72);

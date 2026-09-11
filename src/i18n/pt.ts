@@ -7,7 +7,7 @@ const pt: Dict = {
   loader: { loading: "Carregando…" },
   hero: {
     slides: [
-      { tag: "Agência Criativa Digital — Haiti", title: "Sua marca merece um design **excepcional**\nque realmente destaque você.", sub: "A INOV Digital Services cria identidades visuais, animações e estratégias de marketing que impulsionam sua empresa na economia digital de hoje." },
+      { tag: "Estúdio de Comunicação Visual — Haiti", title: "Sua marca merece um design **excepcional**\nque realmente destaque você.", sub: "A INOV Digital Services cria identidades visuais, logos e materiais de comunicação que dão à sua empresa uma imagem forte e coerente." },
       { tag: "Design · Motion · Branding", title: "Um logotipo não basta —\nvocê precisa de uma **identidade** completa.", sub: "Logotipo, embalagem, motion design, redes sociais… Construímos cada peça do seu universo visual para que falem com uma só voz." },
       { tag: "Entrega em 48h – 1 mês", title: "Visuais entregues **rápido**,\nsem sacrificar a qualidade.", sub: "Flyer em 48h, logotipo em 1 semana, branding completo em 1 mês. Prazos claros, cumpridos, com 3 rodadas de revisões incluídas." },
       { tag: "20+ marcas · 80+ visuais", title: "Resultados comprovados para\nas marcas **haitianas**.", sub: "Mais de 20 empresas confiaram em nós para construir sua imagem. Designs que funcionam na prática, não apenas na tela." },
@@ -21,7 +21,7 @@ const pt: Dict = {
   services: {
     tag: "Nossos Serviços",
     title: "O que criamos para você",
-    subtitle: "Da identidade visual ao marketing digital — cada serviço é feito para fazer sua marca brilhar.",
+    subtitle: "Da identidade visual ao design dos seus materiais — cada serviço é feito para fazer sua marca brilhar.",
     from: "A partir de",
     order: "Encomendar",
     seeExample: "Ver um exemplo",
@@ -329,7 +329,7 @@ const pt: Dict = {
     address: "Pétion-Ville, Haiti",
   },
   footer: {
-    brandDesc: "Agência criativa digital baseada no Haiti. Branding, motion design e marketing digital para impulsionar sua marca.",
+    brandDesc: "Estúdio de comunicação visual baseado no Haiti. Branding, logos, motion design e materiais visuais para dar à sua marca uma imagem forte.",
     navigation: "Navegação",
     contact: "Contato",
     location: "Pétion-Ville, Haiti\nClientes no Haiti, no Canadá e no cenário internacional",

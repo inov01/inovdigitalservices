@@ -7,7 +7,7 @@ const fr = {
   loader: { loading: "Chargement en cours…" },
   hero: {
     slides: [
-      { tag: "Agence Créative Digitale — Haïti", title: "Votre marque mérite un design **exceptionnel**\nqui vous démarque vraiment.", sub: "INOV Digital Services crée des identités visuelles, animations et stratégies marketing qui propulsent votre entreprise dans l'économie numérique d'aujourd'hui." },
+      { tag: "Studio de Communication Visuelle — Haïti", title: "Votre marque mérite un design **exceptionnel**\nqui vous démarque vraiment.", sub: "INOV Digital Services crée des identités visuelles, logos et supports de communication qui donnent à votre entreprise une image forte et cohérente." },
       { tag: "Design · Motion · Branding", title: "Un logo ne suffit pas —\nil vous faut une **identité** complète.", sub: "Logo, packaging, motion design, réseaux sociaux… Nous construisons chaque pièce de votre univers visuel pour qu'elles parlent d'une seule voix." },
       { tag: "Livraison 48h – 1 mois", title: "Des visuels livrés **vite**,\nsans sacrifier la qualité.", sub: "Flyer en 48h, logo en 1 semaine, branding complet en 1 mois. Des délais clairs, tenus, avec 3 rounds de révisions inclus." },
       { tag: "20+ marques · 80+ visuels", title: "Des résultats prouvés pour\nles marques **haïtiennes**.", sub: "Plus de 20 entreprises nous ont fait confiance pour bâtir leur image. Des designs qui fonctionnent sur le terrain, pas juste à l'écran." },
@@ -21,7 +21,7 @@ const fr = {
   services: {
     tag: "Nos Services",
     title: "Ce que nous créons pour vous",
-    subtitle: "De l'identité visuelle au marketing digital — chaque service est conçu pour faire rayonner votre marque.",
+    subtitle: "De l'identité visuelle au design de vos supports — chaque service est conçu pour faire rayonner votre marque.",
     from: "À partir de",
     order: "Commander",
     orderText: "Bonjour INOV Digital Services ! 👋 Je suis intéressé(e) par votre service « {service} ». Pouvez-vous m'envoyer un devis ?",
@@ -329,7 +329,7 @@ const fr = {
     address: "Pétion-Ville, Haïti",
   },
   footer: {
-    brandDesc: "Agence créative digitale basée en Haïti. Branding, motion design et marketing digital pour propulser votre marque.",
+    brandDesc: "Studio de communication visuelle basé en Haïti. Branding, logos, motion design et supports visuels pour donner à votre marque une image forte.",
     navigation: "Navigation",
     contact: "Contact",
     location: "Pétion-Ville, Haïti\nClients en Haïti, au Canada et à l'international",
