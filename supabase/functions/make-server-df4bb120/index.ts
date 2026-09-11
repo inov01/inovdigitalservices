@@ -116,7 +116,7 @@ const ADMIN_EMAILS = ENV_ADMINS.length ? ENV_ADMINS : DEFAULT_ADMINS;
 
 // Public site URL + a stable (non-hashed) logo asset served from /public, used
 // to brand every outgoing e-mail. Overridable via env for staging domains.
-const SITE_URL = (Deno.env.get("SITE_URL") ?? "https://inovdigitalservices.com").replace(/\/+$/, "");
+const SITE_URL = (Deno.env.get("SITE_URL") ?? "https://inov-digital-services.vercel.app").replace(/\/+$/, "");
 const EMAIL_LOGO = `${SITE_URL}/email-logo.webp`;
 
 // Shared secret guarding the scheduled-newsletter dispatch endpoint (called by a

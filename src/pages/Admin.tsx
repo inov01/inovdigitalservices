@@ -23,7 +23,11 @@ import { LANGS, type Lang } from "../i18n/translations"
 import { REGIONS, type RegionCode } from "../data/regions"
 
 // Public site + stable (non-hashed) logo assets for branding e-mails.
-const SITE_URL = "https://inovdigitalservices.com"
+// Public site URL used to build absolute image/link URLs inside emails. Must be a
+// domain that actually serves the assets (the custom domain inovdigitalservices.com
+// currently returns 530), otherwise email logos/links break. Update here (and the
+// SITE_URL env var of the Supabase function) once the custom domain is live.
+const SITE_URL = "https://inov-digital-services.vercel.app"
 const EMAIL_LOGO_DARK = `${SITE_URL}/email-logo-dark.webp`
 const NL_LANGS: { code: string; label: string }[] = [
   { code: "all", label: "Toutes les langues" },
@@ -2041,7 +2045,7 @@ function buildNewsletterHtml(args: { subject: string; intro: string; articles: N
         <tr><td style="background:#fff;border-radius:0 0 14px 14px;padding:8px 32px 34px;border-top:1px solid #eee;">
           <div style="font-size:13px;line-height:1.7;color:#888;text-align:center;padding-top:22px;">
             <strong style="color:#111;">INOV Digital Services</strong><br>
-            Branding · Web · Vidéo · Print &nbsp;·&nbsp; (+509) 3625-5920<br>
+            Branding · Logo Design · Social Media Post Design · Design Web &amp; UI/UX · Vidéo &nbsp;·&nbsp; (+509) 3625-5920<br>
             <a href="https://www.instagram.com/inov_digital_services" style="color:#F7931E;text-decoration:none;">Instagram</a> &nbsp;·&nbsp;
             <a href="${esc(SITE_URL)}" style="color:#F7931E;text-decoration:none;">Site web</a><br>
             <span style="font-size:11.5px;color:#aaa;">Vous recevez cet e-mail car vous êtes abonné(e) à notre newsletter.</span>
