@@ -16,8 +16,9 @@ export default defineConfig(({ mode }) => {
     build: {
       sourcemap: emitSourcemaps ? 'inline' : false,
       // Always minify — sourcemaps and minification can coexist, so preview
-      // builds (which emit sourcemaps) still ship a minified bundle.
-      minify: 'esbuild',
+      // builds (which emit sourcemaps) still ship a minified bundle. Use the
+      // built-in (oxc) minifier: Vite 8 / rolldown does not bundle esbuild.
+      minify: true,
       // Split the bundle so each chunk carries a smaller (inline) sourcemap.
       // This keeps the Figma Make design surface from timing out while it
       // resolves source positions for above-the-fold elements.
