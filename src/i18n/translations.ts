@@ -2,10 +2,6 @@
 // Rich strings use **word** for an orange highlight and \n for a line break (see renderRich).
 // FR is the base leaf module (defines Dict); EN/ES/HT live inline below; PT/IT/DE/AR have their own files.
 import fr, { type Dict } from "./fr"
-import pt from "./pt"
-import it from "./it"
-import de from "./de"
-import ar from "./ar"
 
 export type Lang = "fr" | "en" | "es" | "ht" | "pt" | "it" | "de" | "ar"
 
@@ -1037,4 +1033,37 @@ const ht: Dict = {
 
 export type { Dict } from "./fr"
 
-export const translations: Record<Lang, Dict> = { fr, en, es, ht, pt, it, de, ar }
+const ALL: Lang[] = ["fr", "en", "es", "ht", "pt", "it", "de", "ar"]
+
+/** Type guard for a stored/URL language code. */
+export function isLang(x: string | null | undefined): x is Lang {
+  return !!x && (ALL as string[]).includes(x)
+}
+
+// Languages bundled in the initial payload (primary FR + inlined EN/ES/HT).
+// The remaining leaf modules load on demand to keep first-load JS small — a
+// French visitor no longer downloads Arabic, German, Italian and Portuguese.
+export const EAGER: Partial<Record<Lang, Dict>> = { fr, en, es, ht }
+
+const LAZY: Record<"pt" | "it" | "de" | "ar", () => Promise<{ default: Dict }>> = {
+  pt: () => import("./pt"),
+  it: () => import("./it"),
+  de: () => import("./de"),
+  ar: () => import("./ar"),
+}
+
+const loaded: Partial<Record<Lang, Dict>> = {}
+
+/** The dict for a language if already available (eager or previously fetched). */
+export function getDict(lang: Lang): Dict | undefined {
+  return EAGER[lang] ?? loaded[lang]
+}
+
+/** Resolve a language dict, dynamically importing lazy languages once. */
+export async function loadDict(lang: Lang): Promise<Dict> {
+  const ready = getDict(lang)
+  if (ready) return ready
+  const mod = await LAZY[lang as "pt" | "it" | "de" | "ar"]()
+  loaded[lang] = mod.default
+  return mod.default
+}

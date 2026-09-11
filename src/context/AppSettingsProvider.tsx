@@ -1,5 +1,5 @@
 import { useState, useEffect, type ReactNode } from "react"
-import { translations, type Lang } from "../i18n/translations"
+import { EAGER, getDict, loadDict, isLang, type Lang, type Dict } from "../i18n/translations"
 import { Ctx, CURRENCIES, FALLBACK_RATES, LANG_DEFAULT_CURRENCY, RTL_LANGS, type CurrencyCode } from "./AppSettings"
 import { REGIONS, regionForCountry, type RegionCode } from "../data/regions"
 import { applySeo } from "../lib/seo"
@@ -9,10 +9,10 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     // Priority: ?lang= in the URL (shareable, crawlable) → saved choice → default.
     if (typeof window !== "undefined") {
       const urlLang = new URLSearchParams(window.location.search).get("lang")
-      if (urlLang && urlLang in translations) return urlLang as Lang
+      if (isLang(urlLang)) return urlLang
     }
     const saved = typeof localStorage !== "undefined" ? localStorage.getItem("inov-lang") : null
-    return saved && saved in translations ? (saved as Lang) : "en"
+    return isLang(saved) ? saved : "en"
   })
   const [currency, setCurrencyState] = useState<CurrencyCode>(() => {
     // A dedicated per-country share link (?currency=) wins, then the saved choice.
@@ -23,6 +23,9 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     const saved = typeof localStorage !== "undefined" ? localStorage.getItem("inov-currency") : null
     return saved && saved in CURRENCIES ? (saved as CurrencyCode) : "USD"
   })
+  // Active dictionary. Eager languages (fr/en/es/ht) resolve synchronously; lazy
+  // ones (pt/it/de/ar) fall back to FR until their module finishes loading.
+  const [t, setT] = useState<Dict>(() => getDict(lang) ?? EAGER.fr!)
   const [rates, setRates] = useState<Record<CurrencyCode, number>>(FALLBACK_RATES)
   const [region, setRegionState] = useState<RegionCode>(() => {
     // ?region= on a dedicated per-country link wins, then the saved choice.
@@ -94,6 +97,19 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("inov-currency-set", "1")
     } catch {}
   }
+
+  // Load the active dictionary — synchronously for eager languages, otherwise
+  // dynamically import the leaf module and swap it in (FR shows meanwhile).
+  useEffect(() => {
+    let cancelled = false
+    const ready = getDict(lang)
+    if (ready) {
+      setT(ready)
+      return
+    }
+    loadDict(lang).then((d) => { if (!cancelled) setT(d) }).catch(() => {})
+    return () => { cancelled = true }
+  }, [lang])
 
   // Keep the document's language + text direction in sync with the active language.
   useEffect(() => {
@@ -218,8 +234,6 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
   function revisionsFor(revisions: number) {
     return Math.max(1, Math.round(revisions))
   }
-
-  const t = translations[lang]
 
   return (
     <Ctx.Provider value={{ lang, setLang, t, currency, setCurrency, rates, fmt, region, setRegion, priceFor, revisionDaysFor, revisionsFor }}>

@@ -2,7 +2,7 @@
   "title": "INOV Digital Services",
   "description": "INOV Digital Services : branding, logos, packaging, affiches et motion design. 20+ marques accompagnées, 80+ visuels livrés. Livraison dès 48h.",
   "robots": {
-    "index": false
+    "index": true
   },
   "accessibility": {
     "addBypassLinks": false,

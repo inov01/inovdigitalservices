@@ -158,7 +158,7 @@ export default function Footer() {
             <Link to="/blog" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.blog}</Link>
             <Link to="/mentions-legales" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.terms}</Link>
             <Link to="/confidentialite" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.privacy}</Link>
-            <Link to="/collaborateur" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12.5, textDecoration: "none", color: "rgba(255,255,255,0.5)" }}>{legal.collaborateur}</Link>
+            <Link to="/collaborateur" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12.5, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.collaborateur}</Link>
           </div>
         </div>
       </div>

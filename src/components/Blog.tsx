@@ -6727,7 +6727,17 @@ export default function Blog() {
             <article
               key={a.id}
               className="card blog-card-hover"
+              role="button"
+              tabIndex={0}
+              aria-label={`${ui.cta}: ${a.title}`}
               onClick={() => { track("blog_read", { article: a.id, from: "section_modal" }); setOpenId(a.id) }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  track("blog_read", { article: a.id, from: "section_modal" })
+                  setOpenId(a.id)
+                }
+              }}
               style={{ cursor: "pointer", display: "flex", flexDirection: "column", boxSizing: "border-box", height: "100%", overflow: "hidden", padding: 0 }}
             >
               {/* Cover image */}

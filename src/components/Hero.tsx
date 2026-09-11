@@ -169,9 +169,7 @@ export default function Hero() {
         .hero-btn-primary {
           display: inline-flex; align-items: center; justify-content: center; gap: 9px;
           padding: 15px 30px;
-          background: rgba(var(--ds-accent-rgb),0.62);
-          backdrop-filter: blur(14px) saturate(1.6);
-          -webkit-backdrop-filter: blur(14px) saturate(1.6);
+          background: var(--ds-accent-btn-grad);
           color: #fff;
           text-shadow: 0 1px 2px rgba(0,0,0,0.25);
           border-radius: var(--r-full);
@@ -181,7 +179,7 @@ export default function Hero() {
           box-shadow: 0 8px 32px rgba(var(--ds-accent-rgb),0.28), inset 0 1px 0 rgba(255,255,255,0.4);
           transition: all 0.25s ease;
         }
-        .hero-btn-primary:hover { background: rgba(var(--ds-accent-rgb),0.75); transform: translateY(-2px); box-shadow: 0 14px 40px rgba(var(--ds-accent-rgb),0.4), inset 0 1px 0 rgba(255,255,255,0.5); }
+        .hero-btn-primary:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 14px 40px rgba(var(--ds-accent-rgb),0.4), inset 0 1px 0 rgba(255,255,255,0.5); }
         .hero-btn-ghost {
           display: inline-flex; align-items: center; justify-content: center; gap: 9px;
           padding: 14px 28px;

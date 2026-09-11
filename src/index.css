@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-
+/* Fonts are loaded via <link rel="preconnect"> + <link rel="stylesheet"> in
+   index.html (non-render-blocking discovery), not a CSS @import. */
 @import 'tailwindcss';
 
 :root {
@@ -354,36 +354,7 @@ textarea:focus-visible {
   transition: max-height 0.35s ease;
 }
 .faq-content.open {
-  max-height: 400px;
-}
-
-/* Portfolio lightbox */
-.lightbox {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-}
-.lightbox.open {
-  opacity: 1;
-  pointer-events: all;
-}
-
-/* Accordion list */
-.accordion-list {
-  max-height: 280px;
-  overflow: hidden;
-  transition: max-height 0.4s ease;
-}
-.accordion-list.open {
-  max-height: 3000px;
+  max-height: 1200px;
 }
 
 /* Pricing stepper */

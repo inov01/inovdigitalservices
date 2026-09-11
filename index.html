@@ -6,12 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>INOV Digital Services — Branding, Logos &amp; Design</title>
 
-    <!-- SEO — static defaults are English (the app's default language / x-default);
+    <!-- SEO — static defaults match the site's primary language (fr = <html lang>);
          applySeo() rewrites title/description/OG/canonical/hreflang per language on load. -->
-    <meta name="description" content="Branding studio: logos, packaging, posters, motion design and web &amp; UI/UX design. 20+ brands, 80+ visuals delivered. Delivery from 48h." />
+    <meta name="description" content="Studio de branding en Haïti : logos, packaging, affiches, motion design et design web &amp; UI/UX. 20+ marques, 80+ visuels livrés. Livraison dès 48h." />
     <meta name="theme-color" content="#f7601b" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" />
+    <link rel="canonical" href="https://inovdigitalservices.com/" />
+
+    <!-- Fonts — preconnect first so the browser opens the TLS connection early,
+         then fetch the stylesheet (not a render-blocking CSS @import). -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"
+    />
 
     <!-- Icons & PWA manifest -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -24,16 +33,16 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="INOV Digital Services" />
     <meta property="og:title" content="INOV Digital Services — Branding, Logos &amp; Design" />
-    <meta property="og:description" content="Branding studio: logos, packaging, posters, motion design and web &amp; UI/UX design. 20+ brands, 80+ visuals delivered. Delivery from 48h." />
-    <meta property="og:image" content="/og-image.png" />
-    <meta property="og:url" content="/" />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:description" content="Studio de branding en Haïti : logos, packaging, affiches, motion design et design web &amp; UI/UX. 20+ marques, 80+ visuels livrés. Livraison dès 48h." />
+    <meta property="og:image" content="https://inovdigitalservices.com/og-image.png" />
+    <meta property="og:url" content="https://inovdigitalservices.com/" />
+    <meta property="og:locale" content="fr_FR" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="INOV Digital Services — Branding, Logos &amp; Design" />
-    <meta name="twitter:description" content="Branding studio: logos, packaging, posters, motion design and web &amp; UI/UX design. 20+ brands, 80+ visuals delivered. Delivery from 48h." />
-    <meta name="twitter:image" content="/og-image.png" />
+    <meta name="twitter:description" content="Studio de branding en Haïti : logos, packaging, affiches, motion design et design web &amp; UI/UX. 20+ marques, 80+ visuels livrés. Livraison dès 48h." />
+    <meta name="twitter:image" content="https://inovdigitalservices.com/og-image.png" />
 
     <!-- Structured data + absolute URLs, resolved against the live origin so no
          domain is hard-coded. Injected into <head> only — no visible effect. -->

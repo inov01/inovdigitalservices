@@ -6,7 +6,7 @@ import path from 'node:path'
 import siteConfiguration from './.figma/make/site.json'
 
 // Vite config — https://vitejs.dev/config/
-// (i18n split into per-language leaf modules; touch to force a clean dev restart.)
+// (i18n split into per-language leaf modules; pt/it/de/ar load lazily. Touch to force a clean dev restart.)
 export default defineConfig(({ mode }) => {
   // .figma/make/deploy-preview passes `--mode development` for cached-preview builds.
   const emitSourcemaps = mode === 'development'
@@ -15,7 +15,9 @@ export default defineConfig(({ mode }) => {
     base: process.env.FIGMA_PUBLIC_URL ? `${process.env.FIGMA_PUBLIC_URL}/` : '/',
     build: {
       sourcemap: emitSourcemaps ? 'inline' : false,
-      minify: !emitSourcemaps,
+      // Always minify — sourcemaps and minification can coexist, so preview
+      // builds (which emit sourcemaps) still ship a minified bundle.
+      minify: 'esbuild',
       // Split the bundle so each chunk carries a smaller (inline) sourcemap.
       // This keeps the Figma Make design surface from timing out while it
       // resolves source positions for above-the-fold elements.
@@ -146,22 +148,30 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
         result = replaceHtmlCommentSlot(result, 'figma:body-end', bodyEnd)
 
         const tags: HtmlTagDescriptor[] = []
-        if (description) {
+        // Idempotent injection: the static index.html already ships richer SEO
+        // defaults, so only add a tag when the shell doesn't already declare it.
+        // This prevents shipping duplicate/conflicting <meta> tags in the HTML.
+        const hasMetaName = (name: string) =>
+          new RegExp(`<meta[^>]+name=["']${name}["']`, 'i').test(result)
+        const hasMetaProp = (prop: string) =>
+          new RegExp(`<meta[^>]+property=["']${prop}["']`, 'i').test(result)
+
+        if (description && !hasMetaName('description')) {
           tags.push({ tag: 'meta', attrs: { name: 'description', content: description }, injectTo: 'head' })
         }
-        if (config.robots?.index === false) {
+        if (config.robots?.index === false && !hasMetaName('robots')) {
           tags.push({ tag: 'meta', attrs: { name: 'robots', content: 'noindex, nofollow' }, injectTo: 'head' })
         }
         if (favicon) {
           tags.push({ tag: 'link', attrs: { rel: 'icon', href: favicon }, injectTo: 'head' })
         }
-        if (title) {
+        if (title && !hasMetaProp('og:title')) {
           tags.push({ tag: 'meta', attrs: { property: 'og:title', content: title }, injectTo: 'head' })
         }
-        if (description) {
+        if (description && !hasMetaProp('og:description')) {
           tags.push({ tag: 'meta', attrs: { property: 'og:description', content: description }, injectTo: 'head' })
         }
-        if (socialImage) {
+        if (socialImage && !hasMetaProp('og:image')) {
           tags.push(
             { tag: 'meta', attrs: { property: 'og:image', content: socialImage }, injectTo: 'head' },
             { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' }, injectTo: 'head' },
