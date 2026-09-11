@@ -40,14 +40,14 @@ const NL_LANGS: { code: string; label: string }[] = [
 // selected blog article(s) so each newsletter's accompanying message matches the
 // blog it promotes (unless the admin edits it manually).
 const NL_INTRO: Record<string, { empty: string; single: (t: string, e: string) => string; multi: (n: number) => string }> = {
-  fr: { empty: "Bonjour,\n\nVoici nos derniers conseils pour faire grandir votre marque 👇", single: (t, e) => `Bonjour,\n\n${e}\n\nNous en parlons en détail dans notre article « ${t} » 👇`, multi: (n) => `Bonjour,\n\nVoici ${n} nouveaux conseils pour faire grandir votre marque 👇` },
-  en: { empty: "Hello,\n\nHere are our latest tips to grow your brand 👇", single: (t, e) => `Hello,\n\n${e}\n\nWe cover it in detail in our article "${t}" 👇`, multi: (n) => `Hello,\n\nHere are ${n} fresh tips to grow your brand 👇` },
-  es: { empty: "Hola,\n\nAquí tienes nuestros últimos consejos para hacer crecer tu marca 👇", single: (t, e) => `Hola,\n\n${e}\n\nLo explicamos en detalle en nuestro artículo «${t}» 👇`, multi: (n) => `Hola,\n\nAquí tienes ${n} nuevos consejos para hacer crecer tu marca 👇` },
-  ht: { empty: "Bonjou,\n\nMen dènye konsèy nou yo pou fè mak ou grandi 👇", single: (t, e) => `Bonjou,\n\n${e}\n\nNou pale sou li an detay nan atik nou an « ${t} » 👇`, multi: (n) => `Bonjou,\n\nMen ${n} nouvo konsèy pou fè mak ou grandi 👇` },
-  pt: { empty: "Olá,\n\nAqui estão nossas últimas dicas para fazer sua marca crescer 👇", single: (t, e) => `Olá,\n\n${e}\n\nFalamos disso em detalhe no nosso artigo «${t}» 👇`, multi: (n) => `Olá,\n\nAqui estão ${n} novas dicas para fazer sua marca crescer 👇` },
-  it: { empty: "Ciao,\n\nEcco i nostri ultimi consigli per far crescere il tuo brand 👇", single: (t, e) => `Ciao,\n\n${e}\n\nNe parliamo in dettaglio nel nostro articolo «${t}» 👇`, multi: (n) => `Ciao,\n\nEcco ${n} nuovi consigli per far crescere il tuo brand 👇` },
-  de: { empty: "Hallo,\n\nHier sind unsere neuesten Tipps für Ihr Markenwachstum 👇", single: (t, e) => `Hallo,\n\n${e}\n\nWir gehen darauf ausführlich in unserem Artikel „${t}“ ein 👇`, multi: (n) => `Hallo,\n\nHier sind ${n} neue Tipps für Ihr Markenwachstum 👇` },
-  ar: { empty: "مرحبًا،\n\nإليك أحدث نصائحنا لتنمية علامتك التجارية 👇", single: (t, e) => `مرحبًا،\n\n${e}\n\nنتناول ذلك بالتفصيل في مقالنا «${t}» 👇`, multi: (n) => `مرحبًا،\n\nإليك ${n} نصائح جديدة لتنمية علامتك التجارية 👇` },
+  fr: { empty: "Bonjour,\n\nVoici nos derniers conseils pour faire grandir votre marque", single: (t, e) => `Bonjour,\n\n${e}\n\nNous en parlons en détail dans notre article « ${t} »`, multi: (n) => `Bonjour,\n\nVoici ${n} nouveaux conseils pour faire grandir votre marque` },
+  en: { empty: "Hello,\n\nHere are our latest tips to grow your brand", single: (t, e) => `Hello,\n\n${e}\n\nWe cover it in detail in our article "${t}"`, multi: (n) => `Hello,\n\nHere are ${n} fresh tips to grow your brand` },
+  es: { empty: "Hola,\n\nAquí tienes nuestros últimos consejos para hacer crecer tu marca", single: (t, e) => `Hola,\n\n${e}\n\nLo explicamos en detalle en nuestro artículo «${t}»`, multi: (n) => `Hola,\n\nAquí tienes ${n} nuevos consejos para hacer crecer tu marca` },
+  ht: { empty: "Bonjou,\n\nMen dènye konsèy nou yo pou fè mak ou grandi", single: (t, e) => `Bonjou,\n\n${e}\n\nNou pale sou li an detay nan atik nou an « ${t} »`, multi: (n) => `Bonjou,\n\nMen ${n} nouvo konsèy pou fè mak ou grandi` },
+  pt: { empty: "Olá,\n\nAqui estão nossas últimas dicas para fazer sua marca crescer", single: (t, e) => `Olá,\n\n${e}\n\nFalamos disso em detalhe no nosso artigo «${t}»`, multi: (n) => `Olá,\n\nAqui estão ${n} novas dicas para fazer sua marca crescer` },
+  it: { empty: "Ciao,\n\nEcco i nostri ultimi consigli per far crescere il tuo brand", single: (t, e) => `Ciao,\n\n${e}\n\nNe parliamo in dettaglio nel nostro articolo «${t}»`, multi: (n) => `Ciao,\n\nEcco ${n} nuovi consigli per far crescere il tuo brand` },
+  de: { empty: "Hallo,\n\nHier sind unsere neuesten Tipps für Ihr Markenwachstum", single: (t, e) => `Hallo,\n\n${e}\n\nWir gehen darauf ausführlich in unserem Artikel „${t}“ ein`, multi: (n) => `Hallo,\n\nHier sind ${n} neue Tipps für Ihr Markenwachstum` },
+  ar: { empty: "مرحبًا،\n\nإليك أحدث نصائحنا لتنمية علامتك التجارية", single: (t, e) => `مرحبًا،\n\n${e}\n\nنتناول ذلك بالتفصيل في مقالنا «${t}»`, multi: (n) => `مرحبًا،\n\nإليك ${n} نصائح جديدة لتنمية علامتك التجارية` },
 }
 
 import { registerStepUpVerifier } from "../lib/stepup"
@@ -2257,7 +2257,7 @@ function CampaignsTab({ subs, adminEmail }: { subs: Subscriber[]; adminEmail: st
                     </div>
                   </div>
                   {c.status === "scheduled" && (
-                    <button onClick={() => cancelCampaign(c.id)} style={{ ...btn, padding: "6px 10px", color: "var(--ds-danger)", borderColor: "var(--ds-danger-a40)" }}><X size={14} /></button>
+                    <button aria-label="Annuler la campagne programmée" title="Annuler la campagne programmée" onClick={() => cancelCampaign(c.id)} style={{ ...btn, padding: "6px 10px", color: "var(--ds-danger)", borderColor: "var(--ds-danger-a40)" }}><X size={14} aria-hidden="true" /></button>
                   )}
                 </div>
               ))}
@@ -2299,7 +2299,7 @@ function CampaignsTab({ subs, adminEmail }: { subs: Subscriber[]; adminEmail: st
           <div onClick={(e) => e.stopPropagation()} style={{ width: 640, maxWidth: "100%", height: "86vh", background: "#fff", borderRadius: 12, overflow: "hidden", display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", borderBottom: "1px solid #eee" }}>
               <span style={{ fontWeight: 800, color: "#111" }}>Aperçu de l'e-mail</span>
-              <button onClick={() => setPreview(false)} style={{ ...btn, padding: 8 }}><X size={16} /></button>
+              <button aria-label="Fermer l'aperçu" title="Fermer l'aperçu" onClick={() => setPreview(false)} style={{ ...btn, padding: 8 }}><X size={16} aria-hidden="true" /></button>
             </div>
             <iframe title="preview" srcDoc={html} style={{ flex: 1, border: "none", width: "100%", background: "#f4f4f4" }} />
           </div>

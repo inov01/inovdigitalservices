@@ -256,6 +256,18 @@ const UPWORK_CTA: Record<Lang, { wa: string; email: string; msg: string; subject
   ar: { wa: "راسلنا على واتساب", email: "راسلنا بالبريد", msg: "مرحباً، أرغب في الدفع بالبطاقة عبر Upwork.", subject: "الدفع بالبطاقة عبر Upwork", optional: "اختياري — تواصل مباشر", services: "الخدمات المختارة", budget: "الميزانية", onQuote: "يُحدد لاحقاً / حسب عرض السعر" },
 }
 
+// Accessible labels for the quantity steppers (icon-only buttons), per language.
+const QTY_LABEL: Record<Lang, { dec: string; inc: string }> = {
+  fr: { dec: "Retirer une unité", inc: "Ajouter une unité" },
+  en: { dec: "Decrease quantity", inc: "Increase quantity" },
+  es: { dec: "Quitar una unidad", inc: "Añadir una unidad" },
+  ht: { dec: "Retire yon inite", inc: "Ajoute yon inite" },
+  pt: { dec: "Remover uma unidade", inc: "Adicionar uma unidade" },
+  it: { dec: "Rimuovi una unità", inc: "Aggiungi una unità" },
+  de: { dec: "Menge verringern", inc: "Menge erhöhen" },
+  ar: { dec: "إنقاص الكمية", inc: "زيادة الكمية" },
+}
+
 // Service picker + Upwork-request labels, per language.
 const PICK: Record<Lang, {
   title: string; hint: string; total: string; quote: string;
@@ -529,9 +541,9 @@ export default function Payer() {
                             <div style={{ fontFamily: "var(--font-space), monospace", fontSize: 12.5, color: "var(--ds-text-muted)" }}>{quote ? p.quote : fmt(priceFor(s.price))}</div>
                           </div>
                           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-                            <button type="button" aria-label="−" onClick={(e) => { e.stopPropagation(); setQty(s.id, -1) }} disabled={qty === 0} style={{ ...stepBtn, opacity: qty === 0 ? 0.4 : 1, cursor: qty === 0 ? "default" : "pointer" }}><Minus size={15} /></button>
+                            <button type="button" aria-label={`${QTY_LABEL[lang].dec} — ${svcName(s)}`} onClick={(e) => { e.stopPropagation(); setQty(s.id, -1) }} disabled={qty === 0} style={{ ...stepBtn, opacity: qty === 0 ? 0.4 : 1, cursor: qty === 0 ? "default" : "pointer" }}><Minus size={15} aria-hidden="true" /></button>
                             <span style={{ fontFamily: "var(--font-space), monospace", fontSize: 14, fontWeight: 700, color: "var(--ds-text)", minWidth: 16, textAlign: "center" }}>{qty}</span>
-                            <button type="button" aria-label="+" onClick={(e) => { e.stopPropagation(); setQty(s.id, 1) }} style={{ ...stepBtn, cursor: "pointer" }}><Plus size={15} /></button>
+                            <button type="button" aria-label={`${QTY_LABEL[lang].inc} — ${svcName(s)}`} onClick={(e) => { e.stopPropagation(); setQty(s.id, 1) }} style={{ ...stepBtn, cursor: "pointer" }}><Plus size={15} aria-hidden="true" /></button>
                           </div>
                         </div>
                       )

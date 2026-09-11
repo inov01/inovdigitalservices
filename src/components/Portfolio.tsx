@@ -699,7 +699,7 @@ function AlbumModal({ album, onClose }: { album: Album; onClose: () => void }) {
               <button onClick={() => setImgIndex((i) => (i + 1) % album.works.length)} aria-label={t.a11y.next} style={{ position: "absolute", insetInlineEnd: 10, top: "50%", transform: "translateY(-50%)", width: 36, height: 36, borderRadius: "50%", background: "rgba(0,0,0,0.6)", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><ChevronRight size={20} aria-hidden="true" /></button>
             </>
           )}
-          <span style={{ position: "absolute", top: 10, insetInlineStart: 10, background: "var(--ds-accent)", color: "#fff", borderRadius: "var(--r-full)", padding: "3px 11px", fontFamily: "'Outfit', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>{work.category}</span>
+          <span style={{ position: "absolute", top: 10, insetInlineStart: 10, background: "var(--ds-accent-btn-grad)", color: "#fff", borderRadius: "var(--r-full)", padding: "3px 11px", fontFamily: "'Outfit', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>{work.category}</span>
         </div>
 
         {/* Info + conversion CTA */}
@@ -711,7 +711,7 @@ function AlbumModal({ album, onClose }: { album: Album; onClose: () => void }) {
           <div style={{ display: "flex", gap: 9, flexWrap: "wrap" }}>
             <button
               onClick={() => { onClose(); requestSimilarProject(album.serviceIds) }}
-              style={{ display: "inline-flex", alignItems: "center", gap: 7, fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 800, background: album.accent ?? "var(--ds-accent)", color: "#fff", border: "none", borderRadius: "var(--r-full)", padding: "11px 20px", cursor: "pointer", whiteSpace: "nowrap", boxShadow: `0 8px 24px ${(album.accent ?? "var(--ds-accent)")}55`, transition: "transform 0.2s" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 7, fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 800, background: album.accent ?? "var(--ds-accent-btn-grad)", color: "#fff", border: "none", borderRadius: "var(--r-full)", padding: "11px 20px", cursor: "pointer", whiteSpace: "nowrap", boxShadow: "0 8px 24px rgba(var(--ds-accent-rgb), 0.34)", transition: "transform 0.2s" }}
               onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)" }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)" }}
             >

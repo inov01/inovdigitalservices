@@ -190,16 +190,16 @@ export default function Brief() {
             <h2 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 800, fontSize: 18, color: "var(--ds-text)", margin: 0 }}>{t("ui.stepContact")}</h2>
             <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
               <div style={{ display: "grid", gap: 8 }}>
-                <label style={labelStyle}>{t("ui.name")} <span style={reqStyle}>*</span></label>
-                <input value={contact.name} onChange={(e) => setContact({ ...contact, name: e.target.value })} style={inputStyle} />
+                <label htmlFor="brief-contact-name" style={labelStyle}>{t("ui.name")} <span style={reqStyle}>*</span></label>
+                <input id="brief-contact-name" autoComplete="name" value={contact.name} onChange={(e) => setContact({ ...contact, name: e.target.value })} style={inputStyle} />
               </div>
               <div style={{ display: "grid", gap: 8 }}>
-                <label style={labelStyle}>{t("ui.email")} <span style={reqStyle}>*</span></label>
-                <input type="email" value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} style={inputStyle} />
+                <label htmlFor="brief-contact-email" style={labelStyle}>{t("ui.email")} <span style={reqStyle}>*</span></label>
+                <input id="brief-contact-email" type="email" autoComplete="email" value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} style={inputStyle} />
               </div>
               <div style={{ display: "grid", gap: 8 }}>
-                <label style={labelStyle}>{t("ui.whatsapp")} <span style={optStyle}>· {t("ui.optional")}</span></label>
-                <input value={contact.whatsapp} onChange={(e) => setContact({ ...contact, whatsapp: e.target.value })} style={inputStyle} />
+                <label htmlFor="brief-contact-whatsapp" style={labelStyle}>{t("ui.whatsapp")} <span style={optStyle}>· {t("ui.optional")}</span></label>
+                <input id="brief-contact-whatsapp" type="tel" autoComplete="tel" value={contact.whatsapp} onChange={(e) => setContact({ ...contact, whatsapp: e.target.value })} style={inputStyle} />
               </div>
             </div>
           </div>
@@ -235,20 +235,20 @@ function Field({ f, t, value, onText, onToggle }: {
 
   return (
     <div style={{ display: "grid", gap: 8 }}>
-      <label style={labelStyle}>
+      <label htmlFor={`brief-${f.id}`} style={labelStyle}>
         {label} {f.required ? <span style={reqStyle}>*</span> : <span style={optStyle}>· {t("ui.optional")}</span>}
       </label>
 
       {f.type === "text" && (
-        <input value={str} placeholder={placeholder} onChange={(e) => onText(e.target.value)} style={inputStyle} />
+        <input id={`brief-${f.id}`} value={str} placeholder={placeholder} onChange={(e) => onText(e.target.value)} style={inputStyle} />
       )}
 
       {f.type === "textarea" && (
-        <textarea value={str} placeholder={placeholder} onChange={(e) => onText(e.target.value)} rows={3} style={{ ...inputStyle, resize: "vertical", lineHeight: 1.5 }} />
+        <textarea id={`brief-${f.id}`} value={str} placeholder={placeholder} onChange={(e) => onText(e.target.value)} rows={3} style={{ ...inputStyle, resize: "vertical", lineHeight: 1.5 }} />
       )}
 
       {f.type === "select" && (
-        <select value={str} onChange={(e) => onText(e.target.value)} style={{ ...inputStyle, appearance: "auto" }}>
+        <select id={`brief-${f.id}`} value={str} onChange={(e) => onText(e.target.value)} style={{ ...inputStyle, appearance: "auto" }}>
           <option value="">{t("ui.selectPlaceholder")}</option>
           {f.options?.map((o) => <option key={o} value={o}>{t(`opt.${f.id}.${o}`)}</option>)}
         </select>

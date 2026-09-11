@@ -102,9 +102,9 @@ export default function About() {
             <div style={{ background: "var(--ds-bg-sec)", borderRadius: "var(--r-lg)", padding: "22px 24px", marginBottom: 24 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
                 <Sparkles size={18} color="var(--ds-accent)" strokeWidth={2.2} aria-hidden="true" />
-                <h4 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 16, fontWeight: 800, color: "var(--ds-text)", margin: 0 }}>
+                <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 16, fontWeight: 800, color: "var(--ds-text)", margin: 0 }}>
                   {a.originTitle}
-                </h4>
+                </h3>
               </div>
               <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, color: "var(--ds-text-sec)", lineHeight: 1.75, margin: 0 }}>
                 {renderRich(a.originStory)}
@@ -112,9 +112,9 @@ export default function About() {
             </div>
 
             {/* Reach */}
-            <h4 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 18, fontWeight: 800, color: "var(--ds-text)", marginBottom: 10 }}>
+            <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 18, fontWeight: 800, color: "var(--ds-text)", marginBottom: 10 }}>
               {a.reachTitle}
-            </h4>
+            </h3>
             <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, color: "var(--ds-text-sec)", lineHeight: 1.7, marginBottom: 18 }}>
               {renderRich(a.reachBody)}
             </p>

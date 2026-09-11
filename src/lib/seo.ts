@@ -6,42 +6,42 @@ import type { Lang } from "../i18n/translations"
 const SEO: Record<Lang, { title: string; description: string; locale: string }> = {
   fr: {
     title: "INOV Digital Services — Branding, Logos & Design",
-    description: "Studio de branding en Haïti : logos, packaging, affiches, motion design et sites vitrines. 20+ marques, 80+ visuels livrés. Livraison dès 48h.",
+    description: "Studio de branding en Haïti : logos, packaging, affiches, motion design et design web & UI/UX. 20+ marques, 80+ visuels livrés. Livraison dès 48h.",
     locale: "fr_FR",
   },
   en: {
     title: "INOV Digital Services — Branding, Logos & Design",
-    description: "Branding studio: logos, packaging, posters, motion design and websites. 20+ brands, 80+ visuals delivered. Delivery from 48h.",
+    description: "Branding studio: logos, packaging, posters, motion design and web & UI/UX design. 20+ brands, 80+ visuals delivered. Delivery from 48h.",
     locale: "en_US",
   },
   es: {
     title: "INOV Digital Services — Branding, Logos y Diseño",
-    description: "Estudio de branding: logos, packaging, afiches, motion design y sitios web. 20+ marcas, 80+ visuales entregados. Entrega desde 48h.",
+    description: "Estudio de branding: logos, packaging, afiches, motion design y diseño web y UI/UX. 20+ marcas, 80+ visuales entregados. Entrega desde 48h.",
     locale: "es_ES",
   },
   ht: {
     title: "INOV Digital Services — Branding, Logo & Design",
-    description: "Estidyo branding an Ayiti: logo, anbalaj, afich, motion design ak sit entènèt. 20+ mak, 80+ vizyèl livre. Livrezon depi 48è.",
+    description: "Estidyo branding an Ayiti: logo, anbalaj, afich, motion design ak design web & UI/UX. 20+ mak, 80+ vizyèl livre. Livrezon depi 48è.",
     locale: "ht_HT",
   },
   pt: {
     title: "INOV Digital Services — Branding, Logos e Design",
-    description: "Estúdio de branding: logos, embalagens, cartazes, motion design e sites. 20+ marcas, 80+ visuais entregues. Entrega a partir de 48h.",
+    description: "Estúdio de branding: logos, embalagens, cartazes, motion design e design web e UI/UX. 20+ marcas, 80+ visuais entregues. Entrega a partir de 48h.",
     locale: "pt_BR",
   },
   it: {
     title: "INOV Digital Services — Branding, Loghi e Design",
-    description: "Studio di branding: loghi, packaging, manifesti, motion design e siti web. 20+ brand, 80+ visual consegnati. Consegna da 48h.",
+    description: "Studio di branding: loghi, packaging, manifesti, motion design e web & UI/UX design. 20+ brand, 80+ visual consegnati. Consegna da 48h.",
     locale: "it_IT",
   },
   de: {
     title: "INOV Digital Services — Branding, Logos & Design",
-    description: "Branding-Studio: Logos, Verpackung, Poster, Motion Design und Websites. 20+ Marken, 80+ Visuals geliefert. Lieferung ab 48h.",
+    description: "Branding-Studio: Logos, Verpackung, Poster, Motion Design und Web- & UI/UX-Design. 20+ Marken, 80+ Visuals geliefert. Lieferung ab 48h.",
     locale: "de_DE",
   },
   ar: {
     title: "INOV Digital Services — علامات تجارية وشعارات وتصميم",
-    description: "استوديو علامات تجارية: شعارات، تغليف، ملصقات، موشن ديزاين ومواقع ويب. أكثر من 20 علامة و80 تصميماً. التسليم خلال 48 ساعة.",
+    description: "استوديو علامات تجارية: شعارات، تغليف، ملصقات، موشن ديزاين وتصميم ويب وواجهات UI/UX. أكثر من 20 علامة و80 تصميماً. التسليم خلال 48 ساعة.",
     locale: "ar_AE",
   },
 }

@@ -1248,7 +1248,7 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl }: { 
           {s.featured && (
             <span style={{
               display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 9px", borderRadius: "var(--r-full)",
-              background: "var(--ds-accent)", color: "#fff", fontFamily: "'Outfit', sans-serif", fontSize: 10.5,
+              background: "var(--ds-accent-btn-grad)", color: "#fff", fontFamily: "'Outfit', sans-serif", fontSize: 10.5,
               fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase",
             }}>
               <Package size={11} aria-hidden="true" /> {t.pricing.packageBadge}
@@ -1405,7 +1405,7 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl }: { 
                       position: "absolute", bottom: "calc(100% + 4px)", insetInlineStart: "50%", transform: "translateX(-50%)",
                       display: "inline-flex", alignItems: "center", gap: 3, whiteSpace: "nowrap",
                       padding: "1px 7px", borderRadius: "var(--r-full)",
-                      background: "var(--ds-accent)", color: "#fff",
+                      background: "var(--ds-accent-btn-grad)", color: "#fff",
                       fontSize: 9.5, fontWeight: 800, letterSpacing: "0.04em", textTransform: "uppercase",
                     }}>★ {ux.popular}</span>
                   )}
@@ -1424,7 +1424,7 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl }: { 
               <li key={i} style={{ display: "flex", alignItems: "center", gap: 7, fontFamily: "'Outfit', sans-serif", fontSize: 12, color: "var(--ds-text-sec)", lineHeight: 1.4 }}>
                 <span style={{
                   flexShrink: 0, width: 16, height: 16, borderRadius: "50%",
-                  background: tier === "premium" ? "var(--ds-accent)" : "var(--ds-accent-a14)",
+                  background: tier === "premium" ? "var(--ds-accent-btn-grad)" : "var(--ds-accent-a14)",
                   display: "inline-flex", alignItems: "center", justifyContent: "center",
                 }}>
                   <Check size={11} strokeWidth={3} color={tier === "premium" ? "#fff" : "var(--ds-accent-text)"} aria-hidden="true" />
