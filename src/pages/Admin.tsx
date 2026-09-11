@@ -5,7 +5,7 @@ import {
   Search, TrendingUp, Users, Bell, ArrowUpDown, Phone, X, Copy, Check, Receipt,
   KeyRound, Smartphone, FileText, Tags, Plus, Send,
   Package, Image as ImageIcon, Eye, EyeOff, LayoutGrid, Newspaper, Link2,
-  ClipboardList, CalendarClock, Sparkles,
+  ClipboardList, CalendarClock, Sparkles, Star, MessageSquareQuote,
 } from "lucide-react"
 import {
   pricingServices, tierValues, TIER_KEYS,
@@ -54,7 +54,7 @@ import { registerStepUpVerifier } from "../lib/stepup"
 import { useAdminAuth } from "../hooks/useAdminAuth"
 import { useSessionTimeout, ADMIN_SESSION_POLICY } from "../hooks/useSessionTimeout"
 import { supabase } from "../lib/supabaseClient"
-import { adminApi, api, type Lead, type LeadItem, type Subscriber, type SiteSettings, type Campaign, type AdminService, type AdminWork, type AdminAlbum, type AdminBlog, type AssistantMessage } from "../lib/api"
+import { adminApi, api, type Lead, type LeadItem, type Subscriber, type SiteSettings, type Campaign, type AdminService, type AdminWork, type AdminAlbum, type AdminBlog, type AssistantMessage, type Testimonial } from "../lib/api"
 import { useSettings } from "../context/AppSettings"
 import logoDark from "../imports/logo_pour_fond_noir.webp"
 import logoLight from "../imports/logo.webp"
@@ -414,19 +414,20 @@ function StepUpModal({ email }: { email: string }) {
 }
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
-type Tab = "leads" | "payments" | "links" | "assistant" | "documents" | "reminders" | "procedures" | "pricing" | "services" | "portfolio" | "blog" | "newsletter" | "campaigns" | "settings"
+type Tab = "leads" | "payments" | "reviews" | "links" | "assistant" | "documents" | "reminders" | "procedures" | "pricing" | "services" | "portfolio" | "blog" | "newsletter" | "campaigns" | "settings"
 
 function Dashboard({ email, onSignOut }: { email: string; onSignOut: () => void }) {
   const [tab, setTab] = useState<Tab>("leads")
   const [leads, setLeads] = useState<Lead[]>([])
   const [subs, setSubs] = useState<Subscriber[]>([])
+  const [reviews, setReviews] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
 
   async function refresh() {
     setLoading(true)
     try {
-      const [l, s] = await Promise.all([adminApi.listLeads(), adminApi.listSubscribers()])
-      setLeads(l.leads); setSubs(s.subscribers)
+      const [l, s, r] = await Promise.all([adminApi.listLeads(), adminApi.listSubscribers(), adminApi.listTestimonials()])
+      setLeads(l.leads); setSubs(s.subscribers); setReviews(r.testimonials)
     } catch (e) {
       console.error(e)
     } finally {
@@ -434,6 +435,8 @@ function Dashboard({ email, onSignOut }: { email: string; onSignOut: () => void 
     }
   }
   useEffect(() => { refresh() }, [])
+
+  const pendingReviews = useMemo(() => reviews.filter((r) => r.status === "pending").length, [reviews])
 
   // Payments tab groups declared payments (MonCash/NatCash/BUH) AND Upwork
   // card requests — both need an action from us (verify a payment, or send the
@@ -456,6 +459,7 @@ function Dashboard({ email, onSignOut }: { email: string; onSignOut: () => void 
   const navItems: { key: Tab; label: string; icon: React.ReactNode; count?: number }[] = [
     { key: "leads", label: "Devis & contacts", icon: <Inbox size={18} />, count: otherLeads.length },
     { key: "payments", label: "Paiements", icon: <Wallet size={18} />, count: payLeads.length },
+    { key: "reviews", label: "Avis clients", icon: <MessageSquareQuote size={18} />, count: pendingReviews },
     { key: "links", label: "Liens à partager", icon: <Link2 size={18} /> },
     { key: "assistant", label: "Assistant IA", icon: <Sparkles size={18} /> },
     { key: "reminders", label: "Rappels & RDV", icon: <CalendarClock size={18} /> },
@@ -541,6 +545,7 @@ function Dashboard({ email, onSignOut }: { email: string; onSignOut: () => void 
           <div style={{ minWidth: 0 }}>
             {tab === "leads" && <LeadsTab leads={otherLeads} loading={loading} onChange={refresh} />}
             {tab === "payments" && <PaymentsTab leads={payLeads} loading={loading} onChange={refresh} />}
+            {tab === "reviews" && <ReviewsTab reviews={reviews} loading={loading} onChange={refresh} />}
             {tab === "links" && <LinksTab />}
             {tab === "assistant" && <AssistantTab />}
             {tab === "reminders" && <RemindersTab />}
@@ -1636,6 +1641,85 @@ function NewsletterTab({ subs, loading, onChange }: { subs: Subscriber[]; loadin
           </button>
         </div>
       ))}
+    </div>
+  )
+}
+
+// ── Client reviews moderation tab ─────────────────────────────────────────────
+function ReviewsTab({ reviews, loading, onChange }: { reviews: Testimonial[]; loading: boolean; onChange: () => void }) {
+  const [busy, setBusy] = useState<string | null>(null)
+  const pending = useMemo(() => reviews.filter((r) => r.status === "pending"), [reviews])
+  const approved = useMemo(() => reviews.filter((r) => r.status === "approved"), [reviews])
+
+  async function approve(id: string) {
+    setBusy(id)
+    try { await adminApi.approveTestimonial(id); onChange() }
+    catch (e) { console.error(e) }
+    finally { setBusy(null) }
+  }
+  async function remove(id: string) {
+    if (!confirm("Supprimer cet avis ? Cette action est définitive.")) return
+    setBusy(id)
+    try { await adminApi.deleteTestimonial(id); onChange() }
+    catch (e) { console.error(e) }
+    finally { setBusy(null) }
+  }
+
+  if (loading && reviews.length === 0) return <ListSkeleton />
+
+  const Row = ({ r }: { r: Testimonial }) => (
+    <div className="adm-row" style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: "14px 18px", borderBottom: "1px solid var(--ds-border)" }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+          <span style={{ fontWeight: 700, fontSize: 14.5 }}>{r.name}</span>
+          {(r.role || r.company) && <span style={{ fontSize: 12.5, color: "var(--ds-text-muted)" }}>· {r.role || r.company}</span>}
+          <span style={{ display: "inline-flex", gap: 1 }}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star key={i} size={13} color="var(--ds-accent)" fill={i < r.stars ? "var(--ds-accent)" : "none"} strokeWidth={i < r.stars ? 0 : 1.5} style={{ opacity: i < r.stars ? 1 : 0.35 }} />
+            ))}
+          </span>
+        </div>
+        <p style={{ margin: "0 0 6px", fontSize: 14, color: "var(--ds-text-sec)", lineHeight: 1.6 }}>{r.text}</p>
+        <div style={{ fontSize: 11.5, color: "var(--ds-text-faint)" }}>
+          {(r.lang ? r.lang.toUpperCase() + " · " : "")}{new Date(r.createdAt).toLocaleString("fr-FR")}
+        </div>
+      </div>
+      <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+        {r.status === "pending" && (
+          <button onClick={() => approve(r.id)} disabled={busy === r.id} style={{ ...btn, padding: "6px 12px", color: "var(--ds-accent-text)", borderColor: "var(--ds-accent-a45)" }}>
+            <Check size={14} /> Approuver
+          </button>
+        )}
+        <button onClick={() => remove(r.id)} disabled={busy === r.id} aria-label="Supprimer l'avis" style={{ ...btn, padding: "6px 10px", color: "var(--ds-danger)", borderColor: "var(--ds-danger-a40)" }}>
+          <Trash2 size={14} />
+        </button>
+      </div>
+    </div>
+  )
+
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <div style={{ ...card, padding: 0, overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "13px 18px", borderBottom: "1px solid var(--ds-border)" }}>
+          <Bell size={16} color="var(--ds-accent)" />
+          <span style={{ fontWeight: 800, fontSize: 14.5 }}>En attente de validation</span>
+          <span style={{ marginLeft: "auto", fontSize: 12.5, color: "var(--ds-text-faint)", fontWeight: 600 }}>{pending.length}</span>
+        </div>
+        {pending.length === 0
+          ? <div style={{ padding: 34, textAlign: "center", color: "var(--ds-text-muted)" }}>Aucun avis en attente.</div>
+          : pending.map((r) => <Row key={r.id} r={r} />)}
+      </div>
+
+      <div style={{ ...card, padding: 0, overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "13px 18px", borderBottom: "1px solid var(--ds-border)" }}>
+          <Check size={16} color="var(--ds-accent)" />
+          <span style={{ fontWeight: 800, fontSize: 14.5 }}>Avis publiés</span>
+          <span style={{ marginLeft: "auto", fontSize: 12.5, color: "var(--ds-text-faint)", fontWeight: 600 }}>{approved.length}</span>
+        </div>
+        {approved.length === 0
+          ? <div style={{ padding: 34, textAlign: "center", color: "var(--ds-text-muted)" }}>Aucun avis publié pour l'instant.</div>
+          : approved.map((r) => <Row key={r.id} r={r} />)}
+      </div>
     </div>
   )
 }

@@ -662,6 +662,70 @@ app.post(`${P}/leads`, async (c) => {
   return c.json({ ok: true, id });
 });
 
+// ── Testimonials (client reviews with admin moderation) ───────────────────────────
+// Public: submit a review. Stored as "pending" — invisible on the site until an
+// admin approves it, so nothing a visitor writes appears without moderation.
+app.post(`${P}/testimonials`, async (c) => {
+  if (!(await rateLimit(c, "testimonials", 5))) return c.json({ error: "rate_limited" }, 429);
+  const b = await c.req.json().catch(() => ({} as any));
+  const name = str(b.name, 80).trim();
+  const text = str(b.text, 600).trim();
+  if (name.length < 2 || text.length < 10) return c.json({ error: "invalid" }, 400);
+  const id = newId();
+  const t = {
+    id,
+    createdAt: new Date().toISOString(),
+    status: "pending",
+    name,
+    role: str(b.role, 100).trim(),
+    company: str(b.company, 100).trim(),
+    text,
+    stars: Math.min(5, Math.max(1, Math.round(num(b.stars, 5)))),
+    lang: str(b.lang, 8),
+  };
+  await kv.set(`testimonial:${id}`, t);
+  return c.json({ ok: true, id });
+});
+
+// Public: only APPROVED reviews, newest first, with just the fields the site needs.
+app.get(`${P}/testimonials`, async (c) => {
+  const all = ((await kv.getByPrefix("testimonial:")) as any[]) ?? [];
+  const approved = all
+    .filter((t) => t.status === "approved")
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+    .map((t) => ({ id: t.id, name: t.name, role: t.role, company: t.company, text: t.text, stars: t.stars, lang: t.lang, createdAt: t.createdAt }));
+  return c.json({ testimonials: approved });
+});
+
+// Admin: all reviews (pending + approved) for the moderation queue.
+app.get(`${P}/testimonials/all`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const all = ((await kv.getByPrefix("testimonial:")) as any[]) ?? [];
+  all.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  return c.json({ testimonials: all });
+});
+
+// Admin: approve a pending review (makes it visible on the site).
+app.patch(`${P}/testimonials/:id/approve`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const id = c.req.param("id");
+  const t: any = await kv.get(`testimonial:${id}`);
+  if (!t) return c.json({ error: "not found" }, 404);
+  t.status = "approved";
+  await kv.set(`testimonial:${id}`, t);
+  return c.json({ ok: true, testimonial: t });
+});
+
+// Admin: delete a review (pending or approved).
+app.delete(`${P}/testimonials/:id`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  await kv.del(`testimonial:${c.req.param("id")}`);
+  return c.json({ ok: true });
+});
+
 // ── Public: get a signed URL to upload one brief attachment ───────────────────────
 // The browser sends file metadata, we return a one-shot signed upload URL + token
 // and the storage path. The client then uploads the bytes directly to Storage

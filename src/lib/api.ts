@@ -93,6 +93,29 @@ export interface Subscriber {
   lang: string
   createdAt: string
 }
+// A client-submitted testimonial. "pending" until an admin approves it; only
+// approved ones are returned by the public endpoint and shown on the site.
+export interface Testimonial {
+  id: string
+  createdAt: string
+  status: "pending" | "approved"
+  name: string
+  role: string
+  company: string
+  text: string
+  stars: number
+  lang: string
+}
+// The public shape (no status — the public endpoint only returns approved ones).
+export type PublicTestimonial = Omit<Testimonial, "status">
+export interface TestimonialInput {
+  name: string
+  role?: string
+  company?: string
+  text: string
+  stars: number
+  lang: string
+}
 // One client-uploaded brief attachment, stored (as a list) in a lead's meta.
 export interface BriefAttachment {
   path: string
@@ -241,6 +264,17 @@ export const api = {
   getSettings() {
     return pub<{ settings: SiteSettings }>("/settings")
   },
+  // Public: submit a review (stored pending until the admin approves it).
+  submitTestimonial(input: TestimonialInput) {
+    return pub<{ ok: boolean; id: string }>("/testimonials", {
+      method: "POST",
+      body: JSON.stringify(input),
+    })
+  },
+  // Public: approved reviews to display on the site.
+  listTestimonials() {
+    return pub<{ testimonials: PublicTestimonial[] }>("/testimonials")
+  },
   // Requests a one-shot signed upload URL for a brief attachment. The browser
   // then uploads the bytes directly to Storage with uploadToSignedUrl().
   briefUploadUrl(file: { filename: string; contentType: string; size: number }) {
@@ -304,6 +338,18 @@ export const adminApi = {
   },
   getSettings() {
     return auth<{ settings: SiteSettings }>("/settings")
+  },
+  // Moderation queue: every review (pending + approved), newest first.
+  listTestimonials() {
+    return auth<{ testimonials: Testimonial[] }>("/testimonials/all")
+  },
+  approveTestimonial(id: string) {
+    return auth<{ ok: boolean; testimonial: Testimonial }>(`/testimonials/${id}/approve`, {
+      method: "PATCH",
+    })
+  },
+  deleteTestimonial(id: string) {
+    return auth<{ ok: boolean }>(`/testimonials/${id}`, { method: "DELETE" })
   },
   // Short-lived signed URL to view/download a client-uploaded brief attachment.
   briefFileUrl(path: string) {
