@@ -32,10 +32,45 @@ function detectLang(text: string, fallback: string): string {
 }
 
 // BCP-47 locale used to pick a voice per app language. Haitian Creole has no
-// common TTS voice, so it falls back to French (closest phonetically).
+// common TTS voice, so it falls back to French (closest phonetically) — but the
+// text is respelled first (see creoleToFrenchPhonetic) so the French voice
+// actually pronounces Creole words instead of reading the spelling literally.
 const LOCALE: Record<string, string> = {
   fr: "fr-FR", en: "en-US", es: "es-ES", ht: "fr-FR",
   pt: "pt-BR", it: "it-IT", de: "de-DE", ar: "ar-SA",
+}
+
+// Per-language speech pacing. A touch slower reads calmer and more human; Creole
+// (spoken by a French voice on respelled text) gets a little more room again so
+// the approximated pronunciation stays intelligible.
+const RATE: Record<string, number> = { ht: 0.9, ar: 0.92, de: 0.95 }
+const DEFAULT_RATE = 0.97
+
+// Rewrites Haitian Creole into a French-phonetic spelling so a French TTS voice
+// pronounces it naturally. Creole and French share sounds but not orthography,
+// so a French voice reading raw Creole mangles the most common words. We fix the
+// highest-impact mismatches, word by word, leaving punctuation/spacing intact.
+function creoleToFrenchPhonetic(text: string): string {
+  return text.split(/(\s+)/).map((tok) => {
+    // Skip whitespace and pure punctuation/number tokens.
+    if (!/[a-zàâäéèêëïîôöùûüÿ]/i.test(tok)) return tok
+    // Preserve trailing/leading punctuation, transform the word core only.
+    const m = tok.match(/^([^a-zàâäéèêëïîôöùûüÿ]*)(.*?)([^a-zàâäéèêëïîôöùûüÿ]*)$/i)
+    if (!m) return tok
+    const [, pre, coreRaw, post] = m
+    let w = coreRaw.toLowerCase()
+    // Creole "en"/"èn" = nasal /ɛ̃/ → French "in" (French "en" is /ɑ̃/).
+    w = w.replace(/en/g, "in")
+    // Creole "g" is always hard; French softens it before e/i/y → keep it hard.
+    w = w.replace(/g(?=[eiy])/g, "gu")
+    // Creole "w" = /w/ → French "ou" (French rarely voices a bare "w").
+    w = w.replace(/w/g, "ou")
+    // Creole intervocalic "s" stays /s/; French would voice it /z/ → double it.
+    w = w.replace(/([aeiouéèêëïîôöùûü])s([aeiouéèêëïîôöùûü])/g, "$1ss$2")
+    // Word-final "e" is a closed /e/ in Creole, but silent in French → "é".
+    w = w.replace(/e$/g, "é")
+    return pre + w + post
+  }).join("")
 }
 
 const LABELS: Record<string, { listen: string; pause: string; resume: string; stop: string; playing: string }> = {
@@ -135,13 +170,15 @@ export default function ArticleAudio({ text, lang }: { text: string; lang: strin
       idxRef.current = 0
       return
     }
-    const u = new SpeechSynthesisUtterance(chunks[i])
+    // For Creole, respell the chunk so the French voice pronounces it correctly.
+    const spoken = voiceLang === "ht" ? creoleToFrenchPhonetic(chunks[i]) : chunks[i]
+    const u = new SpeechSynthesisUtterance(spoken)
     const v = pickVoice()
     if (v) u.voice = v
     u.lang = LOCALE[voiceLang] ?? "en-US"
     // Slightly slower than default with a natural pitch reads as calmer and more
     // human than the robotic full-speed monotone.
-    u.rate = 0.96
+    u.rate = RATE[voiceLang] ?? DEFAULT_RATE
     u.pitch = 1.02
     u.onend = () => {
       if (stoppedRef.current) return
