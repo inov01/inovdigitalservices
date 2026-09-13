@@ -7,10 +7,10 @@ const de: Dict = {
   loader: { loading: "Wird geladen…" },
   hero: {
     slides: [
-      { tag: "Studio für visuelle Kommunikation — Haiti", title: "Ihre Marke verdient **außergewöhnliches** Design,\ndas Sie wirklich abhebt.", sub: "INOV Digital Services schafft visuelle Identitäten, Logos und Kommunikationsmittel, die Ihrem Unternehmen ein starkes und stimmiges Image verleihen." },
-      { tag: "Design · Motion · Branding", title: "Ein Logo reicht nicht —\nSie brauchen eine vollständige **Identität**.", sub: "Logo, Verpackung, Motion Design, soziale Netzwerke… Wir gestalten jedes Element Ihrer visuellen Welt, damit sie mit einer Stimme sprechen." },
-      { tag: "Lieferung 48 Std. – 1 Monat", title: "Visuals **schnell** geliefert,\nohne Kompromisse bei der Qualität.", sub: "Flyer in 48 Std., Logo in 1 Woche, komplettes Branding in 1 Monat. Klare, eingehaltene Fristen mit 3 inbegriffenen Korrekturrunden." },
-      { tag: "20+ Marken · 80+ Visuals", title: "Bewährte Ergebnisse für\n**haitianische** Marken.", sub: "Über 20 Unternehmen haben uns den Aufbau ihres Images anvertraut. Designs, die im echten Leben funktionieren, nicht nur auf dem Bildschirm." },
+      { tag: "Studio für visuelle Kommunikation — Haiti", title: "Ihre Marke verdient mehr —\nein Image, das **Kunden gewinnt**.", sub: "INOV Digital Services gestaltet Logos, visuelle Identitäten und Kommunikationsmittel, die Ihrem Unternehmen ein professionelles Image verleihen — und den Unterschied machen." },
+      { tag: "Design · Motion · Branding", title: "Ein Logo reicht nicht —\nSie brauchen eine vollständige **Identität**.", sub: "Logo, Verpackung, Motion Design, soziale Netzwerke… Eine stimmige visuelle Welt, die Ihre Marke überall auf einen Blick erkennbar macht." },
+      { tag: "Lieferung 48 Std. – 1 Monat", title: "Visuals **schnell** geliefert,\nohne Kompromisse bei der Qualität.", sub: "Flyer in 48 Std., Logo in 1 Woche, komplettes Branding in 1 Monat. Klare, eingehaltene Fristen — mit 3 inbegriffenen Korrekturrunden." },
+      { tag: "20+ Marken · 80+ Visuals", title: "Bereits **20+ Marken**\nvertrauen uns.", sub: "In Haiti und darüber hinaus haben über 20 Unternehmen ihr Image mit uns aufgebaut. Designs, die im echten Leben funktionieren, nicht nur auf dem Bildschirm." },
     ],
     ctaPricing: "Unsere Preise ansehen",
     ctaQuote: "Kostenloses Angebot anfordern",

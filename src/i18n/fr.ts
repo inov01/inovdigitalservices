@@ -7,10 +7,10 @@ const fr = {
   loader: { loading: "Chargement en cours…" },
   hero: {
     slides: [
-      { tag: "Studio de Communication Visuelle — Haïti", title: "Votre marque mérite un design **exceptionnel**\nqui vous démarque vraiment.", sub: "INOV Digital Services crée des identités visuelles, logos et supports de communication qui donnent à votre entreprise une image forte et cohérente." },
-      { tag: "Design · Motion · Branding", title: "Un logo ne suffit pas —\nil vous faut une **identité** complète.", sub: "Logo, packaging, motion design, réseaux sociaux… Nous construisons chaque pièce de votre univers visuel pour qu'elles parlent d'une seule voix." },
-      { tag: "Livraison 48h – 1 mois", title: "Des visuels livrés **vite**,\nsans sacrifier la qualité.", sub: "Flyer en 48h, logo en 1 semaine, branding complet en 1 mois. Des délais clairs, tenus, avec 3 rounds de révisions inclus." },
-      { tag: "20+ marques · 80+ visuels", title: "Des résultats prouvés pour\nles marques **haïtiennes**.", sub: "Plus de 20 entreprises nous ont fait confiance pour bâtir leur image. Des designs qui fonctionnent sur le terrain, pas juste à l'écran." },
+      { tag: "Studio de Communication Visuelle — Haïti", title: "Votre marque mérite mieux —\nune image qui **attire vos clients**.", sub: "INOV Digital Services conçoit logos, identités visuelles et supports de communication qui donnent à votre entreprise une image professionnelle — et qui fait la différence." },
+      { tag: "Design · Motion · Branding", title: "Un logo ne suffit pas —\nil vous faut une **identité** complète.", sub: "Logo, packaging, motion design, réseaux sociaux… Un univers visuel cohérent qui rend votre marque reconnaissable partout, en un coup d'œil." },
+      { tag: "Livraison 48h – 1 mois", title: "Des visuels livrés **vite**,\nsans sacrifier la qualité.", sub: "Flyer en 48h, logo en 1 semaine, branding complet en 1 mois. Des délais clairs et tenus — avec 3 rounds de révisions inclus." },
+      { tag: "20+ marques · 80+ visuels", title: "Déjà **20+ marques**\nnous font confiance.", sub: "En Haïti et au-delà, plus de 20 entreprises ont bâti leur image avec nous. Des designs qui fonctionnent sur le terrain, pas juste à l'écran." },
     ],
     ctaPricing: "Voir nos tarifs",
     ctaQuote: "Demander un devis gratuit",

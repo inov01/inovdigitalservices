@@ -7,10 +7,10 @@ const pt: Dict = {
   loader: { loading: "Carregando…" },
   hero: {
     slides: [
-      { tag: "Estúdio de Comunicação Visual — Haiti", title: "Sua marca merece um design **excepcional**\nque realmente destaque você.", sub: "A INOV Digital Services cria identidades visuais, logos e materiais de comunicação que dão à sua empresa uma imagem forte e coerente." },
-      { tag: "Design · Motion · Branding", title: "Um logotipo não basta —\nvocê precisa de uma **identidade** completa.", sub: "Logotipo, embalagem, motion design, redes sociais… Construímos cada peça do seu universo visual para que falem com uma só voz." },
-      { tag: "Entrega em 48h – 1 mês", title: "Visuais entregues **rápido**,\nsem sacrificar a qualidade.", sub: "Flyer em 48h, logotipo em 1 semana, branding completo em 1 mês. Prazos claros, cumpridos, com 3 rodadas de revisões incluídas." },
-      { tag: "20+ marcas · 80+ visuais", title: "Resultados comprovados para\nas marcas **haitianas**.", sub: "Mais de 20 empresas confiaram em nós para construir sua imagem. Designs que funcionam na prática, não apenas na tela." },
+      { tag: "Estúdio de Comunicação Visual — Haiti", title: "Sua marca merece mais —\numa imagem que **atrai clientes**.", sub: "A INOV Digital Services cria logos, identidades visuais e materiais de comunicação que dão à sua empresa uma imagem profissional — e que faz a diferença." },
+      { tag: "Design · Motion · Branding", title: "Um logotipo não basta —\nvocê precisa de uma **identidade** completa.", sub: "Logotipo, embalagem, motion design, redes sociais… Um universo visual coerente que torna sua marca reconhecível em todo lugar, num piscar de olhos." },
+      { tag: "Entrega em 48h – 1 mês", title: "Visuais entregues **rápido**,\nsem sacrificar a qualidade.", sub: "Flyer em 48h, logotipo em 1 semana, branding completo em 1 mês. Prazos claros e cumpridos — com 3 rodadas de revisões incluídas." },
+      { tag: "20+ marcas · 80+ visuais", title: "Já **20+ marcas**\nconfiam em nós.", sub: "No Haiti e além, mais de 20 empresas construíram sua imagem conosco. Designs que funcionam na prática, não apenas na tela." },
     ],
     ctaPricing: "Ver nossos preços",
     ctaQuote: "Peça um orçamento grátis",

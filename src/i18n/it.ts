@@ -7,10 +7,10 @@ const it: Dict = {
   loader: { loading: "Caricamento in corso…" },
   hero: {
     slides: [
-      { tag: "Studio di Comunicazione Visiva — Haiti", title: "Il tuo brand merita un design **eccezionale**\nche ti distingua davvero.", sub: "INOV Digital Services crea identità visive, logo e materiali di comunicazione che danno alla tua azienda un'immagine forte e coerente." },
-      { tag: "Design · Motion · Branding", title: "Un logo non basta —\nti serve un'**identità** completa.", sub: "Logo, packaging, motion design, social… Costruiamo ogni pezzo del tuo universo visivo affinché parlino con un'unica voce." },
-      { tag: "Consegna 48h – 1 mese", title: "Visual consegnati **in fretta**,\nsenza sacrificare la qualità.", sub: "Flyer in 48h, logo in 1 settimana, branding completo in 1 mese. Tempi chiari, rispettati, con 3 round di revisioni inclusi." },
-      { tag: "20+ brand · 80+ visual", title: "Risultati comprovati per\ni brand **haitiani**.", sub: "Oltre 20 aziende ci hanno affidato la costruzione della loro immagine. Design che funzionano sul campo, non solo sullo schermo." },
+      { tag: "Studio di Comunicazione Visiva — Haiti", title: "Il tuo brand merita di più —\nun'immagine che **attira clienti**.", sub: "INOV Digital Services crea logo, identità visive e materiali di comunicazione che danno alla tua azienda un'immagine professionale — e che fa la differenza." },
+      { tag: "Design · Motion · Branding", title: "Un logo non basta —\nti serve un'**identità** completa.", sub: "Logo, packaging, motion design, social… Un universo visivo coerente che rende il tuo brand riconoscibile ovunque, in un colpo d'occhio." },
+      { tag: "Consegna 48h – 1 mese", title: "Visual consegnati **in fretta**,\nsenza sacrificare la qualità.", sub: "Flyer in 48h, logo in 1 settimana, branding completo in 1 mese. Tempi chiari e rispettati — con 3 round di revisioni inclusi." },
+      { tag: "20+ brand · 80+ visual", title: "Già **20+ brand**\nsi affidano a noi.", sub: "Ad Haiti e oltre, oltre 20 aziende hanno costruito la loro immagine con noi. Design che funzionano sul campo, non solo sullo schermo." },
     ],
     ctaPricing: "Scopri le nostre tariffe",
     ctaQuote: "Richiedi un preventivo gratuito",

@@ -24,10 +24,10 @@ const en: Dict = {
   loader: { loading: "Loading…" },
   hero: {
     slides: [
-      { tag: "Visual Communication Studio — Haiti", title: "Your brand deserves **exceptional** design\nthat truly sets you apart.", sub: "INOV Digital Services builds visual identities, logos and communication materials that give your business a strong, consistent image." },
-      { tag: "Design · Motion · Branding", title: "A logo isn't enough —\nyou need a complete **identity**.", sub: "Logo, packaging, motion design, social media… We craft every piece of your visual world so they speak with a single voice." },
-      { tag: "Delivery in 48h – 1 month", title: "Visuals delivered **fast**,\nwithout sacrificing quality.", sub: "Flyer in 48h, logo in 1 week, complete branding in 1 month. Clear deadlines, always met, with 3 rounds of revisions included." },
-      { tag: "20+ brands · 80+ visuals", title: "Proven results for\n**Haitian** brands.", sub: "Over 20 businesses have trusted us to build their image. Designs that work in the real world, not just on screen." },
+      { tag: "Visual Communication Studio — Haiti", title: "Your brand deserves better —\nan image that **wins clients**.", sub: "INOV Digital Services designs logos, visual identities and communication materials that give your business a professional image — one that makes the difference." },
+      { tag: "Design · Motion · Branding", title: "A logo isn't enough —\nyou need a complete **identity**.", sub: "Logo, packaging, motion design, social media… A consistent visual world that makes your brand recognizable everywhere, at a glance." },
+      { tag: "Delivery in 48h – 1 month", title: "Visuals delivered **fast**,\nwithout sacrificing quality.", sub: "Flyer in 48h, logo in 1 week, complete branding in 1 month. Clear deadlines, always met — with 3 rounds of revisions included." },
+      { tag: "20+ brands · 80+ visuals", title: "Already **20+ brands**\ntrust us.", sub: "In Haiti and beyond, over 20 businesses have built their image with us. Designs that work in the real world, not just on screen." },
     ],
     ctaPricing: "See our pricing",
     ctaQuote: "Get a free quote",
@@ -362,10 +362,10 @@ const es: Dict = {
   loader: { loading: "Cargando…" },
   hero: {
     slides: [
-      { tag: "Estudio de Comunicación Visual — Haití", title: "Tu marca merece un diseño **excepcional**\nque de verdad te distinga.", sub: "INOV Digital Services crea identidades visuales, logos y materiales de comunicación que dan a tu empresa una imagen fuerte y coherente." },
-      { tag: "Diseño · Motion · Branding", title: "Un logo no basta —\nnecesitas una **identidad** completa.", sub: "Logo, packaging, motion design, redes sociales… Construimos cada pieza de tu universo visual para que hablen con una sola voz." },
-      { tag: "Entrega en 48h – 1 mes", title: "Visuales entregados **rápido**,\nsin sacrificar la calidad.", sub: "Flyer en 48h, logo en 1 semana, branding completo en 1 mes. Plazos claros y cumplidos, con 3 rondas de revisiones incluidas." },
-      { tag: "20+ marcas · 80+ visuales", title: "Resultados probados para\nlas marcas **haitianas**.", sub: "Más de 20 empresas han confiado en nosotros para construir su imagen. Diseños que funcionan en el terreno, no solo en pantalla." },
+      { tag: "Estudio de Comunicación Visual — Haití", title: "Tu marca merece más —\nuna imagen que **atrae clientes**.", sub: "INOV Digital Services diseña logos, identidades visuales y materiales de comunicación que dan a tu empresa una imagen profesional — y que marca la diferencia." },
+      { tag: "Diseño · Motion · Branding", title: "Un logo no basta —\nnecesitas una **identidad** completa.", sub: "Logo, packaging, motion design, redes sociales… Un universo visual coherente que hace tu marca reconocible en todas partes, de un vistazo." },
+      { tag: "Entrega en 48h – 1 mes", title: "Visuales entregados **rápido**,\nsin sacrificar la calidad.", sub: "Flyer en 48h, logo en 1 semana, branding completo en 1 mes. Plazos claros y cumplidos — con 3 rondas de revisiones incluidas." },
+      { tag: "20+ marcas · 80+ visuales", title: "Ya **20+ marcas**\nconfían en nosotros.", sub: "En Haití y más allá, más de 20 empresas han construido su imagen con nosotros. Diseños que funcionan en el terreno, no solo en pantalla." },
     ],
     ctaPricing: "Ver nuestros precios",
     ctaQuote: "Solicita un presupuesto gratis",
@@ -700,10 +700,10 @@ const ht: Dict = {
   loader: { loading: "N ap chaje…" },
   hero: {
     slides: [
-      { tag: "Estidyo Kominikasyon Vizyèl — Ayiti", title: "Mak ou merite yon design **eksepsyonèl**\nki fè w reyèlman distenge.", sub: "INOV Digital Services kreye idantite vizyèl, logo ak sipò kominikasyon ki bay antrepriz ou yon imaj solid e koyeran." },
-      { tag: "Design · Motion · Branding", title: "Yon logo pa ase —\nou bezwen yon **idantite** konplè.", sub: "Logo, anbalaj, motion design, rezo sosyal… Nou konstwi chak moso nan inivè vizyèl ou pou yo pale ak yon sèl vwa." },
-      { tag: "Livrezon 48è – 1 mwa", title: "Vizyèl livre **vit**,\nsan sakrifye kalite a.", sub: "Flyer nan 48è, logo nan 1 semèn, branding konplè nan 1 mwa. Delè klè, respekte, ak 3 wonn revizyon ki enkli." },
-      { tag: "20+ mak · 80+ vizyèl", title: "Rezilta pwouve pou\nmak **ayisyen** yo.", sub: "Plis pase 20 antrepriz fè nou konfyans pou bati imaj yo. Design ki mache sou teren an, pa sèlman sou ekran." },
+      { tag: "Estidyo Kominikasyon Vizyèl — Ayiti", title: "Mak ou merite plis —\nyon imaj ki **atire kliyan**.", sub: "INOV Digital Services konsevwa logo, idantite vizyèl ak sipò kominikasyon ki bay antrepriz ou yon imaj pwofesyonèl — epi ki fè diferans lan." },
+      { tag: "Design · Motion · Branding", title: "Yon logo pa ase —\nou bezwen yon **idantite** konplè.", sub: "Logo, anbalaj, motion design, rezo sosyal… Yon inivè vizyèl koyeran ki fè mak ou rekonèt tout kote, nan yon sèl kout je." },
+      { tag: "Livrezon 48è – 1 mwa", title: "Vizyèl livre **vit**,\nsan sakrifye kalite a.", sub: "Flyer nan 48è, logo nan 1 semèn, branding konplè nan 1 mwa. Delè klè, respekte — ak 3 wonn revizyon ki enkli." },
+      { tag: "20+ mak · 80+ vizyèl", title: "Deja **20+ mak**\nfè nou konfyans.", sub: "Ann Ayiti ak pi lwen, plis pase 20 antrepriz bati imaj yo avèk nou. Design ki mache sou teren an, pa sèlman sou ekran." },
     ],
     ctaPricing: "Gade tarif nou yo",
     ctaQuote: "Mande yon devi gratis",
