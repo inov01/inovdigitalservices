@@ -47,9 +47,26 @@ export default function Home() {
         <Hero />
       </div>
 
-      {/* Below-the-fold sections — revealed on scroll */}
+      {/* ── Core conversion funnel ───────────────────────────────────────────
+         Ordered so credibility precedes the price ask: what we do (Services) →
+         visual proof (Portfolio) → social proof (Testimonials) → differentiators
+         (WhyUs) → the price (Pricing) → objection handling right at the moment of
+         doubt (FAQ) → conversion actions (BriefLinks). Secondary marketing
+         sections follow below so they never dilute this decision path. */}
       <RevealSection delay={0}>
         <Services />
+      </RevealSection>
+
+      <RevealSection delay={0}>
+        <Suspense fallback={<SectionFallback />}>
+          <Portfolio />
+        </Suspense>
+      </RevealSection>
+
+      <RevealSection delay={0}>
+        <Suspense fallback={<SectionFallback />}>
+          <Testimonials />
+        </Suspense>
       </RevealSection>
 
       <RevealSection delay={0}>
@@ -58,6 +75,12 @@ export default function Home() {
 
       <RevealSection delay={0}>
         <Pricing />
+      </RevealSection>
+
+      <RevealSection delay={0}>
+        <Suspense fallback={<SectionFallback />}>
+          <FAQ />
+        </Suspense>
       </RevealSection>
 
       <RevealSection delay={0}>
@@ -75,15 +98,10 @@ export default function Home() {
         </RevealSection>
       )}
 
+      {/* ── Secondary sections — trust tail & engagement, below the funnel ──── */}
       <RevealSection delay={0}>
         <Suspense fallback={<SectionFallback />}>
-          <Portfolio />
-        </Suspense>
-      </RevealSection>
-
-      <RevealSection delay={0}>
-        <Suspense fallback={<SectionFallback />}>
-          <Testimonials />
+          <About />
         </Suspense>
       </RevealSection>
 
@@ -102,18 +120,6 @@ export default function Home() {
       <RevealSection delay={0}>
         <Suspense fallback={<SectionFallback />}>
           <Referral />
-        </Suspense>
-      </RevealSection>
-
-      <RevealSection delay={0}>
-        <Suspense fallback={<SectionFallback />}>
-          <FAQ />
-        </Suspense>
-      </RevealSection>
-
-      <RevealSection delay={0}>
-        <Suspense fallback={<SectionFallback />}>
-          <About />
         </Suspense>
       </RevealSection>
 

@@ -10,17 +10,20 @@ export interface NavItem {
   id: string
 }
 
+// Order mirrors the on-page scroll order in `pages/Home.tsx` so PageNav's
+// prev/next stepping and scroll-spy highlight track the actual funnel:
+// proof (portfolio, testimonials) precedes the price, FAQ follows it.
 export const NAV_ITEMS: NavItem[] = [
   { key: "home", href: "#home", id: "home" },
   { key: "services", href: "#services", id: "services" },
-  { key: "whyUs", href: "#why-us", id: "why-us" },
-  { key: "pricing", href: "#pricing", id: "pricing" },
   { key: "portfolio", href: "#portfolio", id: "portfolio" },
   { key: "testimonials", href: "#testimonials", id: "testimonials" },
-  { key: "blog", href: "#blog", id: "blog" },
-  { key: "referral", href: "#referral", id: "referral" },
+  { key: "whyUs", href: "#why-us", id: "why-us" },
+  { key: "pricing", href: "#pricing", id: "pricing" },
   { key: "faq", href: "#faq", id: "faq" },
   { key: "about", href: "#about", id: "about" },
+  { key: "blog", href: "#blog", id: "blog" },
+  { key: "referral", href: "#referral", id: "referral" },
   { key: "contact", href: "#contact", id: "contact" },
 ]
 
