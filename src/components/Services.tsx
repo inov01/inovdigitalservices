@@ -10,11 +10,7 @@ const ALL_PRICING: Record<string, string> = {
   ht: "Wè tout pri yo", pt: "Ver todos os preços", it: "Vedi tutti i prezzi",
   de: "Alle Preise ansehen", ar: "عرض كل الأسعار",
 }
-import logo1 from "@/imports/logo-1.webp"
-import socialFlyer from "@/imports/social_flyer.webp"
-import packagingAnana from "@/imports/packaging_anana.webp"
-import etiquetteSimple from "@/imports/INOV_Digital_Services__64_.webp"
-import dielinesPackaging from "@/imports/INOV_Digital_Services__1_.jpg"
+import { logo1, socialFlyer, packagingAnana, etiquetteSimple, dielinesPackaging } from "@/data/servicePreviews"
 
 // Visual/price data; localized title + desc come from the dictionary (t.services.cards) by `card` index.
 // Only services with a preview image/gif are shown; the others are hidden until visuals are provided.

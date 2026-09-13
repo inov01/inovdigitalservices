@@ -7,10 +7,7 @@ import useReducedMotion from "../hooks/useReducedMotion"
 import { useSettings } from "../context/AppSettings"
 import { renderRich } from "../i18n/renderRich"
 
-import showcaseFlyer from "../imports/social_flyer.webp"
-import showcasePackaging from "../imports/packaging_anana.webp"
-import showcaseLabel from "../imports/INOV_Digital_Services__64_.webp"
-import showcaseLogo from "../imports/logo-1.webp"
+import { servicePreviews as SHOWCASE } from "../data/servicePreviews"
 
 const INTERVAL = 5000
 
@@ -38,7 +35,6 @@ function CountUp({ end, duration = 1300, reduced }: { end: number; duration?: nu
 // that rotate through the circular coverflow so the animating trio keeps varying.
 // Three are visible at a time — left, principal (center, largest), right — while
 // the rest wait hidden behind the stack ("celui du bas n'apparaît plus").
-const SHOWCASE = [showcaseFlyer, showcaseLogo, showcasePackaging, showcaseLabel]
 const SHOWCASE_MS = 3000
 
 function HeroShowcase({ isMobile, reduced }: { isMobile: boolean; reduced: boolean }) {
