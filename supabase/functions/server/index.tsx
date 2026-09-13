@@ -117,7 +117,9 @@ const ADMIN_EMAILS = ENV_ADMINS.length ? ENV_ADMINS : DEFAULT_ADMINS;
 // Public site URL + a stable (non-hashed) logo asset served from /public, used
 // to brand every outgoing e-mail. Overridable via env for staging domains.
 const SITE_URL = (Deno.env.get("SITE_URL") ?? "https://inovdigitalservices.com").replace(/\/+$/, "");
-const EMAIL_LOGO = `${SITE_URL}/email-logo.webp`;
+// PNG (not WebP): Outlook desktop, Yahoo, AOL and several mobile clients do not
+// render WebP, which left the logo as a broken-image box in many inboxes.
+const EMAIL_LOGO = `${SITE_URL}/email-logo.png`;
 
 // Shared secret guarding the scheduled-newsletter dispatch endpoint (called by a
 // cron job, not an admin session). No secret set ⇒ dispatch is disabled.
@@ -357,7 +359,10 @@ function buildReceiptHtml(l: any): string {
   const method = (meta.paymentMethodLabel as string) || (meta.paymentMethod as string) || "—";
   const reference = (meta.reference as string) || "";
   const paid = l.status === "won";
-  const logoUrl = Deno.env.get("LOGO_URL") ?? "";
+  // Fall back to the email-safe PNG logo when LOGO_URL is unset (previously an
+  // empty env produced no image at all; a stale .webp override produced a broken
+  // one). An operator can still override with an absolute PNG/JPG URL.
+  const logoUrl = Deno.env.get("LOGO_URL") || EMAIL_LOGO;
 
   type Row = { label: string; qty: number; amount: string };
   let rows: Row[] = [];
@@ -418,7 +423,7 @@ function buildReceiptHtml(l: any): string {
     <tr><td style="padding:40px 36px;">
       <!-- Header -->
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-        <td style="vertical-align:top;">${logoUrl ? `<img src="${escH(logoUrl)}" alt="INOV" height="56" style="height:56px;width:auto;display:block;">` : `<div style="font-size:22px;font-weight:900;">INOV <span style="color:#F7931E;">Digital Services</span></div>`}</td>
+        <td style="vertical-align:top;">${logoUrl ? `<img src="${escH(logoUrl)}" alt="INOV Digital Services" height="56" style="height:56px;width:auto;max-width:220px;border:0;outline:none;text-decoration:none;display:block;">` : `<div style="font-size:22px;font-weight:900;">INOV <span style="color:#F7931E;">Digital Services</span></div>`}</td>
         <td style="text-align:right;vertical-align:top;">
           <div style="font-size:34px;font-weight:900;letter-spacing:-0.01em;">REÇU</div>
           <div style="margin-top:6px;font-size:13px;font-weight:800;">N° ${escH(receiptNo(l))}</div>
@@ -1187,11 +1192,14 @@ function buildFollowUpHtml(l: any, attempt: number): string {
     attempt <= 1
       ? "Nous revenons vers vous au sujet du devis que vous nous avez demandé. Avez-vous eu le temps d'y jeter un œil ?"
       : "Nous nous permettons une dernière relance au sujet de votre devis. Si le moment n'est pas idéal, dites-le-nous simplement.";
-  return `<!doctype html><html><body style="margin:0;background:#f4f4f5;padding:24px;font-family:'Segoe UI',Arial,sans-serif;color:#111;">
+  return `<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escH(displayName)} — suivi de votre devis</title></head>
+<body style="margin:0;background:#f4f4f5;padding:24px;font-family:'Segoe UI',Arial,sans-serif;color:#111;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
   <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border:1.5px solid #111;">
     <tr><td style="padding:28px 32px 8px;">
-      <img src="${EMAIL_LOGO}" alt="${displayName}" style="height:34px;display:block;margin-bottom:20px;" />
+      <img src="${EMAIL_LOGO}" alt="${escH(displayName)}" height="34" style="height:34px;width:auto;max-width:200px;border:0;outline:none;text-decoration:none;display:block;margin-bottom:20px;" />
       <p style="font-size:15px;font-weight:700;margin:0 0 12px;">${hello}</p>
       <p style="font-size:14px;line-height:1.6;margin:0 0 12px;">${intro}</p>
       ${totalStr ? `<p style="font-size:14px;line-height:1.6;margin:0 0 12px;">Pour rappel, votre devis s'élève à <strong>${totalStr}</strong>.</p>` : ""}
