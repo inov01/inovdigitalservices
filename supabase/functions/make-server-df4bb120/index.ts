@@ -117,11 +117,35 @@ const ADMIN_EMAILS = ENV_ADMINS.length ? ENV_ADMINS : DEFAULT_ADMINS;
 // Public site URL + a stable (non-hashed) logo asset served from /public, used
 // to brand every outgoing e-mail. Overridable via env for staging domains.
 const SITE_URL = (Deno.env.get("SITE_URL") ?? "https://inov-digital-services.vercel.app").replace(/\/+$/, "");
-const EMAIL_LOGO = `${SITE_URL}/email-logo.webp`;
+// PNG (not WebP): Outlook desktop, Yahoo, AOL and several mobile clients do not
+// render WebP, which left the logo as a broken-image box in many inboxes.
+const EMAIL_LOGO = `${SITE_URL}/email-logo.png`;
 
 // Shared secret guarding the scheduled-newsletter dispatch endpoint (called by a
 // cron job, not an admin session). No secret set ⇒ dispatch is disabled.
 const CRON_SECRET = Deno.env.get("CRON_SECRET") ?? "";
+
+// ── Meta auto-publishing (Facebook Page + Instagram Business) ──────────────────
+// All optional: a network is simply skipped when its ids/token are absent (same
+// policy as the WhatsApp integration). META_PAGE_TOKEN is a long-lived Page
+// access token; the IG account must be a Business/Creator account linked to the
+// same Facebook Page. Required Meta permissions: pages_manage_posts and
+// instagram_content_publish (app must be reviewed/approved by Meta to post live).
+const META_GRAPH = `https://graph.facebook.com/${Deno.env.get("META_GRAPH_VERSION") ?? "v21.0"}`;
+const META_PAGE_ID = Deno.env.get("META_PAGE_ID") ?? "";
+const META_PAGE_TOKEN = Deno.env.get("META_PAGE_TOKEN") ?? "";
+const META_IG_USER_ID = Deno.env.get("META_IG_USER_ID") ?? "";
+// True when at least one network can actually publish.
+function metaConfigured(): boolean {
+  return !!META_PAGE_TOKEN && (!!META_PAGE_ID || !!META_IG_USER_ID);
+}
+// Turn a site-relative path ("/blog/x", "/email-logo.png") into an absolute URL
+// Meta can fetch. Absolute URLs are returned untouched.
+function absoluteUrl(u: string): string {
+  const s = String(u ?? "").trim();
+  if (!s || /^https?:\/\//i.test(s)) return s;
+  return `${SITE_URL}${s.startsWith("/") ? "" : "/"}${s}`;
+}
 
 // Resolves the authenticated Supabase user from the Bearer token, or null. The
 // anon key is not a user token, so it resolves to null (correctly rejected on
@@ -357,7 +381,9 @@ function buildReceiptHtml(l: any): string {
   const method = (meta.paymentMethodLabel as string) || (meta.paymentMethod as string) || "—";
   const reference = (meta.reference as string) || "";
   const paid = l.status === "won";
-  const logoUrl = Deno.env.get("LOGO_URL") ?? "";
+  // Fall back to the email-safe PNG logo when LOGO_URL is unset (an empty env
+  // previously produced no image; a stale .webp override produced a broken one).
+  const logoUrl = Deno.env.get("LOGO_URL") || EMAIL_LOGO;
 
   type Row = { label: string; qty: number; amount: string };
   let rows: Row[] = [];
@@ -418,7 +444,7 @@ function buildReceiptHtml(l: any): string {
     <tr><td style="padding:40px 36px;">
       <!-- Header -->
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-        <td style="vertical-align:top;">${logoUrl ? `<img src="${escH(logoUrl)}" alt="INOV" height="56" style="height:56px;width:auto;display:block;">` : `<div style="font-size:22px;font-weight:900;">INOV <span style="color:#F7931E;">Digital Services</span></div>`}</td>
+        <td style="vertical-align:top;">${logoUrl ? `<img src="${escH(logoUrl)}" alt="INOV Digital Services" height="56" style="height:56px;width:auto;max-width:220px;border:0;outline:none;text-decoration:none;display:block;">` : `<div style="font-size:22px;font-weight:900;">INOV <span style="color:#F7931E;">Digital Services</span></div>`}</td>
         <td style="text-align:right;vertical-align:top;">
           <div style="font-size:34px;font-weight:900;letter-spacing:-0.01em;">REÇU</div>
           <div style="margin-top:6px;font-size:13px;font-weight:800;">N° ${escH(receiptNo(l))}</div>
@@ -1212,11 +1238,14 @@ function buildFollowUpHtml(l: any, attempt: number): string {
     attempt <= 1
       ? "Nous revenons vers vous au sujet du devis que vous nous avez demandé. Avez-vous eu le temps d'y jeter un œil ?"
       : "Nous nous permettons une dernière relance au sujet de votre devis. Si le moment n'est pas idéal, dites-le-nous simplement.";
-  return `<!doctype html><html><body style="margin:0;background:#f4f4f5;padding:24px;font-family:'Segoe UI',Arial,sans-serif;color:#111;">
+  return `<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escH(displayName)} — suivi de votre devis</title></head>
+<body style="margin:0;background:#f4f4f5;padding:24px;font-family:'Segoe UI',Arial,sans-serif;color:#111;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
   <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border:1.5px solid #111;">
     <tr><td style="padding:28px 32px 8px;">
-      <img src="${EMAIL_LOGO}" alt="${displayName}" style="height:34px;display:block;margin-bottom:20px;" />
+      <img src="${EMAIL_LOGO}" alt="${escH(displayName)}" height="34" style="height:34px;width:auto;max-width:200px;border:0;outline:none;text-decoration:none;display:block;margin-bottom:20px;" />
       <p style="font-size:15px;font-weight:700;margin:0 0 12px;">${hello}</p>
       <p style="font-size:14px;line-height:1.6;margin:0 0 12px;">${intro}</p>
       ${totalStr ? `<p style="font-size:14px;line-height:1.6;margin:0 0 12px;">Pour rappel, votre devis s'élève à <strong>${totalStr}</strong>.</p>` : ""}
@@ -1373,6 +1402,10 @@ app.put(`${P}/settings`, async (c) => {
   if (u instanceof Response) return u;
   const b = await c.req.json().catch(() => ({} as any));
   const a = b?.announcement ?? {};
+  // Snapshot the previously published blog ids so we can auto-post only the new ones.
+  const prevBlogIds = new Set(
+    ((((await kv.get("settings")) as any)?.blogsAdded ?? []) as any[]).map((x) => String(x?.id)),
+  );
   const settings = {
     announcement: {
       enabled: !!a.enabled,
@@ -1390,7 +1423,32 @@ app.put(`${P}/settings`, async (c) => {
     blogsAdded: cleanBlogs(b?.blogsAdded),
   };
   await kv.set("settings", settings);
-  return c.json({ ok: true, settings });
+
+  // Auto-post newly added blog articles to Facebook & Instagram. Each new article
+  // is enqueued as a scheduled social post (published by the /social/dispatch
+  // cron), so a slow Meta call never delays or fails the settings save. Skipped
+  // entirely when Meta is not configured.
+  let autoPosted = 0;
+  if (metaConfigured()) {
+    const fresh = settings.blogsAdded.filter((bl: any) => bl?.id && !prevBlogIds.has(String(bl.id)));
+    for (const bl of fresh) {
+      const slug = String(bl.slug || bl.id);
+      const articleUrl = absoluteUrl(`/blog/${slug}`);
+      const caption = [bl.title, bl.excerpt, articleUrl].filter(Boolean).join("\n\n").slice(0, 2200);
+      const id = newId();
+      await kv.set(`social:${id}`, {
+        id, caption,
+        imageUrl: bl.image ? absoluteUrl(String(bl.image)) : "",
+        link: articleUrl,
+        networks: [...SOCIAL_NETWORKS],
+        source: "blog", status: "scheduled",
+        scheduledAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(), result: null as any,
+      });
+      autoPosted++;
+    }
+  }
+  return c.json({ ok: true, settings, autoPosted });
 });
 
 // ── Admin: AI assistant (Google Gemini, free tier) ─────────────────────────────
@@ -1534,7 +1592,11 @@ function cleanFormation(b: any) {
   const syllabus = Array.isArray(b?.syllabus)
     ? b.syllabus.slice(0, 40).map((s: any) => str(s, 200)).filter(Boolean)
     : [];
+  const tags = Array.isArray(b?.tags)
+    ? b.tags.slice(0, 20).map((t: any) => str(t, 80)).filter(Boolean)
+    : [];
   const free = !!b?.free;
+  const type = ["cours", "live", "conference", "replay"].includes(b?.type) ? b.type : "cours";
   return {
     published: !!b?.published,
     title: str(b?.title, 160).trim(),
@@ -1551,6 +1613,16 @@ function cleanFormation(b: any) {
     seats: num(b?.seats, 0),
     syllabus,
     order: num(b?.order, 0),
+    // Session type fields (live, replay, conference)
+    type,
+    liveUrl: str(b?.liveUrl, 600) || undefined,
+    replayUrl: str(b?.replayUrl, 600) || undefined,
+    resourcesUrl: str(b?.resourcesUrl, 600) || undefined,
+    startDateTime: str(b?.startDateTime, 40) || undefined,
+    endDateTime: str(b?.endDateTime, 40) || undefined,
+    isLive: !!b?.isLive,
+    recordingDate: str(b?.recordingDate, 40) || undefined,
+    tags,
   };
 }
 
@@ -1560,6 +1632,10 @@ const publicFormation = (f: any) => ({
   level: f.level, format: f.format, durationHours: f.durationHours,
   free: f.free, price: f.price, image: f.image, instructor: f.instructor,
   startDate: f.startDate, seats: f.seats, syllabus: f.syllabus, order: f.order,
+  type: f.type, liveUrl: f.liveUrl, replayUrl: f.replayUrl,
+  resourcesUrl: f.resourcesUrl, startDateTime: f.startDateTime,
+  endDateTime: f.endDateTime, isLive: f.isLive, recordingDate: f.recordingDate,
+  tags: f.tags,
 });
 
 // Public: list published formations (soonest / lowest order first).
@@ -1692,6 +1768,12 @@ async function ensureCollabBucket(): Promise<void> {
 }
 
 function cleanCollab(b: any) {
+  const portfolioImages = Array.isArray(b?.portfolioImages)
+    ? b.portfolioImages.slice(0, 6).map((u: any) => str(u, 600)).filter(Boolean)
+    : [];
+  const skills = Array.isArray(b?.skills)
+    ? b.skills.slice(0, 20).map((s: any) => str(s, 80)).filter(Boolean)
+    : [];
   return {
     name: str(b?.name, 120).trim(),
     profession: str(b?.profession, 120).trim(),
@@ -1706,6 +1788,9 @@ function cleanCollab(b: any) {
     instagram: str(b?.instagram, 120).trim(),
     website: str(b?.website, 200).trim(),
     accent: str(b?.accent, 20) || undefined,
+    testimonial: str(b?.testimonial, 600) || undefined,
+    portfolioImages,
+    skills,
   };
 }
 
@@ -1715,6 +1800,7 @@ const publicCollab = (x: any) => ({
   description: x.description, price: x.price, city: x.city, photoUrl: x.photoUrl,
   whatsapp: x.whatsapp, instagram: x.instagram, website: x.website,
   accent: x.accent, createdAt: x.createdAt,
+  testimonial: x.testimonial, portfolioImages: x.portfolioImages, skills: x.skills,
 });
 
 // Public: one-shot signed upload URL for a collaborator photo (public bucket).
@@ -1797,6 +1883,265 @@ app.delete(`${P}/collaborateurs/:id`, async (c) => {
   if (u instanceof Response) return u;
   await kv.del(`collaborateur:${c.req.param("id")}`);
   return c.json({ ok: true });
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ÉVENTUALITÉS (journal d'incidents admin — interne, aucune route publique)
+// ══════════════════════════════════════════════════════════════════════════════
+// KV: eventualite:<id> — an incident/alert/note entry in the admin journal.
+// All routes require admin auth. Public site never touches these.
+
+const EVT_TYPES = ["incident", "alerte", "note", "suivi_client", "paiement"] as const;
+const EVT_SEVERITIES = ["critique", "haute", "normale", "info"] as const;
+const EVT_STATUSES = ["ouverte", "en_cours", "resolue", "archivee"] as const;
+
+function cleanEventualite(b: any) {
+  const tags = Array.isArray(b?.tags)
+    ? b.tags.slice(0, 20).map((t: any) => str(t, 80)).filter(Boolean)
+    : [];
+  return {
+    title: str(b?.title, 200).trim(),
+    description: str(b?.description, 2000) || undefined,
+    type: EVT_TYPES.includes(b?.type) ? b.type : "note",
+    severity: EVT_SEVERITIES.includes(b?.severity) ? b.severity : "normale",
+    status: EVT_STATUSES.includes(b?.status) ? b.status : "ouverte",
+    linkedLeadId: str(b?.linkedLeadId, 80) || undefined,
+    resolvedNote: str(b?.resolvedNote, 800) || undefined,
+    resolvedAt: b?.resolvedAt ? str(b.resolvedAt, 40) : undefined,
+    tags,
+  };
+}
+
+// Admin: list all eventualites, newest first.
+app.get(`${P}/eventualites`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const all = ((await kv.getByPrefix("eventualite:")) as any[]) ?? [];
+  all.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  return c.json({ eventualites: all });
+});
+
+// Admin: create a new eventualite.
+app.post(`${P}/eventualites`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const b = await c.req.json().catch(() => ({} as any));
+  const clean = cleanEventualite(b);
+  if (!clean.title) return c.json({ error: "missing title" }, 400);
+  const id = newId();
+  const eventualite = { id, createdAt: new Date().toISOString(), ...clean };
+  await kv.set(`eventualite:${id}`, eventualite);
+  return c.json({ ok: true, eventualite });
+});
+
+// Admin: patch (update status, resolvedNote, description, severity) on an eventualite.
+app.patch(`${P}/eventualites/:id`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const id = c.req.param("id");
+  const rec: any = await kv.get(`eventualite:${id}`);
+  if (!rec) return c.json({ error: "not found" }, 404);
+  const b = await c.req.json().catch(() => ({} as any));
+  if (b.status !== undefined && EVT_STATUSES.includes(b.status)) {
+    rec.status = b.status;
+    if (b.status === "resolue" && !rec.resolvedAt) {
+      rec.resolvedAt = new Date().toISOString();
+    }
+  }
+  if (b.severity !== undefined && EVT_SEVERITIES.includes(b.severity)) rec.severity = b.severity;
+  if (typeof b.resolvedNote === "string") rec.resolvedNote = str(b.resolvedNote, 800);
+  if (typeof b.description === "string") rec.description = str(b.description, 2000);
+  await kv.set(`eventualite:${id}`, rec);
+  return c.json({ ok: true, eventualite: rec });
+});
+
+// Admin: delete an eventualite.
+app.delete(`${P}/eventualites/:id`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  await kv.del(`eventualite:${c.req.param("id")}`);
+  return c.json({ ok: true });
+});
+
+// ── Social auto-publishing (Facebook Page + Instagram) ─────────────────────────
+// Mirrors the newsletter model: compose/schedule posts (stored as social:<id>),
+// then a cron endpoint (secret-guarded) publishes the ones whose time has come.
+// New blog articles are auto-enqueued from PUT /settings. Each network is skipped
+// gracefully when unconfigured, exactly like the WhatsApp follow-up integration.
+
+const SOCIAL_NETWORKS = ["facebook", "instagram"] as const;
+type SocialNetwork = (typeof SOCIAL_NETWORKS)[number];
+
+function cleanNetworks(input: unknown): SocialNetwork[] {
+  const arr = Array.isArray(input) ? input : [];
+  const picked = SOCIAL_NETWORKS.filter((n) => arr.includes(n));
+  return picked.length ? picked : [...SOCIAL_NETWORKS];
+}
+
+// Publish a single post to the Facebook Page feed. With an image we use /photos
+// (image + caption); text/link-only posts go to /feed.
+async function publishToFacebook(p: { message: string; link?: string; imageUrl?: string }) {
+  if (!META_PAGE_ID || !META_PAGE_TOKEN) return { sent: false, skipped: "not_configured" as const };
+  try {
+    let url: string;
+    const body: Record<string, string> = { access_token: META_PAGE_TOKEN };
+    if (p.imageUrl) {
+      url = `${META_GRAPH}/${META_PAGE_ID}/photos`;
+      body.url = p.imageUrl;
+      body.caption = p.message;
+    } else {
+      url = `${META_GRAPH}/${META_PAGE_ID}/feed`;
+      body.message = p.message;
+      if (p.link) body.link = p.link;
+    }
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(body),
+    });
+    const data = await res.json().catch(() => ({} as any));
+    if (!res.ok) return { sent: false, error: `fb_${res.status}: ${JSON.stringify(data).slice(0, 200)}` };
+    return { sent: true, id: data.post_id ?? data.id };
+  } catch (e) {
+    return { sent: false, error: String((e as any)?.message ?? e) };
+  }
+}
+
+// Publish to Instagram: create a media container, then publish it. IG feed posts
+// require a publicly reachable image URL (a caption alone is not enough).
+async function publishToInstagram(p: { caption: string; imageUrl?: string }) {
+  if (!META_IG_USER_ID || !META_PAGE_TOKEN) return { sent: false, skipped: "not_configured" as const };
+  if (!p.imageUrl) return { sent: false, skipped: "no_image" as const };
+  try {
+    const createRes = await fetch(`${META_GRAPH}/${META_IG_USER_ID}/media`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ image_url: p.imageUrl, caption: p.caption, access_token: META_PAGE_TOKEN }),
+    });
+    const created = await createRes.json().catch(() => ({} as any));
+    if (!createRes.ok || !created.id) {
+      return { sent: false, error: `ig_create_${createRes.status}: ${JSON.stringify(created).slice(0, 200)}` };
+    }
+    const pubRes = await fetch(`${META_GRAPH}/${META_IG_USER_ID}/media_publish`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ creation_id: created.id, access_token: META_PAGE_TOKEN }),
+    });
+    const published = await pubRes.json().catch(() => ({} as any));
+    if (!pubRes.ok || !published.id) {
+      return { sent: false, error: `ig_publish_${pubRes.status}: ${JSON.stringify(published).slice(0, 200)}` };
+    }
+    return { sent: true, id: published.id };
+  } catch (e) {
+    return { sent: false, error: String((e as any)?.message ?? e) };
+  }
+}
+
+// Publish one post to each of its target networks; returns a per-network report.
+async function publishSocialPost(post: any): Promise<Record<string, any>> {
+  const nets = cleanNetworks(post?.networks);
+  const caption = String(post?.caption ?? "");
+  const imageUrl = post?.imageUrl ? absoluteUrl(String(post.imageUrl)) : undefined;
+  const link = post?.link ? absoluteUrl(String(post.link)) : undefined;
+  const report: Record<string, any> = {};
+  const summarize = (r: any) =>
+    r.sent ? { status: "sent", id: r.id } : { status: r.error ? "error" : "skipped", detail: r.error ?? r.skipped };
+  if (nets.includes("facebook")) report.facebook = summarize(await publishToFacebook({ message: caption, link, imageUrl }));
+  if (nets.includes("instagram")) report.instagram = summarize(await publishToInstagram({ caption, imageUrl }));
+  return report;
+}
+
+function socialStatusFromReport(report: Record<string, any>): "sent" | "failed" | "partial" {
+  const states = Object.values(report).map((r: any) => r?.status);
+  if (states.length && states.every((s) => s === "sent")) return "sent";
+  if (states.some((s) => s === "sent")) return "partial";
+  return "failed";
+}
+
+// Admin: publish immediately (a manual, one-off post). Returns the live result.
+app.post(`${P}/social/publish`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  if (!metaConfigured()) return c.json({ error: "meta_not_configured" }, 503);
+  const b = await c.req.json().catch(() => ({} as any));
+  const caption = typeof b.caption === "string" ? b.caption.slice(0, 2200).trim() : "";
+  const imageUrl = typeof b.imageUrl === "string" ? b.imageUrl.slice(0, 600).trim() : "";
+  const link = typeof b.link === "string" ? b.link.slice(0, 600).trim() : "";
+  const networks = cleanNetworks(b.networks);
+  if (!caption && !imageUrl) return c.json({ error: "missing caption or image" }, 400);
+  const report = await publishSocialPost({ caption, imageUrl, link, networks });
+  const status = socialStatusFromReport(report);
+  // Keep a record so the admin history shows manual posts too.
+  const id = newId();
+  await kv.set(`social:${id}`, {
+    id, caption, imageUrl, link, networks,
+    source: "manual", status, scheduledAt: new Date().toISOString(),
+    createdAt: new Date().toISOString(), result: { ...report, dispatchedAt: new Date().toISOString() },
+  });
+  return c.json({ ok: status !== "failed", id, status, result: report });
+});
+
+// Admin: schedule a post for later automatic publication by the cron dispatch.
+app.post(`${P}/social/schedule`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const b = await c.req.json().catch(() => ({} as any));
+  const caption = typeof b.caption === "string" ? b.caption.slice(0, 2200).trim() : "";
+  const imageUrl = typeof b.imageUrl === "string" ? b.imageUrl.slice(0, 600).trim() : "";
+  const link = typeof b.link === "string" ? b.link.slice(0, 600).trim() : "";
+  const when = new Date(String(b.scheduledAt ?? ""));
+  if (!caption && !imageUrl) return c.json({ error: "missing caption or image" }, 400);
+  if (isNaN(when.getTime())) return c.json({ error: "invalid scheduledAt" }, 400);
+  const id = newId();
+  const post = {
+    id, caption, imageUrl, link,
+    networks: cleanNetworks(b.networks),
+    source: "manual", status: "scheduled",
+    scheduledAt: when.toISOString(), createdAt: new Date().toISOString(), result: null as any,
+  };
+  await kv.set(`social:${id}`, post);
+  return c.json({ ok: true, id });
+});
+
+// Admin: list posts (history + scheduled), most recent first.
+app.get(`${P}/social/posts`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  const rows = ((await kv.getByPrefix("social:")) as any[]) ?? [];
+  const posts = rows.sort((a, b) => (a.scheduledAt < b.scheduledAt ? 1 : -1));
+  return c.json({ posts, metaConfigured: metaConfigured() });
+});
+
+// Admin: cancel/delete a scheduled or historical post.
+app.delete(`${P}/social/posts/:id`, async (c) => {
+  const u = await requireAdmin(c);
+  if (u instanceof Response) return u;
+  await kv.del(`social:${c.req.param("id")}`);
+  return c.json({ ok: true });
+});
+
+// Cron: publish due posts (secret-guarded, no admin session). Same contract as
+// the newsletter dispatch — safe to call every few minutes.
+app.post(`${P}/social/dispatch`, async (c) => {
+  if (!CRON_SECRET) return c.json({ error: "dispatch disabled" }, 503);
+  if (c.req.header("x-cron-secret") !== CRON_SECRET) return c.json({ error: "forbidden" }, 403);
+  const now = Date.now();
+  const rows = ((await kv.getByPrefix("social:")) as any[]) ?? [];
+  const due = rows.filter((r) => r?.status === "scheduled" && new Date(r.scheduledAt).getTime() <= now);
+  const processed: any[] = [];
+  for (const post of due) {
+    try {
+      const report = await publishSocialPost(post);
+      post.status = socialStatusFromReport(report);
+      post.result = { ...report, dispatchedAt: new Date().toISOString() };
+    } catch (e) {
+      post.status = "failed";
+      post.result = { error: String((e as any)?.message ?? e), dispatchedAt: new Date().toISOString() };
+    }
+    await kv.set(`social:${post.id}`, post);
+    processed.push({ id: post.id, status: post.status });
+  }
+  return c.json({ ok: true, processed });
 });
 
 Deno.serve(app.fetch);
