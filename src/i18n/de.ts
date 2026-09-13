@@ -53,10 +53,10 @@ const de: Dict = {
   },
   pricing: {
     tag: "Preise",
-    title: "Transparente Preise",
+    title: "Stellen Sie Ihr Angebot zusammen — zum fairen Preis",
     subtitle: "Wählen Sie Ihre Leistungen, passen Sie die Mengen an — das Angebot wird in Echtzeit berechnet.",
     discount5: "10 % ab 5 Leistungen",
-    discount10: "30 % ab 10 Leistungen",
+    discount10: "15 % ab 10 Leistungen",
     currencyLabel: "Preise anzeigen in",
     regionLabel: "Ihre Region",
     rateNote: "Tageskurs: 1 US$ ≈ {rate} · Referenzpreise in USD.",

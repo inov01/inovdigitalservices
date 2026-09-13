@@ -53,10 +53,10 @@ const it: Dict = {
   },
   pricing: {
     tag: "Tariffe",
-    title: "Tariffe trasparenti",
+    title: "Componi la tua offerta, paga il giusto prezzo",
     subtitle: "Seleziona i tuoi servizi, regola le quantità — il preventivo si calcola in tempo reale.",
     discount5: "10% da 5 servizi",
-    discount10: "30% da 10 servizi",
+    discount10: "15% da 10 servizi",
     currencyLabel: "Mostra i prezzi in",
     regionLabel: "La tua regione",
     rateNote: "Tasso del giorno: 1 $US ≈ {rate} · Tariffe di riferimento in USD.",

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { createPortal } from "react-dom"
-import { ShoppingCart, FileText, X, PartyPopper, Rocket, Mail, CheckCircle, ChevronDown, Clock, RefreshCw, Package, PlayCircle, Eye, Coins, Check, ShieldCheck } from "lucide-react"
+import { ShoppingCart, FileText, X, Mail, CheckCircle, ChevronDown, Clock, RefreshCw, Package, PlayCircle, Eye, Coins, Check, ShieldCheck, Share2, SlidersHorizontal, Info } from "lucide-react"
 import { SiWhatsapp } from "./SocialIcons"
 import { smoothScrollToId } from "../lib/smoothScroll"
 import { pricingServices, tierValues, TIER_KEYS, type PricingService, type TierKey } from "../data/services"
@@ -10,6 +10,7 @@ import type { Lang } from "../i18n/translations"
 import useModal from "../hooks/useModal"
 import { track } from "../lib/analytics"
 import { api } from "../lib/api"
+import ServiceConfigurator from "./ServiceConfigurator"
 import logo from "../imports/logo.webp"
 
 // Tier labels live here (local, like CookieConsent) so the same service can be
@@ -55,6 +56,39 @@ const WA_LABELS: Record<Lang, { label: string; placeholder: string }> = {
   ar: { label: "رقم واتساب (اختياري)", placeholder: "+509 3625 5920" },
 }
 
+// Per-row action copy — kept local so the 8 translation files stay untouched.
+type RowKey = "customize" | "share" | "copied"
+const ROW_LABELS: Record<Lang, Record<RowKey, string>> = {
+  fr: { customize: "Personnaliser & commander", share: "Partager", copied: "Lien copié" },
+  en: { customize: "Customize & order", share: "Share", copied: "Link copied" },
+  es: { customize: "Personalizar y pedir", share: "Compartir", copied: "Enlace copiado" },
+  ht: { customize: "Pèsonalize & kòmande", share: "Pataje", copied: "Lyen kopye" },
+  pt: { customize: "Personalizar e pedir", share: "Partilhar", copied: "Link copiado" },
+  it: { customize: "Personalizza e ordina", share: "Condividi", copied: "Link copiato" },
+  de: { customize: "Anpassen & bestellen", share: "Teilen", copied: "Link kopiert" },
+  ar: { customize: "تخصيص وطلب", share: "مشاركة", copied: "تم نسخ الرابط" },
+}
+
+// Curated starter bundles — reduce choice overload (Hick's law) and lift the
+// average basket by pre-selecting a coherent set of existing services. IDs map
+// to entries in `pricingServices`; clicking a pack sets each to qty 1.
+type PackKey = "identity" | "product" | "social"
+const PACKS: { key: PackKey; ids: number[] }[] = [
+  { key: "identity", ids: [2, 15, 24] }, // Logo + Carte de visite + Profil Réseaux Pro
+  { key: "product", ids: [6, 7, 25] },   // Packaging + Étiquette + Mockups Produit
+  { key: "social", ids: [24, 10, 3] },   // Profil Réseaux Pro + Affiche Réseaux + Animation Logo
+]
+const PACK_LABELS: Record<Lang, { heading: string } & Record<PackKey, string>> = {
+  fr: { heading: "Packs rapides", identity: "Pack Identité", product: "Pack Produit", social: "Pack Réseaux" },
+  en: { heading: "Quick packs", identity: "Identity Pack", product: "Product Pack", social: "Social Pack" },
+  es: { heading: "Packs rápidos", identity: "Pack Identidad", product: "Pack Producto", social: "Pack Redes" },
+  ht: { heading: "Pak rapid", identity: "Pak Idantite", product: "Pak Pwodwi", social: "Pak Rezo" },
+  pt: { heading: "Packs rápidos", identity: "Pack Identidade", product: "Pack Produto", social: "Pack Redes" },
+  it: { heading: "Pacchetti rapidi", identity: "Pack Identità", product: "Pack Prodotto", social: "Pack Social" },
+  de: { heading: "Schnellpakete", identity: "Identitäts-Paket", product: "Produkt-Paket", social: "Social-Paket" },
+  ar: { heading: "باقات سريعة", identity: "باقة الهوية", product: "باقة المنتج", social: "باقة الشبكات" },
+}
+
 export default function Pricing() {
   const { t, fmt, currency, setCurrency, rates, lang, priceFor, region } = useSettings()
   const [services, setServices] = useState<PricingService[]>(pricingServices)
@@ -64,6 +98,8 @@ export default function Pricing() {
   const eff = (s: PricingService) => tierValues(s, tierOf(s))
   const tl = TIER_LABELS[lang] ?? TIER_LABELS.fr
   const setTier = (id: number, tier: TierKey) => setTierById((prev) => ({ ...prev, [id]: tier }))
+  // Service whose smart configurator modal is open (null = closed).
+  const [cfgId, setCfgId] = useState<number | null>(null)
   const [accordionOpen, setAccordionOpen] = useState(false)
   const [otherChecked, setOtherChecked] = useState(false)
   const [otherText, setOtherText] = useState("")
@@ -102,7 +138,7 @@ export default function Pricing() {
 
   const totalQty = services.reduce((sum, s) => sum + s.qty, 0)
   const subtotal = services.reduce((sum, s) => sum + priceFor(eff(s).price) * s.qty, 0)
-  const discountPct = totalQty >= 10 ? 0.3 : totalQty >= 5 ? 0.1 : 0
+  const discountPct = totalQty >= 10 ? 0.15 : totalQty >= 5 ? 0.1 : 0
   const discount = Math.round(subtotal * discountPct)
   const total = subtotal - discount
   const acompte = Math.round(total * 0.7)
@@ -113,7 +149,7 @@ export default function Pricing() {
   // the client would save by getting there (estimated on the current subtotal).
   const nextAt = totalQty < 5 ? 5 : totalQty < 10 ? 10 : null
   const toNext = nextAt ? nextAt - totalQty : 0
-  const nextPct = nextAt === 10 ? 0.3 : 0.1
+  const nextPct = nextAt === 10 ? 0.15 : 0.1
   const extraSaving = nextAt ? Math.max(0, Math.round(subtotal * nextPct) - discount) : 0
   const progressPct = nextAt ? Math.min(100, Math.round((totalQty / nextAt) * 100)) : 100
 
@@ -130,6 +166,16 @@ export default function Pricing() {
     }
     window.addEventListener("preselect-services", onPreselect)
     return () => window.removeEventListener("preselect-services", onPreselect)
+  }, [])
+
+  // Deep-link: /devis?service=18 opens that service's configurator (shared links).
+  useEffect(() => {
+    const raw = new URLSearchParams(window.location.search).get("service")
+    const id = raw ? Number(raw) : NaN
+    if (!Number.isNaN(id)) {
+      setAccordionOpen(true)
+      setCfgId(id)
+    }
   }, [])
 
   // Apply admin overrides from the dashboard: hidden built-in cards, extra
@@ -301,6 +347,14 @@ export default function Pricing() {
 
   function removeItem(id: number) {
     setServices((prev) => prev.map((s) => s.id === id ? { ...s, qty: 0 } : s))
+  }
+
+  // Apply a curated pack: ensure each of its services is in the cart (qty >= 1),
+  // then reveal the full list so the client sees what was added.
+  function applyPack(ids: number[]) {
+    if (cartError) setCartError(false)
+    setServices((prev) => prev.map((s) => ids.includes(s.id) ? { ...s, qty: s.qty > 0 ? s.qty : 1 } : s))
+    setAccordionOpen(true)
   }
 
   // Require a client name before any send/preview; focuses the field on failure.
@@ -561,29 +615,8 @@ export default function Pricing() {
             <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 700, color: "var(--ds-accent-text)" }}>{ux.socialProof}</span>
           </div>
 
-          {/* Discount badges */}
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 24, flexWrap: "wrap" }}>
-            <span style={{
-              display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 18px",
-              background: totalQty >= 5 ? "var(--ds-accent)" : "var(--ds-bg-sec)",
-              color: totalQty >= 5 ? "#fff" : "var(--ds-text)",
-              borderRadius: "var(--r-full)", fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 700,
-              transition: "all 0.3s",
-            }}>
-              <PartyPopper size={15} /> {t.pricing.discount5}
-            </span>
-            <span style={{
-              display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 18px",
-              background: totalQty >= 10 ? "var(--ds-accent)" : "var(--ds-bg-sec)",
-              color: totalQty >= 10 ? "#fff" : "var(--ds-text)",
-              borderRadius: "var(--r-full)", fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 700,
-              transition: "all 0.3s",
-            }}>
-              <Rocket size={15} /> {t.pricing.discount10}
-            </span>
-          </div>
-
-          {/* Currency selector — moved here from the header so it lives with the prices */}
+          {/* Currency selector — lives with the prices; discount tiers are surfaced
+              contextually by the cart's goal-gradient progress bar instead of here */}
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 24, padding: "8px 8px 8px 16px", background: "var(--ds-bg-sec)", borderRadius: "var(--r-full)" }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: "var(--ds-text-muted)" }}>
               <Coins size={15} aria-hidden="true" /> {t.pricing.currencyLabel}
@@ -641,11 +674,33 @@ export default function Pricing() {
               <span style={{ transform: accordionOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s", color: "#fff", display: "inline-flex" }}><ChevronDown size={18} aria-hidden="true" /></span>
             </button>
 
+            {/* Quick packs — curated starter bundles to cut choice overload */}
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, margin: "4px 0 18px" }}>
+              <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12.5, fontWeight: 700, color: "var(--ds-text-muted)", marginRight: 2 }}>
+                {PACK_LABELS[lang].heading}
+              </span>
+              {PACKS.map((p) => (
+                <button
+                  key={p.key}
+                  onClick={() => applyPack(p.ids)}
+                  style={{
+                    fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 700, color: "var(--ds-text)",
+                    background: "var(--ds-bg-card)", border: "1.5px solid var(--ds-border)", borderRadius: "var(--r-full)",
+                    padding: "7px 16px", cursor: "pointer", transition: "border-color 0.2s, color 0.2s",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--ds-accent-a30)"; e.currentTarget.style.color = "var(--ds-accent-text)" }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--ds-border)"; e.currentTarget.style.color = "var(--ds-text)" }}
+                >
+                  {PACK_LABELS[lang][p.key]}
+                </button>
+              ))}
+            </div>
+
             {/* Services list — single stable list; rows never reorder when selected */}
             <div>
               {/* When collapsed, keep the current selection visible (stable order, no jump) */}
               {!accordionOpen && services.filter((s) => s.qty > 0).map((s) => (
-                <ServiceRow key={s.id} s={s} name={svcName(s)} desc={svcDesc(s)} idx={services.indexOf(s)} updateQty={updateQty} fmt={fmt} tier={tierOf(s)} onTier={(tk) => setTier(s.id, tk)} tl={tl} />
+                <ServiceRow key={s.id} s={s} name={svcName(s)} desc={svcDesc(s)} idx={services.indexOf(s)} updateQty={updateQty} fmt={fmt} tier={tierOf(s)} onTier={(tk) => setTier(s.id, tk)} tl={tl} onConfigure={() => setCfgId(s.id)} />
               ))}
 
               {/* Full list in original order — selecting a row keeps it in place */}
@@ -662,9 +717,24 @@ export default function Pricing() {
                 }}
               >
                 {services.map((s) => (
-                  <ServiceRow key={s.id} s={s} name={svcName(s)} desc={svcDesc(s)} idx={services.indexOf(s)} updateQty={updateQty} fmt={fmt} tier={tierOf(s)} onTier={(tk) => setTier(s.id, tk)} tl={tl} />
+                  <ServiceRow key={s.id} s={s} name={svcName(s)} desc={svcDesc(s)} idx={services.indexOf(s)} updateQty={updateQty} fmt={fmt} tier={tierOf(s)} onTier={(tk) => setTier(s.id, tk)} tl={tl} onConfigure={() => setCfgId(s.id)} />
                 ))}
               </div>
+
+              {/* Smart configurator modal (formulaire intelligent) */}
+              {cfgId !== null && (() => {
+                const cs = services.find((x) => x.id === cfgId)
+                if (!cs) return null
+                return (
+                  <ServiceConfigurator
+                    service={cs}
+                    name={svcName(cs)}
+                    tier={tierOf(cs)}
+                    tierLabel={tl[tierOf(cs)]}
+                    onClose={() => setCfgId(null)}
+                  />
+                )
+              })()}
 
               {/* Other */}
               <div style={{ marginTop: 12, padding: "16px 20px", background: "var(--ds-bg-sec)", borderRadius: "var(--r-lg)" }}>
@@ -831,38 +901,6 @@ export default function Pricing() {
                 )}
               </div>
 
-              {/* Client e-mail — where we send the proforma */}
-              <div style={{ marginBottom: 16 }}>
-                <label htmlFor="pricing-client-email" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.55)", display: "block", marginBottom: 6 }}>
-                  {t.pricing.clientEmailLabel}
-                </label>
-                <input
-                  id="pricing-client-email"
-                  ref={emailInputRef}
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  value={clientEmail ?? ""}
-                  onChange={(e) => { setClientEmail(e.target.value); if (emailError) setEmailError(false); if (sentOk) setSentOk(false); if (sentErr) setSentErr(false) }}
-                  placeholder={t.pricing.clientEmailPlaceholder}
-                  aria-invalid={emailError}
-                  aria-required="true"
-                  style={{
-                    width: "100%", padding: "11px 14px", borderRadius: "var(--r-md)",
-                    border: `1.5px solid ${emailError ? "var(--ds-danger-on-dark)" : "rgba(255,255,255,0.15)"}`,
-                    fontFamily: "'Outfit', sans-serif", fontSize: 14,
-                    background: "rgba(255,255,255,0.07)", color: "#fff",
-                    outline: "none", transition: "border 0.2s",
-                  }}
-                  onFocus={(e) => { if (!emailError) e.target.style.borderColor = "rgba(255,255,255,0.5)" }}
-                  onBlur={(e) => { if (!emailError) e.target.style.borderColor = "rgba(255,255,255,0.15)" }}
-                />
-                {emailError && (
-                  <p style={{ margin: "6px 2px 0", fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 600, color: "var(--ds-danger-on-dark)" }}>
-                    {t.pricing.clientEmailRequired}
-                  </p>
-                )}
-              </div>
 
               {/* Client WhatsApp — optional, lets INOV follow up on the quote fast */}
               <div style={{ marginBottom: 16 }}>
@@ -903,60 +941,37 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              {/* Action buttons */}
+              {/* Action buttons — single primary (preview → proforma), WhatsApp secondary */}
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <button
-                  onClick={orderWhatsApp}
+                  onClick={openPreview}
                   disabled={selectedServices.length === 0}
+                  className="btn-orange"
                   style={{
-                    background: "#25D366", color: "#fff", border: "none", borderRadius: "var(--r-full)",
-                    padding: "14px 20px", fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700,
+                    color: "#fff", border: "none", borderRadius: "var(--r-full)",
+                    padding: "15px 20px", fontFamily: "'Outfit', sans-serif", fontSize: 15, fontWeight: 800,
                     cursor: selectedServices.length === 0 ? "not-allowed" : "pointer",
                     opacity: selectedServices.length === 0 ? 0.5 : 1, transition: "all 0.2s",
                     display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                   }}
                 >
-                  <SiWhatsapp size={16} /> {t.pricing.orderWhatsApp}
+                  <FileText size={16} /> {t.pricing.seeProforma}
                 </button>
                 <button
-                  onClick={requestProforma}
-                  disabled={selectedServices.length === 0 || sending}
-                  className="btn-orange"
-                  style={{
-                    color: "#fff", border: "none", borderRadius: "var(--r-full)",
-                    padding: "13px 20px", fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700,
-                    cursor: selectedServices.length === 0 ? "not-allowed" : sending ? "wait" : "pointer",
-                    opacity: selectedServices.length === 0 ? 0.5 : sending ? 0.75 : 1, transition: "all 0.2s",
-                    display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                  }}
-                >
-                  <Mail size={16} /> {sending ? t.pricing.sendingProforma : t.pricing.requestProforma}
-                </button>
-                <button
-                  onClick={openPreview}
+                  onClick={orderWhatsApp}
                   disabled={selectedServices.length === 0}
                   style={{
-                    background: "rgba(255,255,255,0.1)", color: "#fff", border: "1.5px solid rgba(255,255,255,0.2)",
-                    borderRadius: "var(--r-full)", padding: "12px 20px", fontFamily: "'Outfit', sans-serif",
-                    fontSize: 13, fontWeight: 700, cursor: selectedServices.length === 0 ? "not-allowed" : "pointer",
+                    background: "transparent", color: "#25D366", border: "1.5px solid rgba(37,211,102,0.55)",
+                    borderRadius: "var(--r-full)", padding: "12px 20px",
+                    fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 700,
+                    cursor: selectedServices.length === 0 ? "not-allowed" : "pointer",
                     opacity: selectedServices.length === 0 ? 0.4 : 1, transition: "all 0.2s",
                     display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                   }}
                 >
-                  <FileText size={16} /> {t.pricing.seeProforma}
+                  <SiWhatsapp size={16} /> {t.pricing.orderWhatsApp}
                 </button>
               </div>
-
-              {sentOk && (
-                <p role="status" aria-live="polite" style={{ display: "flex", alignItems: "center", gap: 8, margin: "12px 0 0", padding: "10px 12px", borderRadius: "var(--r-md)", background: "rgba(34,197,94,0.14)", border: "1px solid rgba(34,197,94,0.4)", fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: "#bbf7d0" }}>
-                  <CheckCircle size={16} aria-hidden="true" /> {t.pricing.proformaSent}
-                </p>
-              )}
-              {sentErr && (
-                <p role="alert" style={{ margin: "12px 0 0", padding: "10px 12px", borderRadius: "var(--r-md)", background: "rgba(239,68,68,0.14)", border: "1px solid rgba(239,68,68,0.4)", fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: "var(--ds-danger-on-dark)" }}>
-                  {t.pricing.proformaError}
-                </p>
-              )}
 
               <p style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, margin: "12px 0 0", fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.55)" }}>
                 <Clock size={13} aria-hidden="true" /> {ux.reply24h}
@@ -1134,7 +1149,27 @@ export default function Pricing() {
                   >+</button>
                 </div>
 
-                {/* ── Demander par e-mail ── */}
+                {/* ── E-mail + envoi : demandé seulement après l'aperçu ── */}
+                <input
+                  id="pricing-client-email"
+                  ref={emailInputRef}
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  value={clientEmail ?? ""}
+                  onChange={(e) => { setClientEmail(e.target.value); if (emailError) setEmailError(false); if (sentOk) setSentOk(false); if (sentErr) setSentErr(false) }}
+                  placeholder={t.pricing.clientEmailPlaceholder}
+                  aria-label={t.pricing.clientEmailLabel}
+                  aria-invalid={emailError}
+                  style={{
+                    width: 200, maxWidth: "100%", padding: "9px 14px", borderRadius: "var(--r-full)",
+                    border: `1.5px solid ${emailError ? "var(--ds-danger)" : "rgba(0,0,0,0.14)"}`,
+                    fontFamily: "'Outfit', sans-serif", fontSize: 13.5, color: "#111",
+                    background: "var(--ds-bg-sec)", outline: "none", transition: "border 0.2s",
+                  }}
+                  onFocus={(e) => { if (!emailError) e.target.style.borderColor = "rgba(0,0,0,0.4)" }}
+                  onBlur={(e) => { if (!emailError) e.target.style.borderColor = "rgba(0,0,0,0.14)" }}
+                />
                 <button
                   onClick={requestProforma}
                   disabled={sending}
@@ -1167,6 +1202,27 @@ export default function Pricing() {
                 </button>
               </div>
             </div>
+
+            {/* Send status / email validation — shown after the proforma request */}
+            {(emailError || sentOk || sentErr) && (
+              <div style={{ flexShrink: 0, padding: "10px 20px", borderBottom: "1px solid rgba(0,0,0,0.09)", background: "#fff" }}>
+                {emailError && (
+                  <p role="alert" style={{ margin: 0, fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: "var(--ds-danger)" }}>
+                    {t.pricing.clientEmailRequired}
+                  </p>
+                )}
+                {sentOk && (
+                  <p role="status" aria-live="polite" style={{ display: "flex", alignItems: "center", gap: 8, margin: 0, fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: "var(--ds-success, #16a34a)" }}>
+                    <CheckCircle size={16} aria-hidden="true" /> {t.pricing.proformaSent}
+                  </p>
+                )}
+                {sentErr && (
+                  <p role="alert" style={{ margin: 0, fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: "var(--ds-danger)" }}>
+                    {t.pricing.proformaError}
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* ── Viewer pan/zoom ── */}
             <div
@@ -1212,14 +1268,21 @@ function youTubeId(url: string): string | null {
   return m ? m[1] : null
 }
 
-function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl }: { s: PricingService; name: string; desc: string; idx: number; updateQty: (i: number, d: number, e: React.MouseEvent) => void; fmt: (usd: number) => string; tier: TierKey; onTier: (t: TierKey) => void; tl: { formula: string } & Record<TierKey, string> }) {
+function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl, onConfigure }: { s: PricingService; name: string; desc: string; idx: number; updateQty: (i: number, d: number, e: React.MouseEvent) => void; fmt: (usd: number) => string; tier: TierKey; onTier: (t: TierKey) => void; tl: { formula: string } & Record<TierKey, string>; onConfigure: () => void }) {
   const { t, priceFor, lang } = useSettings()
   const ux = UX_LABELS[lang] ?? UX_LABELS.fr
+  const rowLabels = ROW_LABELS[lang] ?? ROW_LABELS.fr
+  const [shared, setShared] = useState(false)
+  async function shareService(e: React.MouseEvent) {
+    e.stopPropagation()
+    const url = `${window.location.origin}/devis?service=${s.id}`
+    const text = `${name} · INOV Digital Services`
+    try {
+      if (navigator.share) await navigator.share({ title: name, text, url })
+      else { await navigator.clipboard.writeText(`${text}\n${url}`); setShared(true); setTimeout(() => setShared(false), 1800) }
+    } catch { /* cancelled */ }
+  }
   const ev = tierValues(s, tier)
-  // Anchor: the premium price, shown struck-through when a cheaper tier is
-  // selected so the current choice reads as a deal (price anchoring).
-  const premiumPrice = tierValues(s, "premium").price
-  const showAnchor = !s.quoteOnly && tier !== "premium" && premiumPrice > ev.price
   const features = tierFeatureList(s.id, tier, lang)
   const videoId = s.projectUrl ? youTubeId(s.projectUrl) : null
   const isShort = !!s.projectUrl && s.projectUrl.includes("/shorts/")
@@ -1371,6 +1434,45 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl }: { 
               ? t.pricing.slaRevisionsUnlimited
               : t.pricing.slaRevisions.replace("{r}", String(ev.revisions)).replace("{d}", String(ev.revisionDays))}
           </span>
+          {s.priceNote && (
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 10px", borderRadius: "var(--r-full)",
+              background: "var(--ds-accent-a14)", fontFamily: "'Outfit', sans-serif", fontSize: 11.5, fontWeight: 600, color: "var(--ds-accent-text)",
+            }}>
+              <Info size={12} aria-hidden="true" /> {s.priceNote}
+            </span>
+          )}
+        </div>
+
+        {/* Smart configurator + share — every orderable service gets a live-priced
+            "Personnaliser & commander" form (bespoke options when defined, a
+            type-aware generic set otherwise). */}
+        <div onClick={(e) => e.stopPropagation()} style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
+          {!s.quoteOnly && (
+            <button
+              type="button"
+              onClick={onConfigure}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6, padding: "7px 14px", borderRadius: "var(--r-full)",
+                border: "none", cursor: "pointer", background: "var(--ds-accent-btn-grad)", color: "#fff",
+                fontFamily: "'Outfit', sans-serif", fontSize: 12.5, fontWeight: 700,
+              }}
+            >
+              <SlidersHorizontal size={14} aria-hidden="true" /> {rowLabels.customize}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={shareService}
+            aria-label={rowLabels.share}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 6, padding: "7px 12px", borderRadius: "var(--r-full)",
+              border: "1.5px solid var(--ds-border)", cursor: "pointer", background: "var(--ds-bg)", color: "var(--ds-text-sec)",
+              fontFamily: "'Outfit', sans-serif", fontSize: 12.5, fontWeight: 700,
+            }}
+          >
+            <Share2 size={14} aria-hidden="true" /> {shared ? rowLabels.copied : rowLabels.share}
+          </button>
         </div>
 
         {/* Tier selector — same three formulas for everyone, client's choice. */}
@@ -1462,11 +1564,6 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl }: { 
           </div>
         ) : (
           <>
-            {showAnchor && (
-              <div title={ux.premiumValue} style={{ fontFamily: "'Outfit', sans-serif", fontSize: 11.5, fontWeight: 600, color: "var(--ds-text-faint)", textDecoration: "line-through" }}>
-                {fmt(priceFor(premiumPrice))}
-              </div>
-            )}
             <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, fontWeight: 800, color: "var(--ds-text)" }}>
               {s.qty > 1 ? (
                 <span style={{ color: "var(--ds-accent-text)" }}>{fmt(priceFor(ev.price) * s.qty)}</span>

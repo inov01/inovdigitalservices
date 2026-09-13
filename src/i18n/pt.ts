@@ -53,10 +53,10 @@ const pt: Dict = {
   },
   pricing: {
     tag: "Preços",
-    title: "Preços transparentes",
+    title: "Monte sua oferta, pague o preço justo",
     subtitle: "Selecione seus serviços, ajuste as quantidades — o orçamento é calculado em tempo real.",
     discount5: "10% a partir de 5 serviços",
-    discount10: "30% a partir de 10 serviços",
+    discount10: "15% a partir de 10 serviços",
     currencyLabel: "Exibir os preços em",
     regionLabel: "Sua região",
     rateNote: "Cotação do dia: 1 US$ ≈ {rate} · Preços de referência em USD.",

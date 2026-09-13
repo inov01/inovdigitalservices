@@ -53,10 +53,10 @@ const fr = {
   },
   pricing: {
     tag: "Tarifs",
-    title: "Des tarifs transparents",
+    title: "Composez votre offre, payez le juste prix",
     subtitle: "Sélectionnez vos services, ajustez les quantités — le devis se calcule en temps réel.",
     discount5: "10% dès 5 services",
-    discount10: "30% dès 10 services",
+    discount10: "15% dès 10 services",
     currencyLabel: "Afficher les prix en",
     regionLabel: "Votre région",
     rateNote: "Taux du jour : 1 $US ≈ {rate} · Tarifs de référence en USD.",
