@@ -12,22 +12,43 @@ import type { Lang } from "../i18n/translations"
 /* ──────────────────────────────────────────────────────────────────────────
    CONFIGURATION DES PAIEMENTS
    ──────────────────────────────────────────────────────────────────────────
-   Les coordonnées de paiement (numéros MonCash/NatCash, compte bancaire BUH,
-   e-mail Upwork, WhatsApp) NE SONT PLUS codées ici : elles vivent dans les
-   « secrets » Supabase (variables PAY_*) ou dans le panneau admin, et sont
-   servies au chargement via GET /settings → settings.payments. Ainsi le compte
-   bancaire ne se trouve jamais dans le dépôt de code.
+   Coordonnées par défaut affichées sur la page de paiement. Elles peuvent être
+   remplacées à tout moment depuis /admin → onglet « Paiements » (ces valeurs
+   sont alors servies via GET /settings → settings.payments) ; toute valeur non
+   renseignée côté admin retombe sur celles ci-dessous.
    Rien n'est encaissé automatiquement : le client paie via le moyen choisi,
    entre sa référence, et l'admin valide depuis /admin.
    ────────────────────────────────────────────────────────────────────────── */
-const EMPTY_PAY: PaymentConfig = {
-  moncash: { number: "", holder: "" },
-  natcash: { number: "", holder: "" },
-  buh: { bank: "", account: "", holder: "", type: "" },
-  upwork: { email: "" },
-  // Le WhatsApp public de l'entreprise est déjà affiché partout sur le site ;
-  // on garde ce repli pour que la page reste fonctionnelle même hors ligne.
+const DEFAULT_PAY: PaymentConfig = {
+  moncash: { number: "+509 3625-5920", holder: "Bruny Ben-vino Samson" },
+  natcash: { number: "+509 4315-6835", holder: "Bruny Ben-vino Samson" },
+  buh: {
+    bank: "Banque de l'Union Haïtienne (BUH)",
+    account: "1800-0053313",
+    holder: "BRUNY Ben-vino Samson",
+    type: "Épargne · USD",
+  },
+  upwork: { email: "inov01contact@gmail.com" },
   whatsapp: "50936255920",
+}
+
+// Remplace un champ par la valeur admin uniquement si celle-ci est renseignée,
+// sinon on garde la valeur par défaut ci-dessus.
+function mergePay(base: PaymentConfig, over?: Partial<PaymentConfig>): PaymentConfig {
+  if (!over) return base
+  const pick = (b: string, o?: string) => (o && o.trim() ? o : b)
+  return {
+    moncash: { number: pick(base.moncash.number, over.moncash?.number), holder: pick(base.moncash.holder, over.moncash?.holder) },
+    natcash: { number: pick(base.natcash.number, over.natcash?.number), holder: pick(base.natcash.holder, over.natcash?.holder) },
+    buh: {
+      bank: pick(base.buh.bank, over.buh?.bank),
+      account: pick(base.buh.account, over.buh?.account),
+      holder: pick(base.buh.holder, over.buh?.holder),
+      type: pick(base.buh.type, over.buh?.type),
+    },
+    upwork: { email: pick(base.upwork.email, over.upwork?.email) },
+    whatsapp: pick(base.whatsapp, over.whatsapp),
+  }
 }
 
 type Method = "moncash" | "natcash" | "buh" | "upwork"
@@ -283,13 +304,13 @@ type Status = "idle" | "loading" | "success" | "error"
 
 export default function Payer() {
   const { lang, region, currency, t, fmt, priceFor, rates } = useSettings()
-  // Payment coordinates come from the server (Supabase secrets / admin panel),
-  // never hardcoded here. Until they load we use the empty config.
-  const [payCfg, setPayCfg] = useState<PaymentConfig>(EMPTY_PAY)
+  // Coordonnées par défaut (ci-dessus), remplacées par celles saisies dans
+  // l'admin si elles existent.
+  const [payCfg, setPayCfg] = useState<PaymentConfig>(DEFAULT_PAY)
   useEffect(() => {
     let alive = true
     api.getSettings().then((r) => {
-      if (alive && r?.settings?.payments) setPayCfg({ ...EMPTY_PAY, ...r.settings.payments })
+      if (alive && r?.settings?.payments) setPayCfg(mergePay(DEFAULT_PAY, r.settings.payments))
     }).catch(() => {})
     return () => { alive = false }
   }, [])
