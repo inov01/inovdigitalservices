@@ -13,14 +13,8 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://inovdigitalservices.com/" />
 
-    <!-- Fonts — preconnect first so the browser opens the TLS connection early,
-         then fetch the stylesheet (not a render-blocking CSS @import). -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"
-    />
+    <!-- Fonts are self-hosted via @fontsource-variable (bundled by Vite, served
+         from /assets) — no external Google Fonts request, no render-blocking link. -->
 
     <!-- Icons & PWA manifest -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />

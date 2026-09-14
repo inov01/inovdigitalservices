@@ -1,5 +1,5 @@
-/* Fonts are loaded via <link rel="preconnect"> + <link rel="stylesheet"> in
-   index.html (non-render-blocking discovery), not a CSS @import. */
+/* Fonts are self-hosted via @fontsource-variable (imported in main.tsx) — no
+   external Google Fonts network request. Family names carry the "Variable" suffix. */
 @import 'tailwindcss';
 
 :root {
@@ -29,8 +29,8 @@
   --color-brand-dark: #1A1A1A;
 
   /* Fonts — ONLY these two faces are used throughout the project */
-  --font-outfit: 'Outfit', sans-serif;
-  --font-space: 'Space Grotesk', sans-serif;
+  --font-outfit: 'Outfit Variable', 'Outfit', sans-serif;
+  --font-space: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
 }
 
 /* ── Design system semantic tokens (light mode) ─────────────────────────── */
