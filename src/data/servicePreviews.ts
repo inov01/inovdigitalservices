@@ -6,7 +6,7 @@ import logo1 from "@/imports/logo-1.webp"
 import socialFlyer from "@/imports/social_flyer.webp"
 import packagingAnana from "@/imports/packaging_anana.webp"
 import etiquetteSimple from "@/imports/INOV_Digital_Services__64_.webp"
-import dielinesPackaging from "@/imports/INOV_Digital_Services__1_.jpg"
+import dielinesPackaging from "@/imports/INOV_Digital_Services__1__jpg.webp"
 
 export { logo1, socialFlyer, packagingAnana, etiquetteSimple, dielinesPackaging }
 
