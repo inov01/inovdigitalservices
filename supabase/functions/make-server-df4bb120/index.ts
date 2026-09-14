@@ -1816,16 +1816,22 @@ app.post(`${P}/webhook/whatsapp`, async (c) => {
 // with the META_FAQ env var (JSON array of { keywords: string[], answer: string }).
 type FaqRule = { keywords: string[]; answer: string };
 const DEFAULT_FAQ: FaqRule[] = [
-  { keywords: ["prix", "tarif", "combien", "coute", "cout", "price"],
-    answer: "Merci de votre intérêt ! 💰 Nos tarifs dépendent du projet (logo, packaging, affiche, site web…). Dites-nous ce dont vous avez besoin et nous vous envoyons un devis gratuit. Vous pouvez aussi obtenir un devis instantané ici : " },
-  { keywords: ["delai", "delais", "temps", "quand", "livraison", "rapide"],
-    answer: "⏱️ Livraison dès 48h selon le projet. Précisez votre besoin et votre échéance, on s'adapte !" },
-  { keywords: ["logo", "branding", "identite", "identité"],
-    answer: "🎨 Oui, la création de logo & identité visuelle est notre spécialité ! Envoyez-nous quelques mots sur votre marque pour démarrer." },
-  { keywords: ["site", "web", "website", "internet"],
-    answer: "🌐 Nous concevons des sites vitrines modernes et rapides. Parlez-nous de votre projet !" },
-  { keywords: ["paiement", "payer", "moncash", "natcash", "acompte"],
-    answer: "💳 Paiement facile via MonCash / NatCash / virement. Un acompte lance le projet, le solde à la livraison." },
+  { keywords: ["prix", "tarif", "combien", "coute", "cout", "price", "cost"],
+    answer: "Merci de votre intérêt ! 💰 Nos tarifs dépendent du projet (logo, packaging, affiche, site web…). Dites-nous ce que vous voulez créer et on vous envoie un devis gratuit et personnalisé. 🙌" },
+  { keywords: ["delai", "delais", "temps", "quand", "livraison", "rapide", "vite"],
+    answer: "⏱️ Livraison dès 48h selon le projet ! Précisez votre besoin et votre échéance, on s'adapte à votre rythme." },
+  { keywords: ["logo", "branding", "identite", "identité", "marque"],
+    answer: "🎨 La création de logo & identité visuelle, c'est notre spécialité ! Envoyez-nous quelques mots sur votre marque (nom, activité, style aimé) pour démarrer." },
+  { keywords: ["site", "web", "website", "internet", "vitrine"],
+    answer: "🌐 Oui, on conçoit des sites vitrines modernes, rapides et adaptés au mobile. Parlez-nous de votre projet et de vos objectifs !" },
+  { keywords: ["paiement", "payer", "moncash", "natcash", "acompte", "virement"],
+    answer: "💳 Paiement simple via MonCash / NatCash / virement. Un acompte lance le projet, le solde à la livraison. Facile et sécurisé !" },
+  { keywords: ["commande", "commander", "commencer", "demarrer", "démarrer", "process", "etapes", "étapes"],
+    answer: "🚀 C'est simple : 1) vous décrivez votre besoin, 2) on vous envoie un devis gratuit, 3) acompte, 4) on crée et on révise ensemble, 5) livraison. On commence quand vous voulez !" },
+  { keywords: ["exemple", "exemples", "portfolio", "realisation", "réalisation", "travaux", "reference", "référence"],
+    answer: "✨ Avec plaisir ! Découvrez nos réalisations sur inovdigitalservices.com — 20+ marques accompagnées et 80+ visuels livrés." },
+  { keywords: ["dispo", "disponible", "ouvert", "libre", "accepte"],
+    answer: "✅ Oui, on est disponibles ! Envoyez-nous votre projet en message et on revient vers vous très vite avec une proposition." },
 ];
 function faqRules(): FaqRule[] {
   const raw = Deno.env.get("META_FAQ");

@@ -7,12 +7,46 @@ import { Loader2, Plus, Trash2, Copy, Check, Save, Sparkles, MessageSquare, Mess
 import { adminApi, type SiteSettings, type SocialReplies } from "../../../lib/api"
 import { card, btn, btnPrimary, input, sectionTitle, smallLabel, Empty } from "../shared"
 
+// Contenu de démarrage : pré-rempli dans l'onglet tant que rien n'a été enregistré,
+// pour être opérationnel tout de suite. Ajustez le ton puis cliquez « Enregistrer ».
 const DEFAULT_SOCIAL: SocialReplies = {
   waitMessage: "",
   commentReply: "",
   useGemini: false,
-  faq: [],
-  snippets: [],
+  faq: [
+    { keywords: ["prix", "tarif", "combien", "coute", "coût", "price", "cost"],
+      answer: "Merci de votre intérêt ! 💰 Nos tarifs dépendent du projet (logo, packaging, affiche, site web…). Dites-nous ce que vous voulez créer et on vous envoie un devis gratuit et personnalisé. 🙌" },
+    { keywords: ["delai", "délai", "temps", "quand", "livraison", "rapide", "vite"],
+      answer: "⏱️ Livraison dès 48h selon le projet ! Précisez votre besoin et votre échéance, on s'adapte à votre rythme." },
+    { keywords: ["logo", "branding", "identite", "identité", "marque"],
+      answer: "🎨 La création de logo & identité visuelle, c'est notre spécialité ! Envoyez-nous quelques mots sur votre marque (nom, activité, style aimé) pour démarrer." },
+    { keywords: ["site", "web", "website", "internet", "vitrine"],
+      answer: "🌐 Oui, on conçoit des sites vitrines modernes, rapides et adaptés au mobile. Parlez-nous de votre projet et de vos objectifs !" },
+    { keywords: ["paiement", "payer", "moncash", "natcash", "acompte", "virement"],
+      answer: "💳 Paiement simple via MonCash / NatCash / virement. Un acompte lance le projet, le solde à la livraison. Facile et sécurisé !" },
+    { keywords: ["commande", "commander", "commencer", "demarrer", "démarrer", "comment", "process", "étapes"],
+      answer: "🚀 C'est simple : 1) vous nous décrivez votre besoin, 2) on vous envoie un devis gratuit, 3) acompte, 4) on crée et on révise ensemble, 5) livraison. On commence quand vous voulez !" },
+    { keywords: ["exemple", "exemples", "portfolio", "realisation", "réalisation", "travaux", "travail", "reference", "référence"],
+      answer: "✨ Avec plaisir ! Découvrez nos réalisations sur inovdigitalservices.com — 20+ marques accompagnées et 80+ visuels livrés. Un style vous plaît ? On s'en inspire pour vous." },
+    { keywords: ["dispo", "disponible", "ouvert", "libre", "prendre", "accepte"],
+      answer: "✅ Oui, on est disponibles ! Envoyez-nous votre projet en message et on revient vers vous très vite avec une proposition." },
+  ],
+  snippets: [
+    { title: "Merci (commentaire vidéo)",
+      text: "Merci beaucoup pour votre commentaire ! 🙏 Ça nous motive énormément. N'hésitez pas à nous écrire en privé si vous avez un projet en tête. 🎨" },
+    { title: "Réponse à un compliment",
+      text: "Merci infiniment ! 🥹 Contents que ça vous plaise. Si vous voulez le même niveau de qualité pour votre marque, écrivez-nous en DM — devis gratuit ! ✨" },
+    { title: "Inviter à commander",
+      text: "Vous voulez un visuel comme celui-ci pour votre marque ? 😍 Envoyez-nous un message privé, on vous fait un devis gratuit et on démarre quand vous voulez ! 🚀" },
+    { title: "« C'est combien ? » (en public)",
+      text: "Bonne question ! 💰 Le tarif dépend du projet. On vous envoie tout en détail par message privé — devis gratuit et sans engagement. 📩" },
+    { title: "« Vous faites quoi ? »",
+      text: "On est un studio de branding & design 🎨 : logos, identité visuelle, packaging, affiches, motion design, montage vidéo et sites web. Un besoin ? Écrivez-nous ! 😊" },
+    { title: "Diriger vers WhatsApp",
+      text: "Pour aller plus vite, écrivez-nous sur WhatsApp au +509 3625 5920 📲 — on vous répond directement et on prépare votre devis gratuit !" },
+    { title: "Répondre à un avis négatif",
+      text: "Merci pour votre retour, on le prend au sérieux. 🙏 Écrivez-nous en privé pour qu'on comprenne ce qui n'a pas été et qu'on trouve une solution ensemble." },
+  ],
 }
 
 // Textes de repli réellement utilisés par le serveur quand un champ est laissé vide
