@@ -369,12 +369,16 @@ export const api = {
     total: number
     deposit: number
     items: LeadItem[]
-    html: string
+    /** Deprecated: the proforma HTML is now rendered server-side and this field
+     *  is ignored by the API. Kept optional for backward compatibility. */
+    html?: string
   }) {
     const ref = getStoredRef()
+    // Drop the (now unused) client-rendered HTML so we don't ship ~400 KB per request.
+    const { html: _ignored, ...clean } = payload
     return pub<{ ok: boolean; id: string }>("/proforma", {
       method: "POST",
-      body: JSON.stringify(ref ? { ...payload, meta: { ref } } : payload),
+      body: JSON.stringify(ref ? { ...clean, meta: { ref } } : clean),
     })
   },
   subscribeNewsletter(email: string, lang: string) {
