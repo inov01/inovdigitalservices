@@ -152,6 +152,36 @@ function metaConfigured(): boolean {
 const META_PIXEL_ID = Deno.env.get("META_PIXEL_ID") ?? "";
 const META_CAPI_TOKEN = Deno.env.get("META_CAPI_TOKEN") ?? "";
 const META_TEST_EVENT_CODE = Deno.env.get("META_TEST_EVENT_CODE") ?? "";
+// App Secret used to sign webhook deliveries (X-Hub-Signature-256). Required to
+// authenticate incoming Meta/WhatsApp POST payloads.
+const META_APP_SECRET = Deno.env.get("META_APP_SECRET") ?? "";
+
+// Verify a Meta webhook delivery by recomputing HMAC-SHA256(raw body, app secret)
+// and comparing (constant-time) against the X-Hub-Signature-256 header. Returns
+// true only when a secret is configured AND the signature matches. Fails closed.
+async function verifyMetaSignature(c: any, raw: string): Promise<boolean> {
+  if (!META_APP_SECRET) {
+    console.error("[webhook] META_APP_SECRET not set — rejecting unsigned delivery");
+    return false;
+  }
+  const header = c.req.header("x-hub-signature-256") ?? "";
+  const expected = header.startsWith("sha256=") ? header.slice(7) : "";
+  if (!expected) return false;
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(META_APP_SECRET),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(raw));
+  const actual = Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, "0")).join("");
+  // Constant-time compare.
+  if (actual.length !== expected.length) return false;
+  let diff = 0;
+  for (let i = 0; i < actual.length; i++) diff |= actual.charCodeAt(i) ^ expected.charCodeAt(i);
+  return diff === 0;
+}
 
 // SHA-256 of a normalised value (trimmed + lowercased), hex-encoded — the exact
 // format Meta expects for hashed user_data. Empty input yields an empty string.
@@ -672,6 +702,108 @@ function buildReceiptHtml(l: any): string {
 </body></html>`;
 }
 
+// Server-side proforma sheet. Built from STRUCTURED fields only (never from
+// client-supplied HTML) so /proforma cannot be abused as an open HTML mail relay.
+// Same visual language as the receipt sheet, but a "PROFORMA" stamp, no payment
+// method, and a validity note.
+function buildProformaHtml(l: any): string {
+  const meta = (l.meta ?? {}) as Record<string, unknown>;
+  const no = String((meta.proformaNo as string) ?? "").trim();
+  const logoUrl = Deno.env.get("LOGO_URL") || EMAIL_LOGO;
+
+  type Row = { label: string; qty: number; amount: string };
+  let rows: Row[] = [];
+  if (Array.isArray(l.items) && l.items.length > 0) {
+    rows = l.items.map((it: any) => ({
+      label: (it.name ?? "") + (it.tier ? ` (${it.tier})` : ""),
+      qty: it.qty ?? 1,
+      amount: fmtMoney(it.price, l.currency),
+    }));
+  } else if (Array.isArray(meta.services)) {
+    const svc = meta.services as any[];
+    const rate = typeof meta.rate === "number" ? (meta.rate as number) : null;
+    const mult = localMultiplier(svc, l.total, rate);
+    rows = svc.map((s) => ({ label: s.name, qty: s.qty, amount: svcLineAmount(s, l.currency, mult) }));
+  }
+  const balance = typeof l.total === "number" && typeof l.deposit === "number" ? l.total - l.deposit : null;
+
+  const cell = "padding:13px 18px;border:1.5px solid #111;";
+  const rowsHtml = rows.length
+    ? rows.map((r) => `<tr>
+        <td style="${cell}font-weight:700;font-size:13px;">${escH(String(r.label).toUpperCase())}</td>
+        <td style="${cell}text-align:center;font-weight:700;font-size:13px;">${escH(r.qty)}</td>
+        <td style="${cell}text-align:right;font-weight:800;font-size:13px;white-space:nowrap;">${escH(r.amount)}</td>
+      </tr>`).join("")
+    : `<tr><td colspan="3" style="${cell}text-align:center;color:#666;">Aucun détail de service enregistré.</td></tr>`;
+
+  const totalsRows = [
+    `<tr><td style="padding:9px 22px;border:1.5px solid #111;font-weight:700;font-size:13px;">Total</td>
+      <td style="padding:9px 22px;border:1.5px solid #111;font-weight:800;font-size:13px;text-align:right;white-space:nowrap;">${escH(fmtMoney(l.total, l.currency))}</td></tr>`,
+    typeof l.deposit === "number"
+      ? `<tr><td style="padding:9px 22px;border:1.5px solid #111;font-weight:700;font-size:13px;">Acompte demandé</td>
+          <td style="padding:9px 22px;border:1.5px solid #111;font-weight:700;font-size:13px;text-align:right;white-space:nowrap;">${escH(fmtMoney(l.deposit, l.currency))}</td></tr>`
+      : "",
+    balance !== null
+      ? `<tr><td style="padding:9px 22px;border:1.5px solid #111;font-weight:700;font-size:13px;">Solde restant</td>
+          <td style="padding:9px 22px;border:1.5px solid #111;font-weight:700;font-size:13px;text-align:right;white-space:nowrap;">${escH(fmtMoney(balance, l.currency))}</td></tr>`
+      : "",
+    `<tr><td style="padding:13px 22px;border:1.5px solid #111;background:#e2e2e2;font-weight:800;font-size:15px;">Montant dû</td>
+      <td style="padding:13px 22px;border:1.5px solid #111;background:#e2e2e2;font-weight:900;font-size:15px;text-align:right;white-space:nowrap;">${escH(fmtMoney(typeof l.deposit === "number" ? l.deposit : l.total, l.currency))}</td></tr>`,
+  ].join("");
+
+  const emittedStr = new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+  return `<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Proforma${no ? ` ${escH(no)}` : ""}</title></head>
+<body style="margin:0;padding:24px;background:#f4f4f4;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#111;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
+  <table role="presentation" width="640" cellpadding="0" cellspacing="0" style="background:#fff;max-width:640px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.10);">
+    <tr><td style="padding:40px 36px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td style="vertical-align:top;">${logoUrl ? `<img src="${escH(logoUrl)}" alt="INOV Digital Services" height="56" style="height:56px;width:auto;max-width:220px;border:0;outline:none;text-decoration:none;display:block;">` : `<div style="font-size:22px;font-weight:900;">INOV <span style="color:#F7931E;">Digital Services</span></div>`}</td>
+        <td style="text-align:right;vertical-align:top;">
+          <div style="font-size:30px;font-weight:900;letter-spacing:-0.01em;">FACTURE PROFORMA</div>
+          ${no ? `<div style="margin-top:6px;font-size:13px;font-weight:800;">N° ${escH(no)}</div>` : ""}
+          <div style="margin-top:8px;display:inline-block;padding:4px 14px;border:2.5px solid #F7931E;color:#F7931E;font-weight:900;font-size:14px;letter-spacing:0.08em;border-radius:4px;">PROFORMA</div>
+        </td>
+      </tr></table>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:32px;"><tr>
+        <td style="vertical-align:top;">
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+            <td style="padding:12px 18px;border:1.5px solid #111;background:#e2e2e2;font-weight:800;font-size:12.5px;">AU NOM DE</td>
+            <td style="padding:12px 18px;border:1.5px solid #111;font-weight:700;font-size:12.5px;">${escH(String(l.name || "CLIENT").toUpperCase())}</td>
+          </tr></table>
+        </td>
+        <td style="text-align:right;vertical-align:top;">
+          <table role="presentation" cellpadding="0" cellspacing="0" align="right"><tr>
+            <td style="padding:12px 18px;border:1.5px solid #111;background:#e2e2e2;font-weight:800;font-size:12.5px;">DATE</td>
+            <td style="padding:12px 22px;border:1.5px solid #111;font-weight:700;font-size:12.5px;">${escH(emittedStr)}</td>
+          </tr></table>
+        </td>
+      </tr></table>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;border-collapse:collapse;">
+        <tr style="background:#111;color:#fff;">
+          <th style="padding:12px 18px;border:1.5px solid #111;text-align:left;font-size:12.5px;font-weight:800;">NOM DU SERVICE OU PRODUIT</th>
+          <th style="padding:12px 18px;border:1.5px solid #111;text-align:center;font-size:12.5px;font-weight:800;width:60px;">QTÉ</th>
+          <th style="padding:12px 18px;border:1.5px solid #111;text-align:left;font-size:12.5px;font-weight:800;width:120px;">PRIX</th>
+        </tr>
+        ${rowsHtml}
+      </table>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;"><tr><td align="right">
+        <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${totalsRows}</table>
+      </td></tr></table>
+      <div style="margin-top:28px;font-size:12.5px;line-height:1.7;color:#444;">Cette facture proforma est valable 15 jours. Elle ne constitue pas un reçu de paiement.</div>
+      <div style="margin-top:20px;font-size:12.5px;line-height:1.9;">
+        <div style="font-weight:700;">@inov_digital_services</div>
+        <div style="font-weight:700;">(+509) 3625-5920</div>
+      </div>
+      <div style="margin-top:24px;text-align:center;font-size:12px;color:#666;">Merci de votre confiance.</div>
+    </td></tr>
+  </table>
+  </td></tr></table>
+</body></html>`;
+}
+
 // ── Unified transactional email sender (Gmail SMTP) ───────────────────────────
 // Uses Gmail SMTP with an app password. Configure GMAIL_USER and
 // GMAIL_APP_PASSWORD as Supabase function secrets.
@@ -731,7 +863,7 @@ async function sendProformaEmail(p: any): Promise<void> {
   const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
   const first = String(p.name ?? "").trim().split(/\s+/)[0] || "";
   const hello = first ? `Bonjour ${first},` : "Bonjour,";
-  const no = String(p.proformaNo ?? "").trim();
+  const no = String(p.proformaNo ?? (p.meta?.proformaNo) ?? "").trim();
   const totalStr =
     typeof p.total === "number" ? `${p.total.toLocaleString("fr-FR")} ${p.currency ?? ""}`.trim() : "";
   const textLines = [
@@ -747,12 +879,15 @@ async function sendProformaEmail(p: any): Promise<void> {
     "À très vite,",
     `L'équipe ${displayName}`,
   ];
+  // The proforma HTML is rendered SERVER-SIDE from the structured fields — never
+  // from client-supplied markup — so this route can't be used as an open relay.
+  const proformaHtml = buildProformaHtml(p);
   const subject = String(p.subject ?? "").trim() || `Votre facture proforma${no ? ` n° ${no}` : ""} — ${displayName}`;
   await sendMail({
     to: p.email,
     subject,
     text: textLines.join("\n"),
-    html: p.html,
+    html: proformaHtml,
   });
   // Notify the team (best-effort; never fails the client send).
   const notifyTo = ADMIN_EMAILS[0];
@@ -762,7 +897,7 @@ async function sendProformaEmail(p: any): Promise<void> {
         to: notifyTo,
         subject: `Nouvelle demande de proforma — ${p.name || p.email}${totalStr ? ` (${totalStr})` : ""}`,
         text: `Client : ${p.name || "—"}\nE-mail : ${p.email}\nWhatsApp : ${p.phone || "—"}\nProforma : ${no || "—"}\nTotal : ${totalStr || "—"}\nLangue : ${p.lang || "—"}\nRégion : ${p.region || "—"}`,
-        html: p.html,
+        html: proformaHtml,
       });
     } catch (_) { /* team copy is best-effort */ }
   }
@@ -898,9 +1033,9 @@ app.post(`${P}/leads`, async (c) => {
       text: `${lines.join("\n")}${waLink ? `\n\nRépondre sur WhatsApp : ${waLink}` : ""}`,
       html:
         `<p><strong>Nouveau lead reçu</strong></p>` +
-        `<ul>${lines.filter((l) => !l.startsWith("\n")).map((l) => `<li>${l}</li>`).join("")}</ul>` +
-        (lead.message ? `<p><strong>Message :</strong></p><blockquote>${lead.message}</blockquote>` : "") +
-        (waLink ? `<p><a href="${waLink}">Répondre sur WhatsApp →</a></p>` : ""),
+        `<ul>${lines.filter((l) => !l.startsWith("\n")).map((l) => `<li>${escH(l)}</li>`).join("")}</ul>` +
+        (lead.message ? `<p><strong>Message :</strong></p><blockquote>${escH(lead.message)}</blockquote>` : "") +
+        (waLink ? `<p><a href="${escH(waLink)}">Répondre sur WhatsApp →</a></p>` : ""),
     }).catch(() => { /* notification is best-effort */ });
   }
 
@@ -1062,8 +1197,12 @@ app.post(`${P}/proforma`, async (c) => {
   const b = await c.req.json().catch(() => ({} as any));
   const email = String(b.email ?? "").trim().toLowerCase();
   if (!isEmail(email)) return c.json({ error: "invalid email" }, 400);
-  const html = typeof b.html === "string" ? b.html.slice(0, 400000) : "";
-  if (!html) return c.json({ error: "missing proforma" }, 400);
+  // The proforma must carry at least a total or a line of services — the HTML is
+  // rendered server-side (client-supplied `html` is ignored for security).
+  const hasContent = typeof b.total === "number" ||
+    (Array.isArray(b.items) && b.items.length > 0) ||
+    (b.meta && Array.isArray((b.meta as any).services) && (b.meta as any).services.length > 0);
+  if (!hasContent) return c.json({ error: "missing proforma" }, 400);
   // Record it as a lead so the request shows up in /admin.
   const id = newId();
   const lead = {
@@ -1089,7 +1228,8 @@ app.post(`${P}/proforma`, async (c) => {
   };
   await kv.set(`lead:${id}`, lead);
   try {
-    await sendProformaEmail({ ...b, email, html });
+    // Pass the sanitized lead (structured fields) — HTML is built server-side.
+    await sendProformaEmail({ ...lead, subject: typeof b.subject === "string" ? b.subject.slice(0, 200) : "" });
   } catch (e) {
     console.error("[proforma] email failed:", e);
     return c.json({ error: "email_failed", id }, 502);
@@ -1654,29 +1794,33 @@ app.put(`${P}/settings`, async (c) => {
   const u = await requireAdmin(c);
   if (u instanceof Response) return u;
   const b = await c.req.json().catch(() => ({} as any));
-  const a = b?.announcement ?? {};
+  // Merge onto the currently-stored settings so a partial save (e.g. only the
+  // payment coordinates) never wipes pricing, services, blogs, etc. Only keys
+  // present in the request body are overwritten; everything else is preserved.
+  const stored = { ...DEFAULT_SETTINGS, ...((await kv.get("settings")) as any ?? {}) };
   // Snapshot the previously published blog ids so we can auto-post only the new ones.
-  const prevBlogIds = new Set(
-    ((((await kv.get("settings")) as any)?.blogsAdded ?? []) as any[]).map((x) => String(x?.id)),
-  );
-  const settings = {
-    announcement: {
+  const prevBlogIds = new Set(((stored?.blogsAdded ?? []) as any[]).map((x) => String(x?.id)));
+  const has = (k: string) => Object.prototype.hasOwnProperty.call(b ?? {}, k);
+  const settings = { ...stored };
+  if (has("announcement")) {
+    const a = b?.announcement ?? {};
+    settings.announcement = {
       enabled: !!a.enabled,
       text: typeof a.text === "string" ? a.text.slice(0, 500) : "",
       link: typeof a.link === "string" ? a.link.slice(0, 500) : "",
-    },
-    pricing: cleanPricing(b?.pricing),
-    servicesRemoved: cleanIdList(b?.servicesRemoved, "num"),
-    servicesAdded: cleanServices(b?.servicesAdded),
-    albumsRemoved: cleanIdList(b?.albumsRemoved, "str"),
-    albumsAdded: cleanAlbums(b?.albumsAdded),
-    worksRemoved: cleanWorksRemoved(b?.worksRemoved),
-    worksAdded: cleanWorksAdded(b?.worksAdded),
-    blogsRemoved: cleanIdList(b?.blogsRemoved, "str"),
-    blogsAdded: cleanBlogs(b?.blogsAdded),
-    socialReplies: cleanSocialReplies(b?.socialReplies),
-    payments: cleanPayments(b?.payments),
-  };
+    };
+  }
+  if (has("pricing")) settings.pricing = cleanPricing(b?.pricing);
+  if (has("servicesRemoved")) settings.servicesRemoved = cleanIdList(b?.servicesRemoved, "num");
+  if (has("servicesAdded")) settings.servicesAdded = cleanServices(b?.servicesAdded);
+  if (has("albumsRemoved")) settings.albumsRemoved = cleanIdList(b?.albumsRemoved, "str");
+  if (has("albumsAdded")) settings.albumsAdded = cleanAlbums(b?.albumsAdded);
+  if (has("worksRemoved")) settings.worksRemoved = cleanWorksRemoved(b?.worksRemoved);
+  if (has("worksAdded")) settings.worksAdded = cleanWorksAdded(b?.worksAdded);
+  if (has("blogsRemoved")) settings.blogsRemoved = cleanIdList(b?.blogsRemoved, "str");
+  if (has("blogsAdded")) settings.blogsAdded = cleanBlogs(b?.blogsAdded);
+  if (has("socialReplies")) settings.socialReplies = cleanSocialReplies(b?.socialReplies);
+  if (has("payments")) settings.payments = cleanPayments(b?.payments);
   await kv.set("settings", settings);
 
   // Auto-post newly added blog articles to Facebook & Instagram. Each new article
@@ -1806,7 +1950,9 @@ app.get(`${P}/webhook/whatsapp`, (c) => {
 
 app.post(`${P}/webhook/whatsapp`, async (c) => {
   try {
-    const body = await c.req.json().catch(() => ({}));
+    const raw = await c.req.text();
+    if (!(await verifyMetaSignature(c, raw))) return c.json({ error: "invalid signature" }, 403);
+    const body = (() => { try { return JSON.parse(raw); } catch { return {}; } })();
     const entry = body?.entry?.[0];
     const change = entry?.changes?.[0];
     const msg = change?.value?.messages?.[0];
@@ -1846,7 +1992,7 @@ app.post(`${P}/webhook/whatsapp`, async (c) => {
             to: notifyTo,
             subject: `💬 Réponse WhatsApp de ${contact}`,
             text: `Message reçu de ${contact} (+${from}):\n\n${text}\n\nRépondez directement sur WhatsApp : https://wa.me/${from}`,
-            html: `<p><strong>Message WhatsApp reçu</strong></p><p><strong>De :</strong> ${contact} (+${from})</p><p><strong>Message :</strong></p><blockquote>${text}</blockquote><p><a href="https://wa.me/${from}">Répondre sur WhatsApp →</a></p>`,
+            html: `<p><strong>Message WhatsApp reçu</strong></p><p><strong>De :</strong> ${escH(contact)} (+${escH(from)})</p><p><strong>Message :</strong></p><blockquote>${escH(text)}</blockquote><p><a href="https://wa.me/${encodeURIComponent(from)}">Répondre sur WhatsApp →</a></p>`,
           });
         } catch (_) { /* notification is best-effort */ }
       }
@@ -2055,7 +2201,9 @@ app.get(`${P}/webhook/meta`, (c) => {
 // POST — Instagram + Facebook events (DMs and comments).
 app.post(`${P}/webhook/meta`, async (c) => {
   try {
-    const body = await c.req.json().catch(() => ({} as any));
+    const raw = await c.req.text();
+    if (!(await verifyMetaSignature(c, raw))) return c.json({ error: "invalid signature" }, 403);
+    const body = (() => { try { return JSON.parse(raw); } catch { return {} as any; } })();
     const isInstagram = body?.object === "instagram";
     const cfg = await getSocialCfg();
     for (const entry of (body?.entry ?? [])) {
