@@ -290,7 +290,62 @@ const DEFAULT_SETTINGS = {
     faq: [] as { keywords: string[]; answer: string }[],
     snippets: [] as { title: string; text: string }[], // manual-use reply library
   },
+  // Payment / payout coordinates shown on the /payer page. Kept OUT of the source
+  // repo: empty by default here, filled at runtime from Supabase secrets (see
+  // paymentsWithEnv) or overridden from the admin panel. So the bank account never
+  // lives in git.
+  payments: {
+    moncash: { number: "", holder: "" },
+    natcash: { number: "", holder: "" },
+    buh: { bank: "", account: "", holder: "", type: "" },
+    upwork: { email: "" },
+    whatsapp: "",
+  },
 };
+
+// Sanitize the payment coordinates coming from the admin panel.
+function cleanPayments(input: unknown): typeof DEFAULT_SETTINGS.payments {
+  const b = (input && typeof input === "object" ? input : {}) as Record<string, any>;
+  const s = (v: unknown, max = 120) => String(v ?? "").slice(0, max).trim();
+  const m = (b.moncash ?? {}) as any;
+  const n = (b.natcash ?? {}) as any;
+  const k = (b.buh ?? {}) as any;
+  const u = (b.upwork ?? {}) as any;
+  return {
+    moncash: { number: s(m.number), holder: s(m.holder) },
+    natcash: { number: s(n.number), holder: s(n.holder) },
+    buh: { bank: s(k.bank), account: s(k.account), holder: s(k.holder), type: s(k.type) },
+    upwork: { email: s(u.email, 200) },
+    whatsapp: s(b.whatsapp, 40),
+  };
+}
+
+// Fill any blank payment field from Supabase secrets, so the real coordinates
+// live in the project's secrets (env) rather than in the code. Admin-saved values
+// (KV) win; otherwise we fall back to the env var; otherwise "".
+function paymentsWithEnv(stored: unknown): typeof DEFAULT_SETTINGS.payments {
+  const p = cleanPayments(stored);
+  const env = (name: string) => (Deno.env.get(name) ?? "").trim();
+  const pick = (v: string, name: string) => (v ? v : env(name));
+  return {
+    moncash: {
+      number: pick(p.moncash.number, "PAY_MONCASH_NUMBER"),
+      holder: pick(p.moncash.holder, "PAY_MONCASH_HOLDER"),
+    },
+    natcash: {
+      number: pick(p.natcash.number, "PAY_NATCASH_NUMBER"),
+      holder: pick(p.natcash.holder, "PAY_NATCASH_HOLDER"),
+    },
+    buh: {
+      bank: pick(p.buh.bank, "PAY_BUH_BANK"),
+      account: pick(p.buh.account, "PAY_BUH_ACCOUNT"),
+      holder: pick(p.buh.holder, "PAY_BUH_HOLDER"),
+      type: pick(p.buh.type, "PAY_BUH_TYPE"),
+    },
+    upwork: { email: pick(p.upwork.email, "PAY_UPWORK_EMAIL") },
+    whatsapp: pick(p.whatsapp, "PAY_WHATSAPP"),
+  };
+}
 
 // Sanitize the social auto-reply templates coming from the admin panel.
 function cleanSocialReplies(input: unknown): typeof DEFAULT_SETTINGS.socialReplies {
@@ -1087,7 +1142,10 @@ app.post(`${P}/delivery`, async (c) => {
 
 // ── Public: read site settings ────────────────────────────────────────────────────
 app.get(`${P}/settings`, async (c) => {
-  const settings = (await kv.get("settings")) ?? DEFAULT_SETTINGS;
+  const stored = (await kv.get("settings")) ?? DEFAULT_SETTINGS;
+  // Inject the payment coordinates from Supabase secrets at read time so they are
+  // served to the /payer page without ever living in the source repo.
+  const settings = { ...stored, payments: paymentsWithEnv((stored as any).payments) };
   return c.json({ settings });
 });
 
@@ -1617,6 +1675,7 @@ app.put(`${P}/settings`, async (c) => {
     blogsRemoved: cleanIdList(b?.blogsRemoved, "str"),
     blogsAdded: cleanBlogs(b?.blogsAdded),
     socialReplies: cleanSocialReplies(b?.socialReplies),
+    payments: cleanPayments(b?.payments),
   };
   await kv.set("settings", settings);
 
