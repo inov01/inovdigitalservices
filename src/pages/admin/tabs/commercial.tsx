@@ -21,7 +21,7 @@ import { registerStepUpVerifier } from "../../../lib/stepup"
 import { useAdminAuth } from "../../../hooks/useAdminAuth"
 import { useSessionTimeout, ADMIN_SESSION_POLICY } from "../../../hooks/useSessionTimeout"
 import { supabase } from "../../../lib/supabaseClient"
-import { adminApi, api, type Lead, type LeadItem, type Subscriber, type SiteSettings, type Campaign, type AdminService, type AdminWork, type AdminAlbum, type AdminBlog, type AssistantMessage, type Testimonial, type Formation, type Collaborateur, type Eventualite, type EventualiteInput } from "../../../lib/api"
+import { adminApi, api, type Lead, type LeadItem, type Subscriber, type SiteSettings, type PaymentConfig, type Campaign, type AdminService, type AdminWork, type AdminAlbum, type AdminBlog, type AssistantMessage, type Testimonial, type Formation, type Collaborateur, type Eventualite, type EventualiteInput } from "../../../lib/api"
 import { useSettings } from "../../../context/AppSettings"
 import logoDark from "../../../imports/logo_pour_fond_noir.webp"
 import logoLight from "../../../imports/logo.webp"
@@ -164,6 +164,126 @@ function LeadsTab({ leads, loading, onChange }: { leads: Lead[]; loading: boolea
 }
 
 
+// Éditeur des coordonnées de paiement (MonCash/NatCash/BUH/Upwork/WhatsApp).
+// Ces valeurs NE SONT PLUS codées dans le dépôt : elles vivent dans les réglages
+// (KV) et sont servies à la page /payer via GET /settings → settings.payments.
+// (À défaut, le serveur retombe sur les secrets Supabase PAY_*.)
+const EMPTY_PAYMENTS: PaymentConfig = {
+  moncash: { number: "", holder: "" },
+  natcash: { number: "", holder: "" },
+  buh: { bank: "", account: "", holder: "", type: "" },
+  upwork: { email: "" },
+  whatsapp: "",
+}
+
+function PaymentCoordsCard() {
+  const [settings, setSettings] = useState<SiteSettings | null>(null)
+  const [p, setP] = useState<PaymentConfig>(EMPTY_PAYMENTS)
+  const [open, setOpen] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [err, setErr] = useState("")
+
+  useEffect(() => {
+    adminApi.getSettings()
+      .then((r) => {
+        setSettings(r.settings)
+        setP({ ...EMPTY_PAYMENTS, ...(r.settings.payments ?? {}) })
+      })
+      .catch(() => setErr("Impossible de charger les réglages."))
+  }, [])
+
+  async function save() {
+    if (!settings) return
+    setSaving(true); setErr("")
+    try {
+      // On renvoie l'objet settings COMPLET (le serveur reconstruit tout) : on
+      // ne touche qu'à `payments` pour ne rien écraser d'autre.
+      const next: SiteSettings = { ...settings, payments: p }
+      const r = await adminApi.saveSettings(next)
+      setSettings(r.settings)
+      setP({ ...EMPTY_PAYMENTS, ...(r.settings.payments ?? {}) })
+      setSaved(true); setTimeout(() => setSaved(false), 2000)
+    } catch {
+      setErr("Échec de l'enregistrement. Réessayez.")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const F = ({ label, value, onChange, ph }: { label: string; value: string; onChange: (v: string) => void; ph?: string }) => (
+    <label style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+      <span style={smallLabel}>{label}</span>
+      <input style={input} value={value} placeholder={ph} onChange={(e) => onChange(e.target.value)} />
+    </label>
+  )
+
+  return (
+    <div style={{ ...card, marginBottom: 16 }}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "start" }}
+      >
+        <Wallet size={16} />
+        <span style={{ ...sectionTitle, margin: 0 }}>Coordonnées de paiement</span>
+        <ExternalLink size={0} />
+        <span style={{ marginInlineStart: "auto", color: "var(--ds-text-faint)", transform: open ? "rotate(180deg)" : "none", transition: "transform .2s" }}>▾</span>
+      </button>
+      <p style={{ ...smallLabel, marginTop: 8 }}>
+        Ces coordonnées s'affichent sur la page de paiement du site. Elles sont stockées ici
+        (hors du code) — modifiez-les à tout moment sans redéployer.
+      </p>
+
+      {open && (
+        <div style={{ display: "grid", gap: 16, marginTop: 12 }}>
+          <fieldset style={fs}>
+            <legend style={lg}>MonCash</legend>
+            <div style={grid2}>
+              <F label="Numéro" value={p.moncash.number} ph="+509 …" onChange={(v) => setP((s) => ({ ...s, moncash: { ...s.moncash, number: v } }))} />
+              <F label="Titulaire" value={p.moncash.holder} onChange={(v) => setP((s) => ({ ...s, moncash: { ...s.moncash, holder: v } }))} />
+            </div>
+          </fieldset>
+          <fieldset style={fs}>
+            <legend style={lg}>NatCash</legend>
+            <div style={grid2}>
+              <F label="Numéro" value={p.natcash.number} ph="+509 …" onChange={(v) => setP((s) => ({ ...s, natcash: { ...s.natcash, number: v } }))} />
+              <F label="Titulaire" value={p.natcash.holder} onChange={(v) => setP((s) => ({ ...s, natcash: { ...s.natcash, holder: v } }))} />
+            </div>
+          </fieldset>
+          <fieldset style={fs}>
+            <legend style={lg}>Virement bancaire (BUH)</legend>
+            <div style={grid2}>
+              <F label="Banque" value={p.buh.bank} ph="Banque de l'Union Haïtienne (BUH)" onChange={(v) => setP((s) => ({ ...s, buh: { ...s.buh, bank: v } }))} />
+              <F label="N° de compte" value={p.buh.account} onChange={(v) => setP((s) => ({ ...s, buh: { ...s.buh, account: v } }))} />
+              <F label="Titulaire" value={p.buh.holder} onChange={(v) => setP((s) => ({ ...s, buh: { ...s.buh, holder: v } }))} />
+              <F label="Type de compte" value={p.buh.type} ph="Épargne · USD" onChange={(v) => setP((s) => ({ ...s, buh: { ...s.buh, type: v } }))} />
+            </div>
+          </fieldset>
+          <fieldset style={fs}>
+            <legend style={lg}>Autres</legend>
+            <div style={grid2}>
+              <F label="E-mail Upwork" value={p.upwork.email} onChange={(v) => setP((s) => ({ ...s, upwork: { email: v } }))} />
+              <F label="WhatsApp (chiffres uniquement)" value={p.whatsapp} ph="50936255920" onChange={(v) => setP((s) => ({ ...s, whatsapp: v }))} />
+            </div>
+          </fieldset>
+
+          {err && <p style={{ color: "var(--ds-danger)", fontSize: 13, margin: 0 }}>{err}</p>}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <button type="button" onClick={save} disabled={saving || !settings} style={{ ...btnPrimary, opacity: saving || !settings ? 0.7 : 1 }}>
+              {saving ? <Loader2 size={14} className="spin" /> : <ShieldCheck size={14} />} Enregistrer
+            </button>
+            {saved && <span style={{ color: "var(--ds-accent)", fontSize: 13, fontWeight: 700 }}>Enregistré ✓</span>}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+const fs: React.CSSProperties = { border: "1px solid var(--ds-border)", borderRadius: 10, padding: "10px 14px 14px", margin: 0 }
+const lg: React.CSSProperties = { fontSize: 12, fontWeight: 800, color: "var(--ds-text-sec)", padding: "0 6px" }
+const grid2: React.CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }
+
 function PaymentsTab({ leads, loading, onChange }: { leads: Lead[]; loading: boolean; onChange: () => void }) {
   const [open, setOpen] = useState<string | null>(null)
   const [query, setQuery] = useState("")
@@ -242,6 +362,7 @@ function PaymentsTab({ leads, loading, onChange }: { leads: Lead[]; loading: boo
 
   return (
     <>
+      <PaymentCoordsCard />
       <Toolbar
         query={query} setQuery={setQuery}
         statuses={STATUSES} statusLabels={PAY_STATUS_LABEL} statusColors={STATUS_COLOR}
