@@ -208,6 +208,17 @@ export interface SiteSettings {
   /** Social auto-reply templates (Instagram/Facebook/WhatsApp), editable from the
    *  "Réponses sociales" panel and reusable as manual copy-paste snippets. */
   socialReplies?: SocialReplies
+  /** Payment / payout coordinates shown on /payer. Served from Supabase secrets or
+   *  the admin panel — never hardcoded in the repo. */
+  payments?: PaymentConfig
+}
+
+export interface PaymentConfig {
+  moncash: { number: string; holder: string }
+  natcash: { number: string; holder: string }
+  buh: { bank: string; account: string; holder: string; type: string }
+  upwork: { email: string }
+  whatsapp: string
 }
 
 export interface SocialFaqRule { keywords: string[]; answer: string }
