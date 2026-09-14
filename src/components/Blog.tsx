@@ -509,7 +509,7 @@ function VideoOutro({ lang, articleId }: { lang: Lang; articleId: string }) {
       </p>
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
         <a
-          href="https://wa.me/50937000000"
+          href="https://wa.me/50936255920"
           target="_blank"
           rel="noopener noreferrer"
           style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 18px", borderRadius: "var(--r-md)", background: "rgba(255,255,255,0.22)", border: "1.5px solid rgba(255,255,255,0.6)", color: "#fff", fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700, textDecoration: "none", backdropFilter: "blur(4px)" }}>
