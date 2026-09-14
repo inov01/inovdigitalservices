@@ -10,8 +10,8 @@ import { card, btn, btnPrimary, input, sectionTitle, smallLabel, Empty } from ".
 // Contenu de démarrage : pré-rempli dans l'onglet tant que rien n'a été enregistré,
 // pour être opérationnel tout de suite. Ajustez le ton puis cliquez « Enregistrer ».
 const DEFAULT_SOCIAL: SocialReplies = {
-  waitMessage: "",
-  commentReply: "",
+  waitMessage: "Bonjour et merci d'avoir contacté INOV Digital Services ! 👋 Votre message est bien arrivé. On revient vers vous très vite avec une réponse personnalisée. 🎨\n— L'équipe INOV Digital Services",
+  commentReply: "Merci beaucoup pour votre message ! 🙏 On vous répond en privé tout de suite. 💬\n— INOV Digital Services",
   useGemini: false,
   faq: [
     { keywords: ["prix", "tarif", "combien", "coute", "coût", "price", "cost"],
@@ -52,8 +52,8 @@ const DEFAULT_SOCIAL: SocialReplies = {
 // Textes de repli réellement utilisés par le serveur quand un champ est laissé vide
 // (affichés en placeholder pour que le propriétaire sache ce qui partira par défaut).
 const FALLBACK_WAIT =
-  "Bonjour ! 👋 Merci d'avoir contacté INOV Digital Services. Nous avons bien reçu votre message et un membre de l'équipe vous répond très vite. 🎨"
-const FALLBACK_COMMENT = "Merci pour votre message ! 🙏 On vous répond en privé."
+  "Bonjour et merci d'avoir contacté INOV Digital Services ! 👋 Votre message est bien arrivé. On revient vers vous très vite avec une réponse personnalisée. 🎨\n— L'équipe INOV Digital Services"
+const FALLBACK_COMMENT = "Merci beaucoup pour votre message ! 🙏 On vous répond en privé tout de suite. 💬\n— INOV Digital Services"
 
 const textarea: React.CSSProperties = { ...input, minHeight: 84, lineHeight: 1.5, resize: "vertical", padding: 12 }
 

@@ -1903,9 +1903,9 @@ pour un devis gratuit. Termine en proposant de continuer la discussion. N'invent
 // The "waiting message" — sent when nothing else matched, so the person always
 // gets an instant acknowledgement and you can reply yourself afterwards.
 const META_WAIT_MSG = Deno.env.get("META_WAIT_MSG") ??
-  "Bonjour ! 👋 Merci d'avoir contacté INOV Digital Services. Nous avons bien reçu votre message et un membre de l'équipe vous répond très vite. 🎨";
+  "Bonjour et merci d'avoir contacté INOV Digital Services ! 👋 Votre message est bien arrivé. On revient vers vous très vite avec une réponse personnalisée. 🎨\n— L'équipe INOV Digital Services";
 const META_COMMENT_REPLY = Deno.env.get("META_COMMENT_REPLY") ??
-  "Merci pour votre message ! 🙏 On vous répond en privé.";
+  "Merci beaucoup pour votre message ! 🙏 On vous répond en privé tout de suite. 💬\n— INOV Digital Services";
 
 // Send a DM (Messenger or Instagram — both go through the Page messages endpoint
 // with the Page token). Best-effort.
