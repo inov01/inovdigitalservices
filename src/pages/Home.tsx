@@ -9,13 +9,12 @@ import RevealSection from "../components/RevealSection"
 import PageNav from "../components/PageNav"
 import { useSettings } from "../context/AppSettings"
 
-// Code-split heavy sections — load only when they scroll into view
-const About       = lazy(() => import("../components/About"))
+// Code-split heavy sections — load only when they scroll into view.
+// Blog, Newsletter, Referral and About were removed from the homepage to keep
+// the funnel focused: Blog lives at /blog, and the referral (ambassador) program
+// lives in the client account (/compte).
 const Portfolio   = lazy(() => import("../components/Portfolio"))
 const Testimonials = lazy(() => import("../components/Testimonials"))
-const Blog        = lazy(() => import("../components/Blog"))
-const Referral    = lazy(() => import("../components/Referral"))
-const Newsletter  = lazy(() => import("../components/Newsletter"))
 const FAQ         = lazy(() => import("../components/FAQ"))
 const OnlinePromo = lazy(() => import("../components/OnlinePromo"))
 
@@ -97,31 +96,6 @@ export default function Home() {
           </div>
         </RevealSection>
       )}
-
-      {/* ── Secondary sections — trust tail & engagement, below the funnel ──── */}
-      <RevealSection delay={0}>
-        <Suspense fallback={<SectionFallback />}>
-          <About />
-        </Suspense>
-      </RevealSection>
-
-      <RevealSection delay={0}>
-        <Suspense fallback={<SectionFallback />}>
-          <Blog />
-        </Suspense>
-      </RevealSection>
-
-      <RevealSection delay={0}>
-        <Suspense fallback={<SectionFallback />}>
-          <Newsletter />
-        </Suspense>
-      </RevealSection>
-
-      <RevealSection delay={0}>
-        <Suspense fallback={<SectionFallback />}>
-          <Referral />
-        </Suspense>
-      </RevealSection>
 
       <RevealSection delay={0}>
         <Contact />

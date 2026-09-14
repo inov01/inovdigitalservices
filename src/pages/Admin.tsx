@@ -4355,18 +4355,18 @@ const PAGE_LINKS: LinkItem[] = [
   { label: "Confidentialité", path: "/confidentialite" },
 ]
 
+// Ordre aligné sur le tunnel de la page d'accueil (preuve avant prix).
+// Blog, Newsletter, Parrainage et À propos ont été retirés de l'accueil :
+// le blog a sa page dédiée (/blog) et le parrainage vit dans /compte.
 const SECTION_LINKS: LinkItem[] = [
   { label: "Services", path: "/#services", hint: "Cartes de service" },
-  { label: "Pourquoi nous", path: "/#why-us" },
-  { label: "Tarifs", path: "/#pricing", hint: "Grille de prix + panier" },
-  { label: "Promo en ligne (Haïti)", path: "/#promo-en-ligne", hint: "Visible en Haïti" },
   { label: "Portfolio", path: "/#portfolio", hint: "Réalisations" },
   { label: "Témoignages", path: "/#testimonials" },
-  { label: "Blog (aperçu)", path: "/#blog" },
-  { label: "Newsletter", path: "/#newsletter" },
-  { label: "Parrainage", path: "/#referral" },
+  { label: "Pourquoi nous", path: "/#why-us" },
+  { label: "Tarifs", path: "/#pricing", hint: "Grille de prix + panier" },
   { label: "FAQ", path: "/#faq" },
-  { label: "À propos", path: "/#about" },
+  { label: "Promo en ligne (Haïti)", path: "/#promo-en-ligne", hint: "Visible en Haïti" },
+  { label: "Blog", path: "/blog", hint: "Page blog dédiée" },
   { label: "Contact", path: "/#contact", hint: "Formulaire de contact" },
 ]
 

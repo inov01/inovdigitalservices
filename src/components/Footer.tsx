@@ -28,15 +28,15 @@ const CLIENT_LABELS: Record<string, { title: string; account: string; quote: str
   ar: { title: "منطقة العميل", account: "حسابي", quote: "عرض سعر مجاني", ambassador: "برنامج السفراء", pay: "الدفع عبر الإنترنت", formation: "التدريب" },
 }
 
-const LEGAL_LABELS: Record<string, { blog: string; terms: string; privacy: string; pay: string; collaborateur: string }> = {
-  fr: { blog: "Blog", terms: "Mentions légales", privacy: "Confidentialité", pay: "Payer", collaborateur: "Devenir collaborateur" },
-  en: { blog: "Blog", terms: "Legal notice", privacy: "Privacy", pay: "Pay", collaborateur: "Become a collaborator" },
-  es: { blog: "Blog", terms: "Aviso legal", privacy: "Privacidad", pay: "Pagar", collaborateur: "Ser colaborador" },
-  ht: { blog: "Blog", terms: "Mansyon legal", privacy: "Konfidansyalite", pay: "Peye", collaborateur: "Vin kolaboratè" },
-  pt: { blog: "Blog", terms: "Aviso legal", privacy: "Privacidade", pay: "Pagar", collaborateur: "Seja colaborador" },
-  it: { blog: "Blog", terms: "Note legali", privacy: "Privacy", pay: "Paga", collaborateur: "Diventa collaboratore" },
-  de: { blog: "Blog", terms: "Impressum", privacy: "Datenschutz", pay: "Bezahlen", collaborateur: "Kollaborateur werden" },
-  ar: { blog: "المدونة", terms: "إشعار قانوني", privacy: "الخصوصية", pay: "ادفع", collaborateur: "كن متعاوناً" },
+const LEGAL_LABELS: Record<string, { blog: string; terms: string; privacy: string; pay: string; collaborateur: string; soon: string }> = {
+  fr: { blog: "Blog", terms: "Mentions légales", privacy: "Confidentialité", pay: "Payer", collaborateur: "Devenir collaborateur", soon: "Bientôt" },
+  en: { blog: "Blog", terms: "Legal notice", privacy: "Privacy", pay: "Pay", collaborateur: "Become a collaborator", soon: "Soon" },
+  es: { blog: "Blog", terms: "Aviso legal", privacy: "Privacidad", pay: "Pagar", collaborateur: "Ser colaborador", soon: "Pronto" },
+  ht: { blog: "Blog", terms: "Mansyon legal", privacy: "Konfidansyalite", pay: "Peye", collaborateur: "Vin kolaboratè", soon: "Talè" },
+  pt: { blog: "Blog", terms: "Aviso legal", privacy: "Privacidade", pay: "Pagar", collaborateur: "Seja colaborador", soon: "Em breve" },
+  it: { blog: "Blog", terms: "Note legali", privacy: "Privacy", pay: "Paga", collaborateur: "Diventa collaboratore", soon: "Presto" },
+  de: { blog: "Blog", terms: "Impressum", privacy: "Datenschutz", pay: "Bezahlen", collaborateur: "Kollaborateur werden", soon: "Bald" },
+  ar: { blog: "المدونة", terms: "إشعار قانوني", privacy: "الخصوصية", pay: "ادفع", collaborateur: "كن متعاوناً", soon: "قريبًا" },
 }
 
 export default function Footer() {
@@ -113,7 +113,7 @@ export default function Footer() {
                 { to: "/compte", label: client.account },
                 { to: "/devis", label: client.quote },
                 { to: "/formation", label: client.formation },
-                { to: "/#referral", label: client.ambassador },
+                { to: "/compte", label: client.ambassador },
                 { to: "/paiement", label: client.pay },
               ].map((l) => (
                 <li key={l.to}>
@@ -158,7 +158,38 @@ export default function Footer() {
             <Link to="/blog" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.blog}</Link>
             <Link to="/mentions-legales" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.terms}</Link>
             <Link to="/confidentialite" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.privacy}</Link>
-            <Link to="/collaborateur" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12.5, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.collaborateur}</Link>
+            <span
+              aria-disabled="true"
+              aria-label={`${legal.collaborateur} — ${legal.soon}`}
+              title={legal.soon}
+              style={{
+                fontFamily: "'Outfit', sans-serif",
+                fontSize: 12.5,
+                textDecoration: "none",
+                color: "rgba(255,255,255,0.4)",
+                cursor: "not-allowed",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <span aria-hidden="true">{legal.collaborateur}</span>
+              <span
+                aria-hidden="true"
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: "0.04em",
+                  textTransform: "uppercase",
+                  color: "rgba(255,255,255,0.55)",
+                  border: "1px solid rgba(255,255,255,0.25)",
+                  borderRadius: "var(--r-full, 999px)",
+                  padding: "1px 6px",
+                }}
+              >
+                {legal.soon}
+              </span>
+            </span>
           </div>
         </div>
       </div>

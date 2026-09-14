@@ -21,9 +21,9 @@ export const NAV_ITEMS: NavItem[] = [
   { key: "whyUs", href: "#why-us", id: "why-us" },
   { key: "pricing", href: "#pricing", id: "pricing" },
   { key: "faq", href: "#faq", id: "faq" },
-  { key: "about", href: "#about", id: "about" },
-  { key: "blog", href: "#blog", id: "blog" },
-  { key: "referral", href: "#referral", id: "referral" },
+  // Blog is a standalone route (/blog); Header and Footer route it there. About,
+  // Newsletter and Referral were removed from the homepage, so no anchors remain.
+  { key: "blog", href: "/blog", id: "blog" },
   { key: "contact", href: "#contact", id: "contact" },
 ]
 

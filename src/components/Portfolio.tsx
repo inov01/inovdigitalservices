@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { createPortal } from "react-dom"
 // Portfolio albums — logo albums drive the carousel; others go to "Autres réalisations".
-import { Building2, Eye, Images, FolderOpen, Flame, X, MessageSquare, ChevronLeft, ChevronRight, Play, Pause } from "lucide-react"
+import { Building2, Eye, Images, FolderOpen, Flame, X, MessageSquare, ChevronLeft, ChevronRight, Play, Pause, ArrowRight } from "lucide-react"
 import useIsMobile from "../hooks/useIsMobile"
 import useReducedMotion from "../hooks/useReducedMotion"
 import useModal from "../hooks/useModal"
@@ -363,8 +363,11 @@ export default function Portfolio() {
           </div>
         )}
 
-        {/* CTA */}
-        <div style={{ textAlign: "center", marginTop: 48 }}>
+        {/* CTA — primary pushes toward the quote (funnel), Instagram stays secondary */}
+        <div style={{ textAlign: "center", marginTop: 48, display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+          <a href="#pricing" className="btn-orange">
+            {t.hero.ctaQuote} <ArrowRight size={16} aria-hidden="true" />
+          </a>
           <a href="https://www.instagram.com/inov_digital_services" target="_blank" rel="noreferrer" className="btn-secondary">
             {t.portfolio.seeAllInstagram}
           </a>

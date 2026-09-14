@@ -377,7 +377,7 @@ export default function Contact() {
                   </div>
                 )}
 
-                <button type="submit" className="btn-primary" disabled={fsState.submitting} style={{ opacity: fsState.submitting ? 0.7 : 1 }}>
+                <button type="submit" className="btn-orange" disabled={fsState.submitting} style={{ opacity: fsState.submitting ? 0.7 : 1 }}>
                   {fsState.submitting ? t.contact.sending : <>{t.contact.send} <ArrowRight size={17} /></>}
                 </button>
               </form>

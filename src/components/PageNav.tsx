@@ -8,7 +8,16 @@ export default function PageNav() {
   const [active, setActive] = useState("home")
   const [hoveredDot, setHoveredDot] = useState<string | null>(null)
 
-  const sections = NAV_ITEMS.map((i) => ({ id: i.id, label: t.nav[i.key] }))
+  // Only navigate between sections that actually exist on this page. Items that
+  // route elsewhere (e.g. Blog → /blog) or were removed from the homepage are
+  // skipped so the dots and prev/next never point at a missing anchor.
+  const [presentIds, setPresentIds] = useState<string[]>([])
+  useEffect(() => {
+    setPresentIds(NAV_ITEMS.filter((i) => document.getElementById(i.id)).map((i) => i.id))
+  }, [])
+  const sections = NAV_ITEMS
+    .filter((i) => presentIds.includes(i.id))
+    .map((i) => ({ id: i.id, label: t.nav[i.key] }))
 
   useEffect(() => {
     // Track each section's current visibility ratio so that when several are on
@@ -40,7 +49,7 @@ export default function PageNav() {
     })
     return () => observer.disconnect()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [presentIds])
 
   const currentIdx = sections.findIndex((s) => s.id === active)
 
