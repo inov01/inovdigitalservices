@@ -1863,7 +1863,9 @@ async function getSocialCfg(): Promise<{ waitMessage: string; commentReply: stri
   return {
     waitMessage: (typeof sr.waitMessage === "string" && sr.waitMessage.trim()) ? sr.waitMessage : META_WAIT_MSG,
     commentReply: (typeof sr.commentReply === "string" && sr.commentReply.trim()) ? sr.commentReply : META_COMMENT_REPLY,
-    useGemini: !!sr.useGemini,
+    // Env override (SOCIAL_USE_GEMINI=true) lets the owner switch AI replies on
+    // globally without an admin session; otherwise the per-account setting wins.
+    useGemini: !!sr.useGemini || (Deno.env.get("SOCIAL_USE_GEMINI") ?? "").toLowerCase() === "true",
     rules,
   };
 }
@@ -2435,7 +2437,7 @@ app.delete(`${P}/eventualites/:id`, async (c) => {
 // New blog articles are auto-enqueued from PUT /settings. Each network is skipped
 // gracefully when unconfigured, exactly like the WhatsApp follow-up integration.
 
-const SOCIAL_NETWORKS = ["facebook", "instagram", "tiktok"] as const;
+const SOCIAL_NETWORKS = ["facebook", "instagram"] as const;
 type SocialNetwork = (typeof SOCIAL_NETWORKS)[number];
 
 function cleanNetworks(input: unknown): SocialNetwork[] {
@@ -2503,128 +2505,17 @@ async function publishToInstagram(p: { caption: string; imageUrl?: string }) {
   }
 }
 
-// ── TikTok (Content Posting API) ────────────────────────────────────────────
-// Unlike Meta, TikTok requires a per-user OAuth token (video.publish scope) that
-// expires every 24h and is refreshed with a long-lived refresh token. We store
-// the token set in KV under `tiktok:tokens` and refresh transparently. Publishing
-// uses the PULL_FROM_URL flow: TikTok downloads the video from a public URL.
-const TIKTOK_CLIENT_KEY = Deno.env.get("TIKTOK_CLIENT_KEY") ?? "";
-const TIKTOK_CLIENT_SECRET = Deno.env.get("TIKTOK_CLIENT_SECRET") ?? "";
-const TIKTOK_SCOPE = "video.publish";
-// Default privacy: SELF_ONLY is always allowed, including for apps not yet audited
-// by TikTok. Once your app is approved you can pass "PUBLIC_TO_EVERYONE".
-const TIKTOK_DEFAULT_PRIVACY = Deno.env.get("TIKTOK_PRIVACY") ?? "SELF_ONLY";
-
-function tiktokConfigured(): boolean {
-  return Boolean(TIKTOK_CLIENT_KEY && TIKTOK_CLIENT_SECRET);
-}
-
-// The public callback URL TikTok redirects to after authorization. Must match the
-// Redirect URI registered in the TikTok developer app exactly.
-function tiktokRedirectUri(): string {
-  const base = (Deno.env.get("SUPABASE_URL") ?? "").replace(/\/+$/, "");
-  return `${base}/functions/v1/make-server-df4bb120/tiktok/callback`;
-}
-
-type TikTokTokens = {
-  access_token: string;
-  refresh_token: string;
-  open_id?: string;
-  expires_at: number;         // epoch ms
-  refresh_expires_at: number; // epoch ms
-};
-
-// Exchange an authorization code (or refresh token) for a token set.
-async function tiktokTokenRequest(params: Record<string, string>): Promise<TikTokTokens | null> {
-  try {
-    const res = await fetch("https://open.tiktokapis.com/v2/oauth/token/", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        client_key: TIKTOK_CLIENT_KEY,
-        client_secret: TIKTOK_CLIENT_SECRET,
-        ...params,
-      }),
-    });
-    const data = await res.json().catch(() => ({} as any));
-    if (!res.ok || !data.access_token) {
-      console.error("[tiktok] token error:", res.status, JSON.stringify(data).slice(0, 200));
-      return null;
-    }
-    const now = Date.now();
-    return {
-      access_token: data.access_token,
-      refresh_token: data.refresh_token,
-      open_id: data.open_id,
-      expires_at: now + Number(data.expires_in ?? 86400) * 1000,
-      refresh_expires_at: now + Number(data.refresh_expires_in ?? 31536000) * 1000,
-    };
-  } catch (e) {
-    console.error("[tiktok] token request failed:", String((e as any)?.message ?? e));
-    return null;
-  }
-}
-
-// Return a valid access token, refreshing it if it expires within 2 minutes.
-async function getTikTokAccessToken(): Promise<string | null> {
-  const stored = (await kv.get("tiktok:tokens")) as TikTokTokens | null;
-  if (!stored?.access_token) return null;
-  if (stored.expires_at - Date.now() > 120_000) return stored.access_token;
-  const refreshed = await tiktokTokenRequest({
-    grant_type: "refresh_token",
-    refresh_token: stored.refresh_token,
-  });
-  if (!refreshed) return stored.access_token; // best-effort: try the old one
-  await kv.set("tiktok:tokens", refreshed);
-  return refreshed.access_token;
-}
-
-// Publish one video to TikTok via PULL_FROM_URL. `videoUrl` must be public and its
-// domain must be verified in the TikTok developer portal.
-async function publishToTikTok(p: { videoUrl?: string; caption: string; privacy?: string }) {
-  if (!tiktokConfigured()) return { sent: false, skipped: "not_configured" as const };
-  if (!p.videoUrl) return { sent: false, skipped: "no_video" as const };
-  const token = await getTikTokAccessToken();
-  if (!token) return { sent: false, skipped: "not_connected" as const };
-  try {
-    const res = await fetch("https://open.tiktokapis.com/v2/post/publish/video/init/", {
-      method: "POST",
-      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json; charset=UTF-8" },
-      body: JSON.stringify({
-        post_info: {
-          title: p.caption.slice(0, 2200),
-          privacy_level: p.privacy || TIKTOK_DEFAULT_PRIVACY,
-          disable_comment: false,
-          disable_duet: false,
-          disable_stitch: false,
-        },
-        source_info: { source: "PULL_FROM_URL", video_url: p.videoUrl },
-      }),
-    });
-    const data = await res.json().catch(() => ({} as any));
-    const publishId = data?.data?.publish_id;
-    if (!res.ok || !publishId) {
-      return { sent: false, error: `tiktok_${res.status}: ${JSON.stringify(data).slice(0, 200)}` };
-    }
-    return { sent: true, id: publishId };
-  } catch (e) {
-    return { sent: false, error: String((e as any)?.message ?? e) };
-  }
-}
-
 // Publish one post to each of its target networks; returns a per-network report.
 async function publishSocialPost(post: any): Promise<Record<string, any>> {
   const nets = cleanNetworks(post?.networks);
   const caption = String(post?.caption ?? "");
   const imageUrl = post?.imageUrl ? absoluteUrl(String(post.imageUrl)) : undefined;
-  const videoUrl = post?.videoUrl ? absoluteUrl(String(post.videoUrl)) : undefined;
   const link = post?.link ? absoluteUrl(String(post.link)) : undefined;
   const report: Record<string, any> = {};
   const summarize = (r: any) =>
     r.sent ? { status: "sent", id: r.id } : { status: r.error ? "error" : "skipped", detail: r.error ?? r.skipped };
   if (nets.includes("facebook")) report.facebook = summarize(await publishToFacebook({ message: caption, link, imageUrl }));
   if (nets.includes("instagram")) report.instagram = summarize(await publishToInstagram({ caption, imageUrl }));
-  if (nets.includes("tiktok")) report.tiktok = summarize(await publishToTikTok({ videoUrl, caption }));
   return report;
 }
 
@@ -2643,16 +2534,15 @@ app.post(`${P}/social/publish`, async (c) => {
   const b = await c.req.json().catch(() => ({} as any));
   const caption = typeof b.caption === "string" ? b.caption.slice(0, 2200).trim() : "";
   const imageUrl = typeof b.imageUrl === "string" ? b.imageUrl.slice(0, 600).trim() : "";
-  const videoUrl = typeof b.videoUrl === "string" ? b.videoUrl.slice(0, 600).trim() : "";
   const link = typeof b.link === "string" ? b.link.slice(0, 600).trim() : "";
   const networks = cleanNetworks(b.networks);
-  if (!caption && !imageUrl && !videoUrl) return c.json({ error: "missing caption, image or video" }, 400);
-  const report = await publishSocialPost({ caption, imageUrl, videoUrl, link, networks });
+  if (!caption && !imageUrl) return c.json({ error: "missing caption or image" }, 400);
+  const report = await publishSocialPost({ caption, imageUrl, link, networks });
   const status = socialStatusFromReport(report);
   // Keep a record so the admin history shows manual posts too.
   const id = newId();
   await kv.set(`social:${id}`, {
-    id, caption, imageUrl, videoUrl, link, networks,
+    id, caption, imageUrl, link, networks,
     source: "manual", status, scheduledAt: new Date().toISOString(),
     createdAt: new Date().toISOString(), result: { ...report, dispatchedAt: new Date().toISOString() },
   });
@@ -2666,14 +2556,13 @@ app.post(`${P}/social/schedule`, async (c) => {
   const b = await c.req.json().catch(() => ({} as any));
   const caption = typeof b.caption === "string" ? b.caption.slice(0, 2200).trim() : "";
   const imageUrl = typeof b.imageUrl === "string" ? b.imageUrl.slice(0, 600).trim() : "";
-  const videoUrl = typeof b.videoUrl === "string" ? b.videoUrl.slice(0, 600).trim() : "";
   const link = typeof b.link === "string" ? b.link.slice(0, 600).trim() : "";
   const when = new Date(String(b.scheduledAt ?? ""));
-  if (!caption && !imageUrl && !videoUrl) return c.json({ error: "missing caption, image or video" }, 400);
+  if (!caption && !imageUrl) return c.json({ error: "missing caption or image" }, 400);
   if (isNaN(when.getTime())) return c.json({ error: "invalid scheduledAt" }, 400);
   const id = newId();
   const post = {
-    id, caption, imageUrl, videoUrl, link,
+    id, caption, imageUrl, link,
     networks: cleanNetworks(b.networks),
     source: "manual", status: "scheduled",
     scheduledAt: when.toISOString(), createdAt: new Date().toISOString(), result: null as any,
@@ -2721,94 +2610,6 @@ app.post(`${P}/social/dispatch`, async (c) => {
     processed.push({ id: post.id, status: post.status });
   }
   return c.json({ ok: true, processed });
-});
-
-// ── TikTok connection routes ────────────────────────────────────────────────
-
-// Admin: is TikTok configured (client key/secret) and connected (a valid token)?
-app.get(`${P}/tiktok/status`, async (c) => {
-  const u = await requireAdmin(c);
-  if (u instanceof Response) return u;
-  const tokens = (await kv.get("tiktok:tokens")) as TikTokTokens | null;
-  return c.json({
-    configured: tiktokConfigured(),
-    connected: Boolean(tokens?.access_token && tokens.refresh_expires_at > Date.now()),
-    openId: tokens?.open_id ?? null,
-    expiresAt: tokens?.expires_at ?? null,
-    redirectUri: tiktokRedirectUri(),
-  });
-});
-
-// Admin: start the OAuth flow. Returns the TikTok authorize URL to open. A random
-// state is stored briefly and checked on callback to prevent CSRF.
-app.get(`${P}/tiktok/auth`, async (c) => {
-  const u = await requireAdmin(c);
-  if (u instanceof Response) return u;
-  if (!tiktokConfigured()) return c.json({ error: "tiktok_not_configured" }, 503);
-  const state = crypto.randomUUID();
-  await kv.set(`tiktok:oauth:${state}`, { at: Date.now() });
-  const url = new URL("https://www.tiktok.com/v2/auth/authorize/");
-  url.searchParams.set("client_key", TIKTOK_CLIENT_KEY);
-  url.searchParams.set("scope", TIKTOK_SCOPE);
-  url.searchParams.set("response_type", "code");
-  url.searchParams.set("redirect_uri", tiktokRedirectUri());
-  url.searchParams.set("state", state);
-  return c.json({ url: url.toString() });
-});
-
-// Public: OAuth callback hit by TikTok. Exchanges the code for tokens, stores them,
-// then shows a small confirmation page that points back to the admin.
-app.get(`${P}/tiktok/callback`, async (c) => {
-  const code = c.req.query("code");
-  const state = c.req.query("state") ?? "";
-  const backTo = `${(Deno.env.get("SITE_URL") ?? "").replace(/\/+$/, "")}/admin`;
-  const page = (title: string, msg: string) =>
-    c.html(
-      `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">` +
-      `<div style="font-family:system-ui;max-width:34rem;margin:16vh auto;padding:0 20px;text-align:center">` +
-      `<h1 style="font-size:20px">${title}</h1><p style="color:#555;line-height:1.6">${msg}</p>` +
-      `<p><a href="${backTo}" style="color:#2563eb">Retour à l'administration</a></p></div>`,
-    );
-  if (!code) return page("TikTok — connexion annulée", "Aucun code d'autorisation reçu. Vous pouvez réessayer depuis l'administration.");
-  const saved = await kv.get(`tiktok:oauth:${state}`);
-  if (!saved) return page("TikTok — lien expiré", "Ce lien de connexion a expiré ou est invalide. Relancez la connexion depuis l'administration.");
-  await kv.del(`tiktok:oauth:${state}`);
-  const tokens = await tiktokTokenRequest({
-    grant_type: "authorization_code",
-    code,
-    redirect_uri: tiktokRedirectUri(),
-  });
-  if (!tokens) return page("TikTok — échec", "Impossible de finaliser la connexion. Vérifiez les identifiants de l'app TikTok, puis réessayez.");
-  await kv.set("tiktok:tokens", tokens);
-  return page("TikTok connecté ✅", "Votre compte TikTok est relié. Vous pouvez maintenant publier vos vidéos depuis l'administration.");
-});
-
-// Admin: disconnect (forget stored tokens).
-app.post(`${P}/tiktok/disconnect`, async (c) => {
-  const u = await requireAdmin(c);
-  if (u instanceof Response) return u;
-  await kv.del("tiktok:tokens");
-  return c.json({ ok: true });
-});
-
-// Admin: check the processing status of a TikTok publish (by publish_id).
-app.get(`${P}/tiktok/publish-status/:id`, async (c) => {
-  const u = await requireAdmin(c);
-  if (u instanceof Response) return u;
-  const token = await getTikTokAccessToken();
-  if (!token) return c.json({ error: "not_connected" }, 503);
-  try {
-    const res = await fetch("https://open.tiktokapis.com/v2/post/publish/status/fetch/", {
-      method: "POST",
-      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json; charset=UTF-8" },
-      body: JSON.stringify({ publish_id: c.req.param("id") }),
-    });
-    const data = await res.json().catch(() => ({} as any));
-    if (!res.ok) return c.json({ error: `tiktok_${res.status}`, detail: data }, 502);
-    return c.json({ ok: true, status: data?.data?.status ?? "UNKNOWN", detail: data?.data ?? {} });
-  } catch (e) {
-    return c.json({ error: String((e as any)?.message ?? e) }, 502);
-  }
 });
 
 Deno.serve(app.fetch);
