@@ -28,7 +28,7 @@ const DEFAULT_PAY: PaymentConfig = {
     holder: "BRUNY Ben-vino Samson",
     type: "Épargne · USD",
   },
-  upwork: { email: "inov01contact@gmail.com" },
+  upwork: { email: "benvinosamson@gmail.com" },
   whatsapp: "50936255920",
 }
 
