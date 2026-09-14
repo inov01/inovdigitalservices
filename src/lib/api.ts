@@ -226,6 +226,39 @@ export interface Formation {
   seats?: number
   syllabus: string[]
   order?: number
+  // Nouveau : type de session
+  type?: "cours" | "live" | "conference" | "replay"
+  liveUrl?: string        // lien Zoom/Meet/YouTube Live
+  replayUrl?: string      // URL vidéo (YouTube embed ou mp4)
+  resourcesUrl?: string   // PDF des ressources téléchargeables
+  startDateTime?: string  // ISO 8601 — pour les lives/conférences
+  endDateTime?: string
+  isLive?: boolean        // true si la session est actuellement en cours
+  recordingDate?: string  // date d'enregistrement (replays)
+  tags?: string[]
+}
+
+// ── Éventualités (journal d'incidents admin) ──────────────────────────────────
+export interface Eventualite {
+  id: string
+  createdAt: string
+  title: string
+  description?: string
+  type: "incident" | "alerte" | "note" | "suivi_client" | "paiement"
+  severity: "critique" | "haute" | "normale" | "info"
+  status: "ouverte" | "en_cours" | "resolue" | "archivee"
+  linkedLeadId?: string
+  resolvedAt?: string
+  resolvedNote?: string
+  tags?: string[]
+}
+export interface EventualiteInput {
+  title: string
+  description?: string
+  type: Eventualite["type"]
+  severity: Eventualite["severity"]
+  linkedLeadId?: string
+  tags?: string[]
 }
 export interface EnrollInput {
   formationId: string
@@ -272,6 +305,9 @@ export interface CollaborateurInput {
   instagram?: string
   website?: string
   accent?: string
+  testimonial?: string
+  portfolioImages?: string[]
+  skills?: string[]
 }
 
 // ── Public API (site → server) ────────────────────────────────────────────────
@@ -523,6 +559,26 @@ export const adminApi = {
   },
   deleteCollaborateur(id: string) {
     return auth<{ ok: boolean }>(`/collaborateurs/${id}`, { method: "DELETE" })
+  },
+
+  // ── Éventualités (journal d'incidents) ───────────────────────────────────
+  listEventualites() {
+    return auth<{ eventualites: Eventualite[] }>("/eventualites")
+  },
+  createEventualite(input: EventualiteInput) {
+    return auth<{ ok: boolean; eventualite: Eventualite }>("/eventualites", {
+      method: "POST",
+      body: JSON.stringify(input),
+    })
+  },
+  updateEventualite(id: string, patch: Partial<Pick<Eventualite, "status" | "resolvedNote" | "description" | "severity">>) {
+    return auth<{ ok: boolean; eventualite: Eventualite }>(`/eventualites/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(patch),
+    })
+  },
+  deleteEventualite(id: string) {
+    return auth<{ ok: boolean }>(`/eventualites/${id}`, { method: "DELETE" })
   },
 
   // AI assistant (Gemini). Sends the running conversation; optionally grounds the

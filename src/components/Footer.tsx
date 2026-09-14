@@ -116,7 +116,7 @@ export default function Footer() {
                 { to: "/compte", label: client.ambassador },
                 { to: "/paiement", label: client.pay },
               ].map((l) => (
-                <li key={l.to}>
+                <li key={l.label}>
                   <Link to={l.to} className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, textDecoration: "none" }}>
                     {l.label}
                   </Link>

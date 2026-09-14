@@ -171,15 +171,16 @@ const RUI: Record<string, {
   cta: string; title: string; name: string; role: string; message: string;
   rating: string; submit: string; sending: string; success: string;
   namePh: string; rolePh: string; messagePh: string; required: string; failed: string;
+  anon: string; anonHint: string; anonName: string; ratingLabels: [string, string, string, string, string];
 }> = {
-  fr: { cta: "Laisser un avis", title: "Partagez votre expérience", name: "Votre nom", role: "Entreprise / rôle (optionnel)", message: "Votre avis", rating: "Votre note", submit: "Envoyer mon avis", sending: "Envoi…", success: "Merci ! Votre avis sera publié après validation.", namePh: "Ex. Marie Joseph", rolePh: "Ex. Fondatrice, Rosie Cocktail", messagePh: "Racontez votre expérience avec INOV…", required: "Indiquez votre nom et un avis d'au moins 10 caractères.", failed: "Envoi impossible. Réessayez dans un instant." },
-  en: { cta: "Leave a review", title: "Share your experience", name: "Your name", role: "Company / role (optional)", message: "Your review", rating: "Your rating", submit: "Send my review", sending: "Sending…", success: "Thank you! Your review will appear once approved.", namePh: "e.g. Marie Joseph", rolePh: "e.g. Founder, Rosie Cocktail", messagePh: "Tell us about your experience with INOV…", required: "Enter your name and a review of at least 10 characters.", failed: "Couldn't send. Please try again shortly." },
-  es: { cta: "Dejar una opinión", title: "Comparte tu experiencia", name: "Tu nombre", role: "Empresa / cargo (opcional)", message: "Tu opinión", rating: "Tu valoración", submit: "Enviar mi opinión", sending: "Enviando…", success: "¡Gracias! Tu opinión se publicará tras la aprobación.", namePh: "Ej. Marie Joseph", rolePh: "Ej. Fundadora, Rosie Cocktail", messagePh: "Cuéntanos tu experiencia con INOV…", required: "Introduce tu nombre y una opinión de al menos 10 caracteres.", failed: "No se pudo enviar. Inténtalo de nuevo en un momento." },
-  ht: { cta: "Kite yon avi", title: "Pataje eksperyans ou", name: "Non ou", role: "Antrepriz / wòl (opsyonèl)", message: "Avi ou", rating: "Nòt ou", submit: "Voye avi mwen", sending: "N ap voye…", success: "Mèsi! Avi ou ap parèt apre nou apwouve l.", namePh: "Egz. Marie Joseph", rolePh: "Egz. Fondatè, Rosie Cocktail", messagePh: "Rakonte eksperyans ou ak INOV…", required: "Mete non ou ak yon avi ki gen omwen 10 karaktè.", failed: "Nou pa ka voye l. Eseye ankò nan yon ti moman." },
-  pt: { cta: "Deixar uma avaliação", title: "Partilhe a sua experiência", name: "O seu nome", role: "Empresa / cargo (opcional)", message: "A sua avaliação", rating: "A sua nota", submit: "Enviar a minha avaliação", sending: "A enviar…", success: "Obrigado! A sua avaliação será publicada após aprovação.", namePh: "Ex. Marie Joseph", rolePh: "Ex. Fundadora, Rosie Cocktail", messagePh: "Conte-nos a sua experiência com a INOV…", required: "Informe o seu nome e uma avaliação com pelo menos 10 caracteres.", failed: "Não foi possível enviar. Tente novamente daqui a pouco." },
-  it: { cta: "Lascia una recensione", title: "Condividi la tua esperienza", name: "Il tuo nome", role: "Azienda / ruolo (facoltativo)", message: "La tua recensione", rating: "La tua valutazione", submit: "Invia la mia recensione", sending: "Invio…", success: "Grazie! La tua recensione sarà pubblicata dopo l'approvazione.", namePh: "Es. Marie Joseph", rolePh: "Es. Fondatrice, Rosie Cocktail", messagePh: "Raccontaci la tua esperienza con INOV…", required: "Inserisci il tuo nome e una recensione di almeno 10 caratteri.", failed: "Invio non riuscito. Riprova tra poco." },
-  de: { cta: "Bewertung abgeben", title: "Teilen Sie Ihre Erfahrung", name: "Ihr Name", role: "Firma / Rolle (optional)", message: "Ihre Bewertung", rating: "Ihre Bewertung", submit: "Bewertung senden", sending: "Wird gesendet…", success: "Danke! Ihre Bewertung erscheint nach der Freigabe.", namePh: "z. B. Marie Joseph", rolePh: "z. B. Gründerin, Rosie Cocktail", messagePh: "Erzählen Sie von Ihrer Erfahrung mit INOV…", required: "Bitte Namen und eine Bewertung mit mindestens 10 Zeichen angeben.", failed: "Senden fehlgeschlagen. Bitte gleich erneut versuchen." },
-  ar: { cta: "أضف رأيك", title: "شاركنا تجربتك", name: "اسمك", role: "الشركة / الدور (اختياري)", message: "رأيك", rating: "تقييمك", submit: "إرسال رأيي", sending: "جارٍ الإرسال…", success: "شكرًا! سيظهر رأيك بعد الموافقة.", namePh: "مثال: ماري جوزيف", rolePh: "مثال: مؤسِّسة، Rosie Cocktail", messagePh: "أخبرنا عن تجربتك مع INOV…", required: "أدخل اسمك ورأيًا لا يقل عن 10 أحرف.", failed: "تعذّر الإرسال. حاول مرة أخرى بعد قليل." },
+  fr: { cta: "Laisser un avis", title: "Partagez votre expérience", name: "Votre nom", role: "Entreprise / rôle (optionnel)", message: "Votre avis", rating: "Votre note", submit: "Envoyer mon avis", sending: "Envoi…", success: "Merci ! Votre avis sera publié après validation.", namePh: "Ex. Marie Joseph", rolePh: "Ex. Fondatrice, Rosie Cocktail", messagePh: "Racontez votre expérience avec INOV…", required: "Indiquez votre nom et un avis d'au moins 10 caractères.", failed: "Envoi impossible. Réessayez dans un instant.", anon: "Publier anonymement", anonHint: "Votre nom sera masqué ; ajoutez le nom de votre entreprise si vous le souhaitez.", anonName: "Client anonyme", ratingLabels: ["Décevant", "Passable", "Correct", "Très bien", "Excellent"] },
+  en: { cta: "Leave a review", title: "Share your experience", name: "Your name", role: "Company / role (optional)", message: "Your review", rating: "Your rating", submit: "Send my review", sending: "Sending…", success: "Thank you! Your review will appear once approved.", namePh: "e.g. Marie Joseph", rolePh: "e.g. Founder, Rosie Cocktail", messagePh: "Tell us about your experience with INOV…", required: "Enter your name and a review of at least 10 characters.", failed: "Couldn't send. Please try again shortly.", anon: "Post anonymously", anonHint: "Your name will be hidden; add your company name if you like.", anonName: "Anonymous client", ratingLabels: ["Disappointing", "Fair", "Good", "Very good", "Excellent"] },
+  es: { cta: "Dejar una opinión", title: "Comparte tu experiencia", name: "Tu nombre", role: "Empresa / cargo (opcional)", message: "Tu opinión", rating: "Tu valoración", submit: "Enviar mi opinión", sending: "Enviando…", success: "¡Gracias! Tu opinión se publicará tras la aprobación.", namePh: "Ej. Marie Joseph", rolePh: "Ej. Fundadora, Rosie Cocktail", messagePh: "Cuéntanos tu experiencia con INOV…", required: "Introduce tu nombre y una opinión de al menos 10 caracteres.", failed: "No se pudo enviar. Inténtalo de nuevo en un momento.", anon: "Publicar de forma anónima", anonHint: "Tu nombre se ocultará; añade el nombre de tu empresa si quieres.", anonName: "Cliente anónimo", ratingLabels: ["Decepcionante", "Regular", "Bien", "Muy bien", "Excelente"] },
+  ht: { cta: "Kite yon avi", title: "Pataje eksperyans ou", name: "Non ou", role: "Antrepriz / wòl (opsyonèl)", message: "Avi ou", rating: "Nòt ou", submit: "Voye avi mwen", sending: "N ap voye…", success: "Mèsi! Avi ou ap parèt apre nou apwouve l.", namePh: "Egz. Marie Joseph", rolePh: "Egz. Fondatè, Rosie Cocktail", messagePh: "Rakonte eksperyans ou ak INOV…", required: "Mete non ou ak yon avi ki gen omwen 10 karaktè.", failed: "Nou pa ka voye l. Eseye ankò nan yon ti moman.", anon: "Pibliye anonim", anonHint: "N ap kache non ou ; ajoute non antrepriz ou si ou vle.", anonName: "Kliyan anonim", ratingLabels: ["Dezapwentan", "Mwayen", "Kòrèk", "Trè byen", "Ekselan"] },
+  pt: { cta: "Deixar uma avaliação", title: "Partilhe a sua experiência", name: "O seu nome", role: "Empresa / cargo (opcional)", message: "A sua avaliação", rating: "A sua nota", submit: "Enviar a minha avaliação", sending: "A enviar…", success: "Obrigado! A sua avaliação será publicada após aprovação.", namePh: "Ex. Marie Joseph", rolePh: "Ex. Fundadora, Rosie Cocktail", messagePh: "Conte-nos a sua experiência com a INOV…", required: "Informe o seu nome e uma avaliação com pelo menos 10 caracteres.", failed: "Não foi possível enviar. Tente novamente daqui a pouco.", anon: "Publicar anonimamente", anonHint: "O seu nome ficará oculto; adicione o nome da sua empresa se quiser.", anonName: "Cliente anónimo", ratingLabels: ["Dececionante", "Razoável", "Bom", "Muito bom", "Excelente"] },
+  it: { cta: "Lascia una recensione", title: "Condividi la tua esperienza", name: "Il tuo nome", role: "Azienda / ruolo (facoltativo)", message: "La tua recensione", rating: "La tua valutazione", submit: "Invia la mia recensione", sending: "Invio…", success: "Grazie! La tua recensione sarà pubblicata dopo l'approvazione.", namePh: "Es. Marie Joseph", rolePh: "Es. Fondatrice, Rosie Cocktail", messagePh: "Raccontaci la tua esperienza con INOV…", required: "Inserisci il tuo nome e una recensione di almeno 10 caratteri.", failed: "Invio non riuscito. Riprova tra poco.", anon: "Pubblica in modo anonimo", anonHint: "Il tuo nome sarà nascosto; aggiungi il nome della tua azienda se vuoi.", anonName: "Cliente anonimo", ratingLabels: ["Deludente", "Discreto", "Buono", "Molto buono", "Eccellente"] },
+  de: { cta: "Bewertung abgeben", title: "Teilen Sie Ihre Erfahrung", name: "Ihr Name", role: "Firma / Rolle (optional)", message: "Ihre Bewertung", rating: "Ihre Bewertung", submit: "Bewertung senden", sending: "Wird gesendet…", success: "Danke! Ihre Bewertung erscheint nach der Freigabe.", namePh: "z. B. Marie Joseph", rolePh: "z. B. Gründerin, Rosie Cocktail", messagePh: "Erzählen Sie von Ihrer Erfahrung mit INOV…", required: "Bitte Namen und eine Bewertung mit mindestens 10 Zeichen angeben.", failed: "Senden fehlgeschlagen. Bitte gleich erneut versuchen.", anon: "Anonym veröffentlichen", anonHint: "Ihr Name wird ausgeblendet; fügen Sie bei Bedarf Ihren Firmennamen hinzu.", anonName: "Anonymer Kunde", ratingLabels: ["Enttäuschend", "Mäßig", "Gut", "Sehr gut", "Ausgezeichnet"] },
+  ar: { cta: "أضف رأيك", title: "شاركنا تجربتك", name: "اسمك", role: "الشركة / الدور (اختياري)", message: "رأيك", rating: "تقييمك", submit: "إرسال رأيي", sending: "جارٍ الإرسال…", success: "شكرًا! سيظهر رأيك بعد الموافقة.", namePh: "مثال: ماري جوزيف", rolePh: "مثال: مؤسِّسة، Rosie Cocktail", messagePh: "أخبرنا عن تجربتك مع INOV…", required: "أدخل اسمك ورأيًا لا يقل عن 10 أحرف.", failed: "تعذّر الإرسال. حاول مرة أخرى بعد قليل.", anon: "النشر بشكل مجهول", anonHint: "سيتم إخفاء اسمك؛ أضف اسم شركتك إذا رغبت.", anonName: "عميل مجهول", ratingLabels: ["مخيّب", "مقبول", "جيد", "جيد جدًا", "ممتاز"] },
 }
 
 // Card for a client-submitted (approved) review. Uses initials since these have
@@ -219,15 +220,23 @@ function ReviewForm({ lang, onClose, onSubmitted }: { lang: string; onClose: () 
   const [role, setRole] = useState("")
   const [text, setText] = useState("")
   const [stars, setStars] = useState(5)
+  const [anon, setAnon] = useState(false)
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle")
   const [err, setErr] = useState("")
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
-    if (name.trim().length < 2 || text.trim().length < 10) { setErr(u.required); return }
+    if ((!anon && name.trim().length < 2) || text.trim().length < 10) { setErr(u.required); return }
     setErr(""); setStatus("sending")
     try {
-      await api.submitTestimonial({ name: name.trim(), role: role.trim(), text: text.trim(), stars, lang })
+      await api.submitTestimonial({
+        name: anon ? u.anonName : name.trim(),
+        role: role.trim(),
+        company: role.trim(),
+        text: text.trim(),
+        stars,
+        lang,
+      })
       setStatus("done")
       onSubmitted()
     } catch {
@@ -259,22 +268,34 @@ function ReviewForm({ lang, onClose, onSubmitted }: { lang: string; onClose: () 
           </div>
         ) : (
           <form onSubmit={submit} style={{ display: "grid", gap: 16 }}>
-            <div>
-              <label htmlFor="rv-name" style={labelStyle}>{u.name}</label>
-              <input id="rv-name" value={name} onChange={(e) => setName(e.target.value)} placeholder={u.namePh} autoComplete="name" style={inputStyle} />
-            </div>
+            <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
+              <input type="checkbox" checked={anon} onChange={(e) => setAnon(e.target.checked)} style={{ width: 17, height: 17, marginTop: 2, accentColor: "var(--ds-accent)", flexShrink: 0, cursor: "pointer" }} />
+              <span>
+                <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700, color: "var(--ds-text)", display: "block" }}>{u.anon}</span>
+                <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12.5, color: "var(--ds-text-muted)", lineHeight: 1.5 }}>{u.anonHint}</span>
+              </span>
+            </label>
+            {!anon && (
+              <div>
+                <label htmlFor="rv-name" style={labelStyle}>{u.name}</label>
+                <input id="rv-name" value={name} onChange={(e) => setName(e.target.value)} placeholder={u.namePh} autoComplete="name" style={inputStyle} />
+              </div>
+            )}
             <div>
               <label htmlFor="rv-role" style={labelStyle}>{u.role}</label>
               <input id="rv-role" value={role} onChange={(e) => setRole(e.target.value)} placeholder={u.rolePh} style={inputStyle} />
             </div>
             <div>
               <span style={labelStyle}>{u.rating}</span>
-              <div style={{ display: "flex", gap: 6 }}>
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <button key={i} type="button" aria-label={`${i + 1} / 5`} aria-pressed={stars === i + 1} onClick={() => setStars(i + 1)} style={{ padding: 2, border: "none", background: "transparent", cursor: "pointer", lineHeight: 0 }}>
-                    <Star size={26} color="var(--ds-accent)" fill={i < stars ? "var(--ds-accent)" : "none"} strokeWidth={i < stars ? 0 : 1.6} style={{ opacity: i < stars ? 1 : 0.4 }} />
-                  </button>
-                ))}
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ display: "flex", gap: 6 }}>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <button key={i} type="button" aria-label={`${i + 1} / 5 — ${u.ratingLabels[i]}`} aria-pressed={stars === i + 1} onClick={() => setStars(i + 1)} style={{ padding: 2, border: "none", background: "transparent", cursor: "pointer", lineHeight: 0 }}>
+                      <Star size={26} color="var(--ds-accent)" fill={i < stars ? "var(--ds-accent)" : "none"} strokeWidth={i < stars ? 0 : 1.6} style={{ opacity: i < stars ? 1 : 0.4 }} />
+                    </button>
+                  ))}
+                </div>
+                <span aria-live="polite" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 700, color: "var(--ds-accent-text)" }}>{u.ratingLabels[stars - 1]}</span>
               </div>
             </div>
             <div>

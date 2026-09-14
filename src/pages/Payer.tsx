@@ -40,9 +40,9 @@ type Method = "moncash" | "natcash" | "buh" | "upwork"
 const HT_METHODS: Method[] = ["moncash", "natcash", "buh"]
 const INTL_METHODS: Method[] = ["upwork"]
 
-import moncashLogo from "@/imports/unnamed.png"
+import moncashLogo from "@/imports/unnamed.webp"
 import natcashLogo from "@/imports/d144965d8de439a0d8d6689b85fe4093.jpg"
-import buhLogo from "@/imports/images__5_.png"
+import buhLogo from "@/imports/images__5_.webp"
 
 // 44×44 rounded tile carrying an official provider logo. `scale` lets us crop
 // out letterboxing on wordmark thumbnails (e.g. the NatCash image).

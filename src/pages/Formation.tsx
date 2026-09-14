@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router"
 import {
   ArrowLeft, GraduationCap, Clock, Wifi, MapPin, Users, CheckCircle2,
-  Send, X, Sparkles, BadgeCheck,
+  Send, X, Sparkles, BadgeCheck, Radio, Mic2, PlayCircle, Download,
+  CalendarPlus, ExternalLink, BookOpen,
 } from "lucide-react"
 import { useSettings } from "../context/AppSettings"
 import type { Lang } from "../i18n/translations"
@@ -10,7 +11,6 @@ import { applyPageMeta } from "../lib/seo"
 import { track } from "../lib/analytics"
 import { api, type Formation as Course } from "../lib/api"
 
-// Page-local copy (kept out of the central dict). Falls back to French.
 type Str = {
   eyebrow: string; title: string; intro: string; back: string
   free: string; paid: string; hours: string; from: string
@@ -21,7 +21,13 @@ type Str = {
   name: string; email: string; whatsapp: string; msg: string
   msgPh: string; submit: string; sending: string
   okFree: string; okPaid: string; payCta: string; required: string; error: string
+  // types
+  all: string; cours: string; live: string; conference: string; replay: string
+  joinLive: string; watchReplay: string; downloadRes: string; addCalendar: string
+  liveBadge: string; countdown: string; startsIn: string
+  recordedOn: string; resources: string
 }
+
 const TR: Record<Lang, Str> = {
   fr: {
     eyebrow: "Espace Formation", title: "Apprends le design avec INOV",
@@ -39,6 +45,10 @@ const TR: Record<Lang, Str> = {
     okPaid: "Inscription reçue ! Finalise le paiement pour réserver ta place.",
     payCta: "Procéder au paiement", required: "Renseigne au moins ton nom et ton e-mail.",
     error: "Un souci est survenu. Réessaie ou écris-nous sur WhatsApp.",
+    all: "Tout", cours: "Cours", live: "Lives", conference: "Conférences", replay: "Replays",
+    joinLive: "Rejoindre le live", watchReplay: "Voir le replay", downloadRes: "Télécharger les ressources",
+    addCalendar: "Ajouter au calendrier", liveBadge: "EN DIRECT", countdown: "Compte à rebours",
+    startsIn: "Commence dans", recordedOn: "Enregistré le", resources: "Ressources",
   },
   en: {
     eyebrow: "Training Space", title: "Learn design with INOV",
@@ -56,6 +66,10 @@ const TR: Record<Lang, Str> = {
     okPaid: "Enrollment received! Complete payment to reserve your seat.",
     payCta: "Proceed to payment", required: "Please add at least your name and email.",
     error: "Something went wrong. Try again or message us on WhatsApp.",
+    all: "All", cours: "Courses", live: "Lives", conference: "Conferences", replay: "Replays",
+    joinLive: "Join the live", watchReplay: "Watch replay", downloadRes: "Download resources",
+    addCalendar: "Add to calendar", liveBadge: "LIVE", countdown: "Countdown",
+    startsIn: "Starts in", recordedOn: "Recorded on", resources: "Resources",
   },
   es: {
     eyebrow: "Espacio Formación", title: "Aprende diseño con INOV",
@@ -73,6 +87,10 @@ const TR: Record<Lang, Str> = {
     okPaid: "¡Inscripción recibida! Completa el pago para reservar tu plaza.",
     payCta: "Ir al pago", required: "Añade al menos tu nombre y correo.",
     error: "Algo salió mal. Inténtalo de nuevo o escríbenos por WhatsApp.",
+    all: "Todo", cours: "Cursos", live: "Lives", conference: "Conferencias", replay: "Replays",
+    joinLive: "Unirse al live", watchReplay: "Ver replay", downloadRes: "Descargar recursos",
+    addCalendar: "Añadir al calendario", liveBadge: "EN VIVO", countdown: "Cuenta atrás",
+    startsIn: "Empieza en", recordedOn: "Grabado el", resources: "Recursos",
   },
   ht: {
     eyebrow: "Espas Fòmasyon", title: "Aprann design ak INOV",
@@ -90,6 +108,10 @@ const TR: Record<Lang, Str> = {
     okPaid: "Nou resevwa enskripsyon w! Fin peye pou w rezève plas ou.",
     payCta: "Ale peye", required: "Mete omwen non w ak imèl ou.",
     error: "Gen yon pwoblèm. Eseye ankò oswa ekri nou sou WhatsApp.",
+    all: "Tout", cours: "Kou", live: "Lives", conference: "Konferans", replay: "Replays",
+    joinLive: "Rejwenn live a", watchReplay: "Gade replay a", downloadRes: "Telechaje resous yo",
+    addCalendar: "Ajoute nan kalandriye", liveBadge: "AN DIRÈK", countdown: "Dekontwòl",
+    startsIn: "Kòmanse nan", recordedOn: "Anrejistre", resources: "Resous",
   },
   pt: {
     eyebrow: "Espaço Formação", title: "Aprenda design com a INOV",
@@ -107,6 +129,10 @@ const TR: Record<Lang, Str> = {
     okPaid: "Inscrição recebida! Conclua o pagamento para reservar sua vaga.",
     payCta: "Ir para o pagamento", required: "Informe ao menos nome e e-mail.",
     error: "Algo deu errado. Tente novamente ou fale no WhatsApp.",
+    all: "Tudo", cours: "Cursos", live: "Lives", conference: "Conferências", replay: "Replays",
+    joinLive: "Entrar no live", watchReplay: "Assistir replay", downloadRes: "Baixar recursos",
+    addCalendar: "Adicionar ao calendário", liveBadge: "AO VIVO", countdown: "Contagem regressiva",
+    startsIn: "Começa em", recordedOn: "Gravado em", resources: "Recursos",
   },
   it: {
     eyebrow: "Spazio Formazione", title: "Impara il design con INOV",
@@ -124,6 +150,10 @@ const TR: Record<Lang, Str> = {
     okPaid: "Iscrizione ricevuta! Completa il pagamento per riservare il posto.",
     payCta: "Vai al pagamento", required: "Inserisci almeno nome ed e-mail.",
     error: "Qualcosa è andato storto. Riprova o scrivici su WhatsApp.",
+    all: "Tutto", cours: "Corsi", live: "Live", conference: "Conferenze", replay: "Replay",
+    joinLive: "Entra nel live", watchReplay: "Guarda il replay", downloadRes: "Scarica risorse",
+    addCalendar: "Aggiungi al calendario", liveBadge: "IN DIRETTA", countdown: "Conto alla rovescia",
+    startsIn: "Inizia tra", recordedOn: "Registrato il", resources: "Risorse",
   },
   de: {
     eyebrow: "Weiterbildung", title: "Lerne Design mit INOV",
@@ -141,6 +171,10 @@ const TR: Record<Lang, Str> = {
     okPaid: "Anmeldung erhalten! Schließe die Zahlung ab, um deinen Platz zu sichern.",
     payCta: "Zur Zahlung", required: "Bitte mindestens Name und E-Mail angeben.",
     error: "Etwas ist schiefgelaufen. Versuche es erneut oder schreib uns per WhatsApp.",
+    all: "Alle", cours: "Kurse", live: "Lives", conference: "Konferenzen", replay: "Replays",
+    joinLive: "Live beitreten", watchReplay: "Replay ansehen", downloadRes: "Ressourcen herunterladen",
+    addCalendar: "Zum Kalender hinzufügen", liveBadge: "LIVE", countdown: "Countdown",
+    startsIn: "Beginnt in", recordedOn: "Aufgezeichnet am", resources: "Ressourcen",
   },
   ar: {
     eyebrow: "مساحة التدريب", title: "تعلّم التصميم مع INOV",
@@ -158,8 +192,14 @@ const TR: Record<Lang, Str> = {
     okPaid: "تم استلام تسجيلك! أكمل الدفع لحجز مقعدك.",
     payCta: "المتابعة للدفع", required: "أضف اسمك وبريدك على الأقل.",
     error: "حدث خطأ. حاول مجدداً أو راسلنا على واتساب.",
+    all: "الكل", cours: "دورات", live: "بث مباشر", conference: "مؤتمرات", replay: "إعادة",
+    joinLive: "انضم للبث", watchReplay: "شاهد الإعادة", downloadRes: "تحميل الموارد",
+    addCalendar: "أضف للتقويم", liveBadge: "مباشر", countdown: "عدّ تنازلي",
+    startsIn: "يبدأ خلال", recordedOn: "سُجِّل في", resources: "الموارد",
   },
 }
+
+type CourseType = "all" | "cours" | "live" | "conference" | "replay"
 
 const card: React.CSSProperties = {
   background: "var(--ds-bg-card)", border: "1px solid var(--ds-border)",
@@ -175,11 +215,96 @@ const inputStyle: React.CSSProperties = {
   color: "var(--ds-text)", fontSize: 15, fontFamily: "'Outfit', sans-serif",
 }
 
+/** Format a duration until a future ISO date as "Xh Ym" or "Xm Ys". */
+function useCountdown(isoDate?: string) {
+  const [diff, setDiff] = useState<number | null>(null)
+  useEffect(() => {
+    if (!isoDate) return
+    function tick() {
+      const ms = new Date(isoDate!).getTime() - Date.now()
+      setDiff(ms > 0 ? ms : 0)
+    }
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [isoDate])
+  if (diff === null || !isoDate) return null
+  if (diff <= 0) return "0m"
+  const totalSec = Math.floor(diff / 1000)
+  const h = Math.floor(totalSec / 3600)
+  const m = Math.floor((totalSec % 3600) / 60)
+  const s = totalSec % 60
+  if (h > 0) return `${h}h ${m}m`
+  if (m > 0) return `${m}m ${s}s`
+  return `${s}s`
+}
+
+/** Determine if a session is within the next 24 hours. */
+function isWithin24h(isoDate?: string) {
+  if (!isoDate) return false
+  const ms = new Date(isoDate).getTime() - Date.now()
+  return ms > 0 && ms < 86_400_000
+}
+
+/** Build a Google Calendar add-event URL. */
+function gcalUrl(c: Course) {
+  const start = c.startDateTime ? new Date(c.startDateTime).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z" : ""
+  const end = c.endDateTime ? new Date(c.endDateTime).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z" :
+    c.startDateTime ? new Date(new Date(c.startDateTime).getTime() + 60 * 60 * 1000).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z" : ""
+  if (!start) return ""
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: c.title,
+    details: c.summary,
+    dates: `${start}/${end}`,
+    location: c.liveUrl || "",
+  })
+  return `https://calendar.google.com/calendar/render?${params.toString()}`
+}
+
+/** Detect YouTube URL and return an embeddable src. */
+function toYoutubeEmbed(url: string) {
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]+)/)
+  if (m) return `https://www.youtube.com/embed/${m[1]}`
+  return url
+}
+
+/** Type icon mapping */
+function TypeIcon({ type }: { type?: Course["type"] }) {
+  if (type === "live") return <Radio size={13} />
+  if (type === "conference") return <Mic2 size={13} />
+  if (type === "replay") return <PlayCircle size={13} />
+  return <BookOpen size={13} />
+}
+
+function typeColor(type?: Course["type"]) {
+  if (type === "live") return { bg: "rgba(220,38,38,0.12)", color: "#DC2626" }
+  if (type === "conference") return { bg: "rgba(109,40,217,0.12)", color: "#7C3AED" }
+  if (type === "replay") return { bg: "rgba(14,165,233,0.12)", color: "#0EA5E9" }
+  return { bg: "var(--ds-accent-a12)", color: "var(--ds-accent)" }
+}
+
+function LiveBadge({ label }: { label: string }) {
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 5,
+      padding: "3px 10px", borderRadius: "var(--r-full)",
+      background: "#DC2626", color: "#fff", fontSize: 11, fontWeight: 800,
+      fontFamily: "'Outfit', sans-serif", letterSpacing: "0.06em",
+      animation: "livePulse 1.6s ease-in-out infinite",
+    }}>
+      <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", display: "inline-block" }} />
+      {label}
+    </span>
+  )
+}
+
 export default function Formation() {
   const { lang, fmt, currency, region } = useSettings()
   const s = TR[lang] ?? TR.fr
   const [courses, setCourses] = useState<Course[] | null>(null)
   const [active, setActive] = useState<Course | null>(null)
+  const [filter, setFilter] = useState<CourseType>("all")
 
   useEffect(() => {
     applyPageMeta({ title: `${s.title} — INOV Digital Services`, description: s.intro, type: "website" })
@@ -188,18 +313,51 @@ export default function Formation() {
     api.listFormations().then((r) => setCourses(r.formations)).catch(() => setCourses([]))
   }, [s.title, s.intro])
 
+  const filtered = useMemo(() => {
+    if (!courses) return null
+    if (filter === "all") return courses
+    return courses.filter((c) => (c.type ?? "cours") === filter)
+  }, [courses, filter])
+
+  const counts = useMemo(() => {
+    if (!courses) return {} as Record<CourseType, number>
+    return {
+      all: courses.length,
+      cours: courses.filter((c) => (c.type ?? "cours") === "cours").length,
+      live: courses.filter((c) => c.type === "live").length,
+      conference: courses.filter((c) => c.type === "conference").length,
+      replay: courses.filter((c) => c.type === "replay").length,
+    }
+  }, [courses])
+
   const fmtLabel = (f: Course["format"]) => f === "presentiel" ? s.presential : f === "hybride" ? s.hybrid : s.online
   const fmtIcon = (f: Course["format"]) => f === "presentiel" ? <MapPin size={13} /> : <Wifi size={13} />
   const lvlLabel = (l: Course["level"]) => l === "avance" ? s.advanced : l === "intermediaire" ? s.intermediate : s.beginner
 
+  const FILTERS: { key: CourseType; label: string; icon: React.ReactNode }[] = [
+    { key: "all", label: s.all, icon: <Sparkles size={14} /> },
+    { key: "cours", label: s.cours, icon: <BookOpen size={14} /> },
+    { key: "live", label: s.live, icon: <Radio size={14} /> },
+    { key: "conference", label: s.conference, icon: <Mic2 size={14} /> },
+    { key: "replay", label: s.replay, icon: <PlayCircle size={14} /> },
+  ]
+
   return (
     <section style={{ background: "var(--ds-bg-sec)", padding: "64px 0 96px", minHeight: "70vh" }}>
+      <style>{`
+        @keyframes livePulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+        .formation-filter-btn { transition: background 0.15s, color 0.15s, box-shadow 0.15s; }
+        .formation-filter-btn:hover { background: var(--ds-accent-a12) !important; color: var(--ds-accent) !important; }
+      `}</style>
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 var(--section-px)" }}>
         <Link to="/" style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "var(--ds-text-muted)", fontSize: 14, fontFamily: "'Outfit', sans-serif", textDecoration: "none", marginBottom: 28 }}>
           <ArrowLeft size={16} /> {s.back}
         </Link>
 
-        <div style={{ maxWidth: 720, marginBottom: 44 }}>
+        <div style={{ maxWidth: 720, marginBottom: 36 }}>
           <span style={{ ...badge, background: "var(--ds-accent-a12)", color: "var(--ds-accent)", marginBottom: 16 }}>
             <GraduationCap size={14} /> {s.eyebrow}
           </span>
@@ -211,13 +369,42 @@ export default function Formation() {
           </p>
         </div>
 
-        {courses === null ? (
+        {/* Type filters */}
+        {courses && courses.length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 28 }}>
+            {FILTERS.map(({ key, label, icon }) => {
+              const isActive = filter === key
+              const count = counts[key] ?? 0
+              return (
+                <button key={key} className="formation-filter-btn" onClick={() => setFilter(key)}
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 6,
+                    padding: "8px 14px", borderRadius: "var(--r-full)", cursor: "pointer",
+                    fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 700,
+                    border: isActive ? "1.5px solid var(--ds-accent)" : "1.5px solid var(--ds-border)",
+                    background: isActive ? "var(--ds-accent-a12)" : "var(--ds-bg-card)",
+                    color: isActive ? "var(--ds-accent)" : "var(--ds-text-muted)",
+                    boxShadow: isActive ? "0 0 0 1px var(--ds-accent)" : "none",
+                  }}>
+                  {icon} {label}
+                  {count > 0 && (
+                    <span style={{ marginLeft: 2, fontFamily: "'Space Mono', monospace", fontSize: 11, fontWeight: 800, background: isActive ? "var(--ds-accent)" : "var(--ds-bg-sec)", color: isActive ? "#fff" : "var(--ds-text-faint)", borderRadius: "var(--r-full)", padding: "1px 7px" }}>
+                      {count}
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        )}
+
+        {filtered === null ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 22 }}>
             {[0, 1, 2].map((i) => (
               <div key={i} style={{ ...card, height: 340, opacity: 0.5, background: "var(--ds-bg-card-hover)" }} />
             ))}
           </div>
-        ) : courses.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div style={{ ...card, padding: "56px 24px", textAlign: "center", alignItems: "center" }}>
             <Sparkles size={30} style={{ color: "var(--ds-accent)", marginBottom: 12 }} />
             <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 19, fontWeight: 700, color: "var(--ds-text)", margin: "0 0 6px" }}>{s.empty}</p>
@@ -225,41 +412,9 @@ export default function Formation() {
           </div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 22 }}>
-            {courses.map((c) => (
-              <article key={c.id} style={card}>
-                {c.image && (
-                  <div style={{ aspectRatio: "16/9", overflow: "hidden", background: "var(--ds-bg-card-hover)" }}>
-                    <img src={c.image} alt={c.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  </div>
-                )}
-                <div style={{ padding: 20, display: "flex", flexDirection: "column", flex: 1 }}>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
-                    <span style={{ ...badge, background: c.free ? "var(--ds-success-a12, rgba(22,163,74,0.12))" : "var(--ds-accent-a12)", color: c.free ? "var(--ds-success)" : "var(--ds-accent)" }}>
-                      <BadgeCheck size={13} /> {c.free ? s.free : s.paid}
-                    </span>
-                    <span style={{ ...badge, background: "var(--ds-bg-card-hover)", color: "var(--ds-text-muted)" }}>{lvlLabel(c.level)}</span>
-                  </div>
-                  <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 20, fontWeight: 800, color: "var(--ds-text)", margin: "0 0 8px", lineHeight: 1.2 }}>{c.title}</h2>
-                  <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 14.5, lineHeight: 1.55, color: "var(--ds-text-muted)", margin: "0 0 16px", flex: 1 }}>{c.summary}</p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 14, fontSize: 13, color: "var(--ds-text-muted)", fontFamily: "'Outfit', sans-serif", marginBottom: 16 }}>
-                    {c.durationHours > 0 && <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><Clock size={13} /> {c.durationHours}{s.hours}</span>}
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>{fmtIcon(c.format)} {fmtLabel(c.format)}</span>
-                    {c.seats ? <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><Users size={13} /> {c.seats} {s.seats}</span> : null}
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, borderTop: "1px solid var(--ds-border)", paddingTop: 16 }}>
-                    <div style={{ fontFamily: "'Outfit', sans-serif" }}>
-                      {c.free ? (
-                        <span style={{ fontSize: 20, fontWeight: 800, color: "var(--ds-success)" }}>{s.free}</span>
-                      ) : (
-                        <span style={{ fontSize: 20, fontWeight: 800, color: "var(--ds-text)" }}>{fmt(c.price)}</span>
-                      )}
-                    </div>
-                    <button className="btn-orange" onClick={() => { setActive(c); track("formation_open", { id: c.id }) }} style={{ display: "inline-flex", alignItems: "center", gap: 7, whiteSpace: "nowrap" }}>
-                      <GraduationCap size={16} /> {s.enroll}
-                    </button>
-                  </div>
-                </div>
-              </article>
+            {filtered.map((c) => (
+              <CourseCard key={c.id} c={c} s={s} fmt={fmt} lang={lang} lvlLabel={lvlLabel} fmtLabel={fmtLabel} fmtIcon={fmtIcon}
+                onEnroll={() => { setActive(c); track("formation_open", { id: c.id }) }} />
             ))}
           </div>
         )}
@@ -273,6 +428,122 @@ export default function Formation() {
   )
 }
 
+// ── Course Card ────────────────────────────────────────────────────────────────
+function CourseCard({ c, s, fmt, lang, lvlLabel, fmtLabel, fmtIcon, onEnroll }: {
+  c: Course; s: Str; fmt: (n: number) => string; lang: string
+  lvlLabel: (l: Course["level"]) => string; fmtLabel: (f: Course["format"]) => string
+  fmtIcon: (f: Course["format"]) => React.ReactNode
+  onEnroll: () => void
+}) {
+  const { bg, color } = typeColor(c.type)
+  const within24h = isWithin24h(c.startDateTime)
+  const countdown = useCountdown(within24h ? c.startDateTime : undefined)
+  const isLiveNow = c.isLive === true
+
+  // For replay cards, extract a YouTube thumbnail if possible.
+  const ytThumb = useMemo(() => {
+    if (c.type !== "replay" || !c.replayUrl) return null
+    const m = c.replayUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]+)/)
+    return m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null
+  }, [c.type, c.replayUrl])
+
+  const cover = c.image || (c.type === "replay" ? ytThumb : null)
+
+  return (
+    <article style={{ background: "var(--ds-bg-card)", border: "1px solid var(--ds-border)", borderRadius: "var(--r-xl)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      {cover && (
+        <div style={{ aspectRatio: "16/9", overflow: "hidden", background: "var(--ds-bg-card-hover)", position: "relative" }}>
+          <img src={cover} alt={c.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          {(c.type === "replay") && (
+            <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(0,0,0,0.3)" }}>
+              <PlayCircle size={44} style={{ color: "#fff", filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.5))" }} />
+            </div>
+          )}
+          {isLiveNow && (
+            <div style={{ position: "absolute", top: 10, left: 10 }}>
+              <LiveBadge label={s.liveBadge} />
+            </div>
+          )}
+        </div>
+      )}
+      <div style={{ padding: 20, display: "flex", flexDirection: "column", flex: 1 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 10px", borderRadius: "var(--r-full)", fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif", background: bg, color }}>
+            <TypeIcon type={c.type} />
+            {c.type === "live" ? s.live : c.type === "conference" ? s.conference : c.type === "replay" ? s.replay : s.cours}
+          </span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 10px", borderRadius: "var(--r-full)", fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif", background: c.free ? "rgba(22,163,74,0.12)" : "var(--ds-accent-a12)", color: c.free ? "#16A34A" : "var(--ds-accent)" }}>
+            <BadgeCheck size={13} /> {c.free ? s.free : s.paid}
+          </span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 10px", borderRadius: "var(--r-full)", fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif", background: "var(--ds-bg-card-hover)", color: "var(--ds-text-muted)" }}>
+            {lvlLabel(c.level)}
+          </span>
+        </div>
+
+        <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 20, fontWeight: 800, color: "var(--ds-text)", margin: "0 0 8px", lineHeight: 1.2 }}>{c.title}</h2>
+        <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 14.5, lineHeight: 1.55, color: "var(--ds-text-muted)", margin: "0 0 16px", flex: 1 }}>{c.summary}</p>
+
+        {/* Countdown for upcoming lives within 24h */}
+        {within24h && countdown && !isLiveNow && (
+          <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 12, padding: "8px 12px", borderRadius: "var(--r-md)", background: "rgba(220,38,38,0.08)", border: "1px solid rgba(220,38,38,0.2)" }}>
+            <Clock size={14} style={{ color: "#DC2626", flexShrink: 0 }} />
+            <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 700, color: "#DC2626" }}>
+              {s.startsIn} {countdown}
+            </span>
+          </div>
+        )}
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 14, fontSize: 13, color: "var(--ds-text-muted)", fontFamily: "'Outfit', sans-serif", marginBottom: 16 }}>
+          {c.durationHours > 0 && <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><Clock size={13} /> {c.durationHours}{s.hours}</span>}
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>{fmtIcon(c.format)} {fmtLabel(c.format)}</span>
+          {c.seats ? <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}><Users size={13} /> {c.seats} {s.seats}</span> : null}
+          {c.startDateTime && !isLiveNow && (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+              <CalendarPlus size={13} />
+              {new Date(c.startDateTime).toLocaleDateString(lang === "ar" ? "ar" : lang, { day: "numeric", month: "short" })}
+            </span>
+          )}
+          {c.recordingDate && c.type === "replay" && (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+              <PlayCircle size={13} /> {s.recordedOn} {new Date(c.recordingDate).toLocaleDateString()}
+            </span>
+          )}
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, borderTop: "1px solid var(--ds-border)", paddingTop: 16, flexWrap: "wrap" }}>
+          <div style={{ fontFamily: "'Outfit', sans-serif" }}>
+            {c.free ? (
+              <span style={{ fontSize: 20, fontWeight: 800, color: "#16A34A" }}>{s.free}</span>
+            ) : (
+              <span style={{ fontSize: 20, fontWeight: 800, color: "var(--ds-text)" }}>{fmt(c.price)}</span>
+            )}
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {/* Direct action for replay */}
+            {c.type === "replay" && c.replayUrl && (
+              <a href={toYoutubeEmbed(c.replayUrl).replace("/embed/", "/watch?v=")} target="_blank" rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 14px", borderRadius: "var(--r-md)", background: "rgba(14,165,233,0.12)", color: "#0EA5E9", fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 700, textDecoration: "none", whiteSpace: "nowrap" }}>
+                <PlayCircle size={15} /> {s.watchReplay}
+              </a>
+            )}
+            {/* Direct join for live/conference now */}
+            {(c.type === "live" || c.type === "conference") && c.liveUrl && isLiveNow && (
+              <a href={c.liveUrl} target="_blank" rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 14px", borderRadius: "var(--r-md)", background: "#DC2626", color: "#fff", fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 700, textDecoration: "none", whiteSpace: "nowrap" }}>
+                <Radio size={15} /> {s.joinLive}
+              </a>
+            )}
+            <button className="btn-orange" onClick={onEnroll} style={{ display: "inline-flex", alignItems: "center", gap: 7, whiteSpace: "nowrap" }}>
+              <GraduationCap size={16} /> {s.enroll}
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+// ── Enroll Modal ───────────────────────────────────────────────────────────────
 function EnrollModal({
   course, s, lang, currency, region, fmt, lvlLabel, fmtLabel, onClose,
 }: {
@@ -285,6 +556,10 @@ function EnrollModal({
   const [busy, setBusy] = useState(false)
   const [done, setDone] = useState(false)
   const [error, setError] = useState("")
+  const { bg, color } = typeColor(course.type)
+  const calUrl = gcalUrl(course)
+  const within24h = isWithin24h(course.startDateTime)
+  const countdown = useCountdown(within24h ? course.startDateTime : undefined)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose() }
@@ -317,7 +592,7 @@ function EnrollModal({
     <div role="dialog" aria-modal="true" aria-label={course.title}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
       style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "5vh 16px", overflow: "auto" }}>
-      <div style={{ background: "var(--ds-bg-card)", border: "1px solid var(--ds-border)", borderRadius: "var(--r-xl)", maxWidth: 560, width: "100%", padding: 28, position: "relative" }}>
+      <div style={{ background: "var(--ds-bg-card)", border: "1px solid var(--ds-border)", borderRadius: "var(--r-xl)", maxWidth: 580, width: "100%", padding: 28, position: "relative" }}>
         <button onClick={onClose} aria-label="Fermer" style={{ position: "absolute", top: 16, insetInlineEnd: 16, background: "var(--ds-bg-card-hover)", border: "none", borderRadius: "var(--r-full)", width: 34, height: 34, display: "grid", placeItems: "center", cursor: "pointer", color: "var(--ds-text)" }}>
           <X size={18} />
         </button>
@@ -328,22 +603,89 @@ function EnrollModal({
             <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 17, fontWeight: 700, color: "var(--ds-text)", lineHeight: 1.5, margin: "0 0 20px" }}>
               {course.free ? s.okFree : s.okPaid}
             </p>
-            {!course.free && (
-              <Link to="/paiement" className="btn-orange" style={{ display: "inline-flex", alignItems: "center", gap: 7 }} onClick={onClose}>
-                {s.payCta}
-              </Link>
+            {/* Post-enrollment actions */}
+            <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+              {(course.type === "live" || course.type === "conference") && course.liveUrl && (
+                <a href={course.liveUrl} target="_blank" rel="noopener noreferrer"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: "var(--r-md)", background: "#DC2626", color: "#fff", fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700, textDecoration: "none" }}>
+                  <ExternalLink size={15} /> {s.joinLive}
+                </a>
+              )}
+              {calUrl && (course.type === "live" || course.type === "conference") && (
+                <a href={calUrl} target="_blank" rel="noopener noreferrer"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: "var(--r-md)", background: "var(--ds-bg-sec)", border: "1px solid var(--ds-border)", color: "var(--ds-text)", fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700, textDecoration: "none" }}>
+                  <CalendarPlus size={15} /> {s.addCalendar}
+                </a>
+              )}
+              {course.type === "replay" && course.replayUrl && (
+                <a href={course.replayUrl} target="_blank" rel="noopener noreferrer"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: "var(--r-md)", background: "rgba(14,165,233,0.12)", color: "#0EA5E9", fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700, textDecoration: "none" }}>
+                  <PlayCircle size={15} /> {s.watchReplay}
+                </a>
+              )}
+              {course.resourcesUrl && (
+                <a href={course.resourcesUrl} target="_blank" rel="noopener noreferrer"
+                  style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: "var(--r-md)", background: "var(--ds-bg-sec)", border: "1px solid var(--ds-border)", color: "var(--ds-text)", fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700, textDecoration: "none" }}>
+                  <Download size={15} /> {s.downloadRes}
+                </a>
+              )}
+              {!course.free && (
+                <Link to="/paiement" className="btn-orange" style={{ display: "inline-flex", alignItems: "center", gap: 7 }} onClick={onClose}>
+                  {s.payCta}
+                </Link>
+              )}
+            </div>
+
+            {/* Inline replay embed after enrollment */}
+            {course.type === "replay" && course.replayUrl && (
+              <div style={{ marginTop: 22, borderRadius: "var(--r-lg)", overflow: "hidden", aspectRatio: "16/9" }}>
+                <iframe
+                  src={toYoutubeEmbed(course.replayUrl)}
+                  title={course.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{ width: "100%", height: "100%", border: "none" }}
+                />
+              </div>
             )}
           </div>
         ) : (
           <>
-            <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 22, fontWeight: 800, color: "var(--ds-text)", margin: "0 8px 4px 0", lineHeight: 1.2 }}>{course.title}</h2>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 18, fontSize: 13, fontFamily: "'Outfit', sans-serif", color: "var(--ds-text-muted)" }}>
-              <span style={{ ...badge, background: course.free ? "var(--ds-success-a12, rgba(22,163,74,0.12))" : "var(--ds-accent-a12)", color: course.free ? "var(--ds-success)" : "var(--ds-accent)" }}>
-                {course.free ? s.free : fmt(course.price)}
-              </span>
-              <span style={{ ...badge, background: "var(--ds-bg-card-hover)", color: "var(--ds-text-muted)" }}>{lvlLabel(course.level)}</span>
-              <span style={{ ...badge, background: "var(--ds-bg-card-hover)", color: "var(--ds-text-muted)" }}>{fmtLabel(course.format)}</span>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 18 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 8 }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 9px", borderRadius: "var(--r-full)", fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif", background: bg, color }}>
+                    <TypeIcon type={course.type} />
+                    {course.type === "live" ? s.live : course.type === "conference" ? s.conference : course.type === "replay" ? s.replay : s.cours}
+                  </span>
+                  {course.free ? (
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 9px", borderRadius: "var(--r-full)", fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif", background: "rgba(22,163,74,0.12)", color: "#16A34A" }}>
+                      {s.free}
+                    </span>
+                  ) : (
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 9px", borderRadius: "var(--r-full)", fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif", background: "var(--ds-accent-a12)", color: "var(--ds-accent)" }}>
+                      {fmt(course.price)}
+                    </span>
+                  )}
+                  {lvlLabel(course.level) && (
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "3px 9px", borderRadius: "var(--r-full)", fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif", background: "var(--ds-bg-card-hover)", color: "var(--ds-text-muted)" }}>
+                      {lvlLabel(course.level)}
+                    </span>
+                  )}
+                </div>
+                <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 22, fontWeight: 800, color: "var(--ds-text)", margin: "0 0 4px", lineHeight: 1.2 }}>{course.title}</h2>
+              </div>
             </div>
+
+            {/* Countdown if upcoming */}
+            {within24h && countdown && !course.isLive && (
+              <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 14, padding: "8px 12px", borderRadius: "var(--r-md)", background: "rgba(220,38,38,0.08)", border: "1px solid rgba(220,38,38,0.2)" }}>
+                <Clock size={14} style={{ color: "#DC2626", flexShrink: 0 }} />
+                <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 700, color: "#DC2626" }}>
+                  {s.startsIn} {countdown}
+                </span>
+              </div>
+            )}
 
             {course.description && (
               <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 14.5, lineHeight: 1.6, color: "var(--ds-text-muted)", margin: "0 0 18px", whiteSpace: "pre-wrap" }}>{course.description}</p>
@@ -361,11 +703,20 @@ function EnrollModal({
                 </ul>
               </div>
             )}
+
             {course.instructor && (
               <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13.5, color: "var(--ds-text-muted)", margin: "0 0 20px" }}>
                 <strong style={{ color: "var(--ds-text)" }}>{s.instructor} :</strong> {course.instructor}
                 {course.startDate ? ` · ${s.starts} ${course.startDate}` : ""}
               </p>
+            )}
+
+            {/* Resources link before form */}
+            {course.resourcesUrl && (
+              <a href={course.resourcesUrl} target="_blank" rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: 7, marginBottom: 20, padding: "9px 14px", borderRadius: "var(--r-md)", background: "var(--ds-bg-sec)", border: "1px solid var(--ds-border)", color: "var(--ds-text)", fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 700, textDecoration: "none" }}>
+                <Download size={14} /> {s.downloadRes}
+              </a>
             )}
 
             <form onSubmit={submit} style={{ display: "grid", gap: 12 }}>

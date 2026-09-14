@@ -50,7 +50,7 @@ export default function RootLayout() {
       const el = document.documentElement
       setScrollPct(Math.round((el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100))
     }
-    window.addEventListener("scroll", onScroll)
+    window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
@@ -121,6 +121,8 @@ export default function RootLayout() {
 
       <div
         id="progress-bar"
+        aria-hidden="true"
+        role="presentation"
         style={{ width: `${scrollPct}%`, background: "linear-gradient(90deg, var(--ds-accent), var(--ds-accent-hover))" }}
       />
 
