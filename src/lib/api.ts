@@ -523,6 +523,25 @@ export const adminApi = {
       body: JSON.stringify(settings),
     })
   },
+  // ── TikTok (auto-publication) ──
+  tiktokStatus() {
+    return auth<{ configured: boolean; connected: boolean; openId: string | null; expiresAt: number | null; redirectUri: string }>(
+      "/tiktok/status",
+    )
+  },
+  tiktokAuthUrl() {
+    return auth<{ url: string }>("/tiktok/auth")
+  },
+  tiktokDisconnect() {
+    return auth<{ ok: boolean }>("/tiktok/disconnect", { method: "POST" })
+  },
+  // Publish (or schedule) a post; add "tiktok" to networks and pass videoUrl to post a video.
+  publishSocial(payload: { caption: string; imageUrl?: string; videoUrl?: string; link?: string; networks?: string[] }) {
+    return auth<{ ok: boolean; id: string; status: string; result: Record<string, unknown> }>("/social/publish", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    })
+  },
   // Emails a delivery note (bon de livraison) to the client (Gmail SMTP) and
   // records it as a "delivery" lead so it shows up in the dashboard.
   sendDelivery(payload: {

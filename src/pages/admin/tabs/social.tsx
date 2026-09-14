@@ -3,7 +3,7 @@
 // servent de bibliothèque à copier-coller pour répondre à la main (ex. commentaires
 // sous les vidéos) tant que l'automatisation n'est pas encore activée.
 import { useEffect, useState } from "react"
-import { Loader2, Plus, Trash2, Copy, Check, Save, Sparkles, MessageSquare, MessagesSquare, HelpCircle } from "lucide-react"
+import { Loader2, Plus, Trash2, Copy, Check, Save, Sparkles, MessageSquare, MessagesSquare, HelpCircle, Video, Link2, Send, LogOut } from "lucide-react"
 import { adminApi, type SiteSettings, type SocialReplies } from "../../../lib/api"
 import { card, btn, btnPrimary, input, sectionTitle, smallLabel, Empty } from "../shared"
 
@@ -81,6 +81,92 @@ function CopyBtn({ text }: { text: string }) {
     >
       {done ? <Check size={15} /> : <Copy size={15} />} {done ? "Copié" : "Copier"}
     </button>
+  )
+}
+
+// Auto-publication TikTok : connexion OAuth du compte + publication d'une vidéo
+// depuis une URL publique. Nécessite TIKTOK_CLIENT_KEY / TIKTOK_CLIENT_SECRET
+// côté serveur (secrets Supabase) et une app TikTok approuvée.
+function TikTokPanel() {
+  const [st, setSt] = useState<{ configured: boolean; connected: boolean; expiresAt: number | null } | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [msg, setMsg] = useState("")
+  const [videoUrl, setVideoUrl] = useState("")
+  const [caption, setCaption] = useState("")
+
+  async function refresh() {
+    try { setSt(await adminApi.tiktokStatus()) } catch { setMsg("Impossible de lire l'état TikTok.") }
+  }
+  useEffect(() => { refresh() }, [])
+
+  async function connect() {
+    setBusy(true); setMsg("")
+    try {
+      const { url } = await adminApi.tiktokAuthUrl()
+      window.open(url, "_blank", "noopener")
+      setMsg("Fenêtre TikTok ouverte : autorisez l'accès, puis revenez et cliquez « Actualiser ».")
+    } catch { setMsg("Connexion impossible. Vérifiez la configuration serveur.") }
+    finally { setBusy(false) }
+  }
+  async function disconnect() {
+    setBusy(true); setMsg("")
+    try { await adminApi.tiktokDisconnect(); await refresh(); setMsg("Compte TikTok déconnecté.") }
+    catch { setMsg("Échec de la déconnexion.") } finally { setBusy(false) }
+  }
+  async function publish() {
+    if (!videoUrl.trim()) { setMsg("Ajoutez l'URL publique de la vidéo."); return }
+    setBusy(true); setMsg("")
+    try {
+      const r = await adminApi.publishSocial({ caption, videoUrl, networks: ["tiktok"] })
+      const tk = (r.result as any)?.tiktok
+      setMsg(tk?.status === "sent" ? `Publication envoyée à TikTok ✅ (id ${tk.id})` : `Réponse TikTok : ${tk?.detail ?? r.status}`)
+    } catch { setMsg("Échec de la publication.") } finally { setBusy(false) }
+  }
+
+  return (
+    <section style={card}>
+      <div style={{ ...sectionTitle, display: "flex", alignItems: "center", gap: 8 }}>
+        <Video size={16} /> Auto-publication TikTok
+      </div>
+      {!st && <p style={smallLabel}>Chargement de l'état…</p>}
+      {st && !st.configured && (
+        <p style={smallLabel}>
+          ⚙️ Non configuré. Ajoutez <code>TIKTOK_CLIENT_KEY</code> et <code>TIKTOK_CLIENT_SECRET</code> dans les
+          secrets Supabase (après avoir créé votre app sur developers.tiktok.com), puis actualisez.
+        </p>
+      )}
+      {st?.configured && (
+        <>
+          <p style={smallLabel}>
+            État : {st.connected
+              ? <strong style={{ color: "var(--ds-success, #1a9d5a)" }}>compte connecté ✅</strong>
+              : <strong style={{ color: "var(--ds-danger, #d33)" }}>non connecté</strong>}
+          </p>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+            {!st.connected
+              ? <button type="button" style={{ ...btnPrimary, gap: 6 }} className="adm-iconbtn" onClick={connect} disabled={busy}><Link2 size={15} /> Connecter TikTok</button>
+              : <button type="button" style={{ ...btn, gap: 6 }} className="adm-iconbtn" onClick={disconnect} disabled={busy}><LogOut size={15} /> Déconnecter</button>}
+            <button type="button" style={{ ...btn, gap: 6 }} className="adm-iconbtn" onClick={refresh} disabled={busy}>Actualiser</button>
+          </div>
+          {st.connected && (
+            <div style={{ display: "grid", gap: 8, borderTop: "1px solid var(--ds-border)", paddingTop: 12 }}>
+              <span style={smallLabel}>Publier une vidéo (URL publique .mp4 sur un domaine vérifié dans votre app TikTok) :</span>
+              <input style={input} value={videoUrl} placeholder="https://…/ma-video.mp4" onChange={(e) => setVideoUrl(e.target.value)} />
+              <textarea style={textarea} value={caption} placeholder="Légende / titre de la vidéo…" onChange={(e) => setCaption(e.target.value)} />
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <button type="button" style={{ ...btnPrimary, gap: 6 }} className="adm-iconbtn" onClick={publish} disabled={busy}>
+                  {busy ? <Loader2 size={15} style={{ animation: "spin 0.8s linear infinite" }} /> : <Send size={15} />} Publier sur TikTok
+                </button>
+              </div>
+              <span style={{ ...smallLabel, fontSize: 11.5 }}>
+                ℹ️ Tant que l'app n'est pas auditée par TikTok, les vidéos sont publiées en <strong>privé</strong> (règle TikTok).
+              </span>
+            </div>
+          )}
+        </>
+      )}
+      {msg && <p style={{ ...smallLabel, marginTop: 10 }}>{msg}</p>}
+    </section>
   )
 }
 
@@ -255,6 +341,9 @@ export function SocialRepliesTab() {
           <Plus size={15} /> Ajouter une réponse
         </button>
       </section>
+
+      {/* Auto-publication TikTok */}
+      <TikTokPanel />
 
       {/* Option Gemini */}
       <section style={card}>
