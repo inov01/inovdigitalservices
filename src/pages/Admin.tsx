@@ -6,9 +6,32 @@ import { supabase } from "../lib/supabaseClient"
 import { shell } from "./admin/shared"
 import { LoginScreen, ForcedMfaSetupScreen, MfaChallengeScreen } from "./admin/auth"
 import Dashboard from "./admin/AdminShell"
+import NotFound from "./NotFound"
+
+// Anti-scanning: /admin renders a normal 404 for anyone who is not signed in and
+// who did not arrive with the unlock token in the URL hash. The hash never hits
+// server logs. Bookmark `/admin#<token>` to reveal the login screen. This is
+// obscurity to cut bot noise — the real barrier stays login + MFA + allowlist.
+// Overridable at build time via VITE_ADMIN_UNLOCK (kept out of the source repo).
+const ADMIN_UNLOCK = import.meta.env.VITE_ADMIN_UNLOCK || "hfdJ4HF7Fplo"
+const UNLOCK_KEY = "adm_unlocked"
 
 export default function Admin() {
   const { session, loading, signIn, signOut, email } = useAdminAuth()
+  // Once unlocked this session, stay unlocked (so the hash can be stripped from
+  // the URL). Also unlocks retroactively if a session already exists.
+  const [unlocked, setUnlocked] = useState(() => {
+    try { return sessionStorage.getItem(UNLOCK_KEY) === "1" } catch { return false }
+  })
+  useEffect(() => {
+    const hash = window.location.hash.replace(/^#/, "")
+    if (hash && hash === ADMIN_UNLOCK) {
+      try { sessionStorage.setItem(UNLOCK_KEY, "1") } catch { /* ignore */ }
+      setUnlocked(true)
+      // Strip the token from the address bar without adding a history entry.
+      history.replaceState(null, "", window.location.pathname + window.location.search)
+    }
+  }, [])
   const [expired, setExpired] = useState(false)
   // "checking" until we know whether a 2FA step-up is required for this session.
   const [mfa, setMfa] = useState<"checking" | "ok" | "required">("checking")
@@ -58,6 +81,9 @@ export default function Admin() {
       </div>
     )
   }
+
+  // Not signed in and no unlock token → look exactly like any missing page.
+  if (!session && !unlocked) return <NotFound />
 
   if (!session) return <LoginScreen onSignIn={signIn} expired={expired} onClearExpired={() => setExpired(false)} />
 
