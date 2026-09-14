@@ -205,6 +205,24 @@ export interface SiteSettings {
   blogsRemoved?: string[]
   /** Extra blog articles the admin wrote from the dashboard. */
   blogsAdded?: AdminBlog[]
+  /** Social auto-reply templates (Instagram/Facebook/WhatsApp), editable from the
+   *  "Réponses sociales" panel and reusable as manual copy-paste snippets. */
+  socialReplies?: SocialReplies
+}
+
+export interface SocialFaqRule { keywords: string[]; answer: string }
+export interface SocialSnippet { title: string; text: string }
+export interface SocialReplies {
+  /** Instant acknowledgement sent when nothing else matched. */
+  waitMessage: string
+  /** Public reply posted under a comment before moving to a private DM. */
+  commentReply: string
+  /** When true, unmatched DMs get a Gemini-drafted reply. */
+  useGemini: boolean
+  /** Keyword → answer rules (first match wins). */
+  faq: SocialFaqRule[]
+  /** Ready-to-use reply library for replying by hand (e.g. video comments). */
+  snippets: SocialSnippet[]
 }
 
 // ── Formations (espace Formation) ──────────────────────────────────────────────

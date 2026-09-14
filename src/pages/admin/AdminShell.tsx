@@ -33,6 +33,7 @@ import { StepUpModal } from "./auth"
 import { LeadsTab, PaymentsTab, ReviewsTab, DocumentsTab } from "./tabs/commercial"
 import { FormationTab, CollaborateursTab, PricingTab, ServicesTab, PortfolioTab, BlogTab } from "./tabs/contenu"
 import { NewsletterTab, CampaignsTab, LinksTab } from "./tabs/marketing"
+import { SocialRepliesTab } from "./tabs/social"
 import { ProceduresTab, AssistantTab, RemindersTab, EventualitesTab } from "./tabs/outils"
 import { SettingsTab } from "./tabs/systeme"
 import FormationScriptsTab from "./FormationScriptsTab"
@@ -251,6 +252,7 @@ function Dashboard({ email, onSignOut }: { email: string; onSignOut: () => void 
             {tab === "payments" && <PaymentsTab leads={payLeads} loading={loading} onChange={refresh} />}
             {tab === "reviews" && <ReviewsTab reviews={reviews} loading={loading} onChange={refresh} />}
             {tab === "links" && <LinksTab />}
+            {tab === "social" && <SocialRepliesTab />}
             {tab === "assistant" && <AssistantTab />}
             {tab === "reminders" && <RemindersTab />}
             {tab === "procedures" && <ProceduresTab />}

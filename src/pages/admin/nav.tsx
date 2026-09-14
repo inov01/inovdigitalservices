@@ -1,7 +1,7 @@
 import {
   Home, Inbox, Wallet, MessageSquareQuote, FileText, Tags, Package, LayoutGrid,
   Newspaper, GraduationCap, Handshake, Mail, Send, Link2, Sparkles, CalendarClock,
-  ClipboardList, Bell, Settings as SettingsIcon, BookOpen,
+  ClipboardList, Bell, Settings as SettingsIcon, BookOpen, MessagesSquare,
 } from "lucide-react"
 
 // All admin section keys. `home` is the overview landing view; the rest map 1:1 to
@@ -11,7 +11,7 @@ export type Tab =
   | "home"
   | "leads" | "payments" | "reviews" | "documents"
   | "pricing" | "services" | "portfolio" | "blog" | "formation" | "collaborateurs"
-  | "newsletter" | "campaigns" | "links"
+  | "newsletter" | "campaigns" | "links" | "social"
   | "assistant" | "reminders" | "procedures" | "eventualites" | "scripts"
   | "settings"
 
@@ -59,6 +59,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { key: "newsletter", label: "Newsletter", icon: <Mail {...ic} />, hint: "abonnés" },
       { key: "campaigns", label: "Campagnes e-mail", icon: <Send {...ic} /> },
       { key: "links", label: "Liens à partager", icon: <Link2 {...ic} /> },
+      { key: "social", label: "Réponses sociales", icon: <MessagesSquare {...ic} />, hint: "instagram facebook commentaires dm faq réponses vidéo" },
     ],
   },
   {

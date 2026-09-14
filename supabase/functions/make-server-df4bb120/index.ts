@@ -280,7 +280,43 @@ const DEFAULT_SETTINGS = {
   worksAdded: {} as Record<string, any[]>,
   blogsRemoved: [] as string[],
   blogsAdded: [] as any[],
+  // Social auto-reply templates (Instagram/Facebook/WhatsApp). Editable from the
+  // admin "Réponses sociales" panel; also usable as copy-paste snippets to reply
+  // by hand (e.g. comments on videos) before the automation is switched on.
+  socialReplies: {
+    waitMessage: "",       // "" → falls back to META_WAIT_MSG / built-in default
+    commentReply: "",      // "" → falls back to META_COMMENT_REPLY / built-in default
+    useGemini: false,      // when true, unmatched DMs get a Gemini-drafted reply
+    faq: [] as { keywords: string[]; answer: string }[],
+    snippets: [] as { title: string; text: string }[], // manual-use reply library
+  },
 };
+
+// Sanitize the social auto-reply templates coming from the admin panel.
+function cleanSocialReplies(input: unknown): typeof DEFAULT_SETTINGS.socialReplies {
+  const b = (input && typeof input === "object" ? input : {}) as Record<string, any>;
+  const faq = Array.isArray(b.faq)
+    ? b.faq.slice(0, 40).map((r: any) => ({
+        keywords: Array.isArray(r?.keywords)
+          ? r.keywords.slice(0, 20).map((k: any) => String(k ?? "").slice(0, 60).trim()).filter(Boolean)
+          : [],
+        answer: String(r?.answer ?? "").slice(0, 1000),
+      })).filter((r: any) => r.keywords.length && r.answer)
+    : [];
+  const snippets = Array.isArray(b.snippets)
+    ? b.snippets.slice(0, 60).map((s: any) => ({
+        title: String(s?.title ?? "").slice(0, 120).trim(),
+        text: String(s?.text ?? "").slice(0, 1000),
+      })).filter((s: any) => s.title && s.text)
+    : [];
+  return {
+    waitMessage: String(b.waitMessage ?? "").slice(0, 1000),
+    commentReply: String(b.commentReply ?? "").slice(0, 1000),
+    useGemini: !!b.useGemini,
+    faq,
+    snippets,
+  };
+}
 
 // Sanitize admin base-price overrides (USD, keyed by service id).
 function cleanPricing(input: unknown): Record<string, number> {
@@ -1580,6 +1616,7 @@ app.put(`${P}/settings`, async (c) => {
     worksAdded: cleanWorksAdded(b?.worksAdded),
     blogsRemoved: cleanIdList(b?.blogsRemoved, "str"),
     blogsAdded: cleanBlogs(b?.blogsAdded),
+    socialReplies: cleanSocialReplies(b?.socialReplies),
   };
   await kv.set("settings", settings);
 
@@ -1804,12 +1841,57 @@ function faqRules(): FaqRule[] {
 function stripAccents(s: string): string {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
-function matchFaq(text: string): string | null {
+function matchFaq(text: string, rules?: FaqRule[]): string | null {
   const hay = stripAccents(String(text ?? "").toLowerCase());
-  for (const rule of faqRules()) {
+  for (const rule of (rules ?? faqRules())) {
     if (rule.keywords.some((k) => hay.includes(stripAccents(k.toLowerCase())))) return rule.answer;
   }
   return null;
+}
+
+// Effective social-reply config: admin settings win over env vars over built-in
+// defaults, so the owner can edit everything from the dashboard without redeploy.
+async function getSocialCfg(): Promise<{ waitMessage: string; commentReply: string; useGemini: boolean; rules: FaqRule[] }> {
+  const sr = ((await kv.get("settings")) as any)?.socialReplies ?? {};
+  const rules = Array.isArray(sr.faq) && sr.faq.length ? (sr.faq as FaqRule[]) : faqRules();
+  return {
+    waitMessage: (typeof sr.waitMessage === "string" && sr.waitMessage.trim()) ? sr.waitMessage : META_WAIT_MSG,
+    commentReply: (typeof sr.commentReply === "string" && sr.commentReply.trim()) ? sr.commentReply : META_COMMENT_REPLY,
+    useGemini: !!sr.useGemini,
+    rules,
+  };
+}
+
+// Draft a short, on-brand DM reply with Gemini. Best-effort: returns null when
+// unconfigured or on any error, so the caller falls back to the waiting message.
+async function geminiSocialReply(incoming: string): Promise<string | null> {
+  const key = Deno.env.get("GEMINI_API_KEY");
+  if (!key) return null;
+  const sys = `Tu réponds au nom d'INOV Digital Services (studio de branding & design en Haïti :
+logos, packaging, affiches, motion design, montage vidéo, sites vitrines) à un message reçu
+en DM Instagram/Facebook. Réponds en 1 à 3 phrases, chaleureux et professionnel, en français
+(ou dans la langue du message). Ne promets jamais de prix ferme : invite à préciser le besoin
+pour un devis gratuit. Termine en proposant de continuer la discussion. N'invente aucune info.`;
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(key)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: sys }] },
+          contents: [{ role: "user", parts: [{ text: String(incoming).slice(0, 2000) }] }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 400 },
+        }),
+      },
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const out = data?.candidates?.[0]?.content?.parts?.map((p: any) => p?.text ?? "").join("").trim();
+    return out || null;
+  } catch (_) {
+    return null;
+  }
 }
 
 // The "waiting message" — sent when nothing else matched, so the person always
@@ -1908,6 +1990,7 @@ app.post(`${P}/webhook/meta`, async (c) => {
   try {
     const body = await c.req.json().catch(() => ({} as any));
     const isInstagram = body?.object === "instagram";
+    const cfg = await getSocialCfg();
     for (const entry of (body?.entry ?? [])) {
       // ── Direct messages (Messenger + Instagram DM) ──────────────────────────
       for (const m of (entry?.messaging ?? [])) {
@@ -1916,11 +1999,14 @@ app.post(`${P}/webhook/meta`, async (c) => {
         // Ignore echoes of our own outgoing messages and empty/non-text events.
         if (!senderId || m?.message?.is_echo || !incoming) continue;
         if (!(await autoReplyOnce(`dm:${senderId}`))) continue;
-        const answer = matchFaq(incoming) ?? META_WAIT_MSG;
+        // Priority: FAQ keyword → Gemini draft (if enabled) → waiting message.
+        const faqHit = matchFaq(incoming, cfg.rules);
+        const answer = faqHit ?? (cfg.useGemini ? await geminiSocialReply(incoming) : null) ?? cfg.waitMessage;
         await metaSendDM(senderId, answer);
+        const kind = faqHit ? "FAQ" : (cfg.useGemini ? "Gemini" : "message d'attente");
         await notifyAdminSocial(
           `📩 ${isInstagram ? "Instagram" : "Messenger"} — message de ${senderId}`,
-          `Message reçu :\n\n${incoming}\n\nRéponse auto envoyée : ${matchFaq(incoming) ? "FAQ" : "message d'attente"}.\nRépondez vous-même dans la boîte de réception ${isInstagram ? "Instagram" : "Messenger"}.`,
+          `Message reçu :\n\n${incoming}\n\nRéponse auto envoyée (${kind}) :\n${answer}\n\nRépondez vous-même dans la boîte de réception ${isInstagram ? "Instagram" : "Messenger"}.`,
         );
       }
       // ── Comments (Facebook feed + Instagram comments) ───────────────────────
@@ -1937,8 +2023,8 @@ app.post(`${P}/webhook/meta`, async (c) => {
         if (!commentId) continue;
         if (!(await autoReplyOnce(`comment:${commentId}`))) continue;
         // Public reply + a private DM so the conversation moves to the inbox.
-        await metaReplyToComment(commentId, META_COMMENT_REPLY, isInstagram);
-        const dm = matchFaq(commentText) ?? META_WAIT_MSG;
+        await metaReplyToComment(commentId, cfg.commentReply, isInstagram);
+        const dm = matchFaq(commentText, cfg.rules) ?? cfg.waitMessage;
         await metaPrivateReplyToComment(commentId, dm);
         await notifyAdminSocial(
           `💬 ${isInstagram ? "Instagram" : "Facebook"} — nouveau commentaire`,
