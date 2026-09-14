@@ -139,6 +139,87 @@ const META_IG_USER_ID = Deno.env.get("META_IG_USER_ID") ?? "";
 function metaConfigured(): boolean {
   return !!META_PAGE_TOKEN && (!!META_PAGE_ID || !!META_IG_USER_ID);
 }
+
+// ── Meta Conversions API (server-side events) ──────────────────────────────────
+// Sends conversion events (Lead, Contact, …) to Meta straight from the server,
+// so ad optimisation keeps working even when the browser Pixel is blocked by an
+// ad-blocker, iOS ITP or a rejected cookie consent. Personally identifiable
+// fields (email, phone) are SHA-256 hashed before they ever leave the server, as
+// Meta requires. Send the SAME event_id here and in the browser Pixel call for
+// the same action so Meta DEDUPLICATES them into one conversion.
+//   META_PIXEL_ID    the Pixel/dataset id (same one used by the site Pixel)
+//   META_CAPI_TOKEN  a Conversions API access token (Events Manager → Settings)
+const META_PIXEL_ID = Deno.env.get("META_PIXEL_ID") ?? "";
+const META_CAPI_TOKEN = Deno.env.get("META_CAPI_TOKEN") ?? "";
+const META_TEST_EVENT_CODE = Deno.env.get("META_TEST_EVENT_CODE") ?? "";
+
+// SHA-256 of a normalised value (trimmed + lowercased), hex-encoded — the exact
+// format Meta expects for hashed user_data. Empty input yields an empty string.
+async function sha256Hex(value: string): Promise<string> {
+  const normalised = String(value ?? "").trim().toLowerCase();
+  if (!normalised) return "";
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(normalised));
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+// Fire a server-side conversion event. Silently skips when unconfigured, so the
+// caller never has to guard on env presence. Best-effort: failures are logged,
+// never thrown, so a Meta hiccup can't break lead capture.
+async function sendMetaConversion(opts: {
+  eventName: string;
+  eventId: string;
+  email?: string;
+  phone?: string;
+  clientIp?: string;
+  userAgent?: string;
+  eventSourceUrl?: string;
+  fbp?: string;
+  fbc?: string;
+  customData?: Record<string, unknown>;
+}): Promise<{ sent: boolean; skipped?: string; error?: string }> {
+  if (!META_PIXEL_ID || !META_CAPI_TOKEN) return { sent: false, skipped: "not_configured" };
+  try {
+    const [em, ph] = await Promise.all([
+      opts.email ? sha256Hex(opts.email) : Promise.resolve(""),
+      // Phone must be digits-only (with country code) before hashing.
+      opts.phone ? sha256Hex(normalizeWa(opts.phone)) : Promise.resolve(""),
+    ]);
+    const user_data: Record<string, unknown> = {};
+    if (em) user_data.em = [em];
+    if (ph) user_data.ph = [ph];
+    if (opts.clientIp) user_data.client_ip_address = opts.clientIp;
+    if (opts.userAgent) user_data.client_user_agent = opts.userAgent;
+    if (opts.fbp) user_data.fbp = opts.fbp;
+    if (opts.fbc) user_data.fbc = opts.fbc;
+
+    const payload: Record<string, unknown> = {
+      data: [{
+        event_name: opts.eventName,
+        event_time: Math.floor(Date.now() / 1000),
+        event_id: opts.eventId,
+        action_source: "website",
+        event_source_url: opts.eventSourceUrl || SITE_URL,
+        user_data,
+        custom_data: opts.customData ?? {},
+      }],
+    };
+    if (META_TEST_EVENT_CODE) payload.test_event_code = META_TEST_EVENT_CODE;
+
+    const res = await fetch(
+      `${META_GRAPH}/${META_PIXEL_ID}/events?access_token=${encodeURIComponent(META_CAPI_TOKEN)}`,
+      { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) },
+    );
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      console.error(`[capi] ${opts.eventName} failed ${res.status}: ${detail.slice(0, 300)}`);
+      return { sent: false, error: `capi_${res.status}` };
+    }
+    return { sent: true };
+  } catch (e) {
+    console.error("[capi] error:", e);
+    return { sent: false, error: String((e as any)?.message ?? e) };
+  }
+}
 // Turn a site-relative path ("/blog/x", "/email-logo.png") into an absolute URL
 // Meta can fetch. Absolute URLs are returned untouched.
 function absoluteUrl(u: string): string {
@@ -685,6 +766,53 @@ app.post(`${P}/leads`, async (c) => {
     meta: b.meta && typeof b.meta === "object" ? b.meta : {},
   };
   await kv.set(`lead:${id}`, lead);
+
+  // Server-side conversion event (Meta CAPI). event_id is shared with the browser
+  // Pixel — pass lead.meta.eventId from the client's fbq('track','Lead',…) call so
+  // Meta deduplicates the two into one conversion. IP/UA improve match quality.
+  const clientIp = (c.req.header("x-forwarded-for") ?? "").split(",")[0].trim();
+  await sendMetaConversion({
+    eventName: "Lead",
+    eventId: typeof lead.meta?.eventId === "string" && lead.meta.eventId ? lead.meta.eventId : `lead_${id}`,
+    email: lead.email,
+    phone: lead.phone,
+    clientIp,
+    userAgent: c.req.header("user-agent") ?? "",
+    eventSourceUrl: typeof lead.meta?.pageUrl === "string" ? lead.meta.pageUrl : SITE_URL,
+    fbp: typeof lead.meta?.fbp === "string" ? lead.meta.fbp : undefined,
+    fbc: typeof lead.meta?.fbc === "string" ? lead.meta.fbc : undefined,
+    customData: {
+      lead_source: lead.source,
+      currency: lead.currency || undefined,
+      value: typeof lead.total === "number" ? lead.total : undefined,
+    },
+  });
+
+  // Instant admin notification (best-effort) so a new lead is seen right away
+  // instead of only surfacing on the next dashboard visit.
+  const notifyTo = ADMIN_EMAILS[0];
+  if (notifyTo) {
+    const waLink = lead.phone ? `https://wa.me/${normalizeWa(lead.phone)}` : "";
+    const lines = [
+      `Nom : ${lead.name || "—"}`,
+      `E-mail : ${lead.email || "—"}`,
+      `Téléphone : ${lead.phone || "—"}`,
+      `Source : ${lead.source}`,
+      lead.total != null ? `Total : ${lead.total} ${lead.currency || ""}`.trim() : "",
+      lead.message ? `\nMessage :\n${lead.message}` : "",
+    ].filter(Boolean);
+    sendMail({
+      to: notifyTo,
+      subject: `🎯 Nouveau lead — ${lead.name || lead.email || "sans nom"} (${lead.source})`,
+      text: `${lines.join("\n")}${waLink ? `\n\nRépondre sur WhatsApp : ${waLink}` : ""}`,
+      html:
+        `<p><strong>Nouveau lead reçu</strong></p>` +
+        `<ul>${lines.filter((l) => !l.startsWith("\n")).map((l) => `<li>${l}</li>`).join("")}</ul>` +
+        (lead.message ? `<p><strong>Message :</strong></p><blockquote>${lead.message}</blockquote>` : "") +
+        (waLink ? `<p><a href="${waLink}">Répondre sur WhatsApp →</a></p>` : ""),
+    }).catch(() => { /* notification is best-effort */ });
+  }
+
   return c.json({ ok: true, id });
 });
 
@@ -1320,6 +1448,37 @@ async function sendFollowUpWhatsApp(l: any): Promise<{ sent: boolean; skipped?: 
   }
 }
 
+// Free-text WhatsApp reply — only valid INSIDE the 24h customer-service window
+// (i.e. in response to a user-initiated message, as in the webhook), where Meta
+// allows non-template text. Uses the same WHATSAPP_TOKEN/WHATSAPP_PHONE_ID as the
+// template sender. Best-effort: returns a status, never throws.
+async function sendWhatsAppText(to: string, body: string): Promise<{ sent: boolean; skipped?: string; error?: string }> {
+  const token = Deno.env.get("WHATSAPP_TOKEN");
+  const phoneId = Deno.env.get("WHATSAPP_PHONE_ID");
+  if (!token || !phoneId) return { sent: false, skipped: "not_configured" };
+  const dest = normalizeWa(to);
+  if (!dest) return { sent: false, skipped: "no_phone" };
+  try {
+    const res = await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to: dest,
+        type: "text",
+        text: { body: body.slice(0, 1024), preview_url: false },
+      }),
+    });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      return { sent: false, error: `wa_${res.status}: ${detail.slice(0, 200)}` };
+    }
+    return { sent: true };
+  } catch (e) {
+    return { sent: false, error: String((e as any)?.message ?? e) };
+  }
+}
+
 // Cron: send all due follow-ups (secret-guarded, no admin session).
 app.post(`${P}/leads/follow-up`, async (c) => {
   if (!CRON_SECRET) return c.json({ error: "dispatch disabled" }, 503);
@@ -1560,6 +1719,29 @@ app.post(`${P}/webhook/whatsapp`, async (c) => {
       const text    = msg?.text?.body ?? msg?.type ?? "(non-text)";
       const contact = change?.value?.contacts?.[0]?.profile?.name ?? from;
       console.log(`[whatsapp] message from ${from} (${contact}): ${text}`);
+
+      // Auto-reply once per contact per 24h (avoids replying to every message in a
+      // burst). Free text is allowed here because the user just wrote to us, so we
+      // are inside the 24h service window. Skipped silently if WhatsApp isn't set up.
+      try {
+        const guardKey = `wa:autoreply:${from}`;
+        const prev = (await kv.get(guardKey)) as { at?: string } | null;
+        const lastAt = prev?.at ? Date.parse(prev.at) : 0;
+        const withinDay = lastAt && (Date.now() - lastAt) < 24 * 60 * 60 * 1000;
+        if (!withinDay) {
+          const reply =
+            `Bonjour ${change?.value?.contacts?.[0]?.profile?.name ?? ""}! 👋 ` +
+            `Merci d'avoir contacté INOV Digital Services. Nous avons bien reçu votre message ` +
+            `et un membre de l'équipe vous répond très vite. Pour accélérer, précisez votre besoin ` +
+            `(logo, packaging, affiche, site web…) et votre délai. 🎨`;
+          const r = await sendWhatsAppText(from, reply);
+          if (r.sent) {
+            // Record when we acknowledged; the age check above re-arms after 24h.
+            await kv.set(guardKey, { at: new Date().toISOString() });
+          }
+        }
+      } catch (_) { /* auto-reply is best-effort */ }
+
       // Notify admin by email (best-effort).
       const notifyTo = ADMIN_EMAILS[0];
       if (notifyTo) {
@@ -1576,6 +1758,198 @@ app.post(`${P}/webhook/whatsapp`, async (c) => {
   } catch (e) {
     console.error("[whatsapp-webhook] error:", e);
   }
+  return c.json({ ok: true });
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// INSTAGRAM + FACEBOOK (Messenger) — comment auto-reply, DM waiting message & FAQ
+// ══════════════════════════════════════════════════════════════════════════════
+// One webhook handles both networks. Messenger DMs arrive as `entry[].messaging`;
+// Instagram DMs also arrive as `messaging` when object === "instagram". Comments
+// arrive as `entry[].changes` with field "feed" (Facebook Page) or "comments"
+// (Instagram). Everything is BEST-EFFORT and silently skipped when unconfigured,
+// so the code can ship now and light up once you complete Meta App Review and set
+// META_PAGE_ID / META_PAGE_TOKEN (+ META_IG_USER_ID for Instagram).
+//
+// Required Meta permissions (App Review): pages_messaging, pages_manage_engagement
+// (Facebook comments), instagram_manage_messages, instagram_manage_comments.
+// Verify token = CRON_SECRET (same convention as the WhatsApp webhook).
+
+// FAQ rules: first keyword that appears (accent/case-insensitive) wins. Override
+// with the META_FAQ env var (JSON array of { keywords: string[], answer: string }).
+type FaqRule = { keywords: string[]; answer: string };
+const DEFAULT_FAQ: FaqRule[] = [
+  { keywords: ["prix", "tarif", "combien", "coute", "cout", "price"],
+    answer: "Merci de votre intérêt ! 💰 Nos tarifs dépendent du projet (logo, packaging, affiche, site web…). Dites-nous ce dont vous avez besoin et nous vous envoyons un devis gratuit. Vous pouvez aussi obtenir un devis instantané ici : " },
+  { keywords: ["delai", "delais", "temps", "quand", "livraison", "rapide"],
+    answer: "⏱️ Livraison dès 48h selon le projet. Précisez votre besoin et votre échéance, on s'adapte !" },
+  { keywords: ["logo", "branding", "identite", "identité"],
+    answer: "🎨 Oui, la création de logo & identité visuelle est notre spécialité ! Envoyez-nous quelques mots sur votre marque pour démarrer." },
+  { keywords: ["site", "web", "website", "internet"],
+    answer: "🌐 Nous concevons des sites vitrines modernes et rapides. Parlez-nous de votre projet !" },
+  { keywords: ["paiement", "payer", "moncash", "natcash", "acompte"],
+    answer: "💳 Paiement facile via MonCash / NatCash / virement. Un acompte lance le projet, le solde à la livraison." },
+];
+function faqRules(): FaqRule[] {
+  const raw = Deno.env.get("META_FAQ");
+  if (!raw) return DEFAULT_FAQ;
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.every((r) => Array.isArray(r?.keywords) && typeof r?.answer === "string")) {
+      return parsed as FaqRule[];
+    }
+  } catch (_) { /* fall back to defaults on bad JSON */ }
+  return DEFAULT_FAQ;
+}
+function stripAccents(s: string): string {
+  return s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+function matchFaq(text: string): string | null {
+  const hay = stripAccents(String(text ?? "").toLowerCase());
+  for (const rule of faqRules()) {
+    if (rule.keywords.some((k) => hay.includes(stripAccents(k.toLowerCase())))) return rule.answer;
+  }
+  return null;
+}
+
+// The "waiting message" — sent when nothing else matched, so the person always
+// gets an instant acknowledgement and you can reply yourself afterwards.
+const META_WAIT_MSG = Deno.env.get("META_WAIT_MSG") ??
+  "Bonjour ! 👋 Merci d'avoir contacté INOV Digital Services. Nous avons bien reçu votre message et un membre de l'équipe vous répond très vite. 🎨";
+const META_COMMENT_REPLY = Deno.env.get("META_COMMENT_REPLY") ??
+  "Merci pour votre message ! 🙏 On vous répond en privé.";
+
+// Send a DM (Messenger or Instagram — both go through the Page messages endpoint
+// with the Page token). Best-effort.
+async function metaSendDM(recipientId: string, text: string): Promise<{ sent: boolean; skipped?: string; error?: string }> {
+  if (!META_PAGE_ID || !META_PAGE_TOKEN) return { sent: false, skipped: "not_configured" };
+  if (!recipientId) return { sent: false, skipped: "no_recipient" };
+  try {
+    const res = await fetch(`${META_GRAPH}/${META_PAGE_ID}/messages?access_token=${encodeURIComponent(META_PAGE_TOKEN)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ recipient: { id: recipientId }, messaging_type: "RESPONSE", message: { text: text.slice(0, 1000) } }),
+    });
+    if (!res.ok) return { sent: false, error: `dm_${res.status}: ${(await res.text().catch(() => "")).slice(0, 200)}` };
+    return { sent: true };
+  } catch (e) {
+    return { sent: false, error: String((e as any)?.message ?? e) };
+  }
+}
+
+// Public reply under a comment. Facebook: POST /{comment-id}/comments.
+// Instagram: POST /{ig-comment-id}/replies. Best-effort.
+async function metaReplyToComment(commentId: string, text: string, isInstagram: boolean): Promise<{ sent: boolean; skipped?: string; error?: string }> {
+  if (!META_PAGE_TOKEN) return { sent: false, skipped: "not_configured" };
+  if (!commentId) return { sent: false, skipped: "no_comment" };
+  const edge = isInstagram ? "replies" : "comments";
+  try {
+    const res = await fetch(`${META_GRAPH}/${commentId}/${edge}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text.slice(0, 1000), access_token: META_PAGE_TOKEN }),
+    });
+    if (!res.ok) return { sent: false, error: `comment_${res.status}: ${(await res.text().catch(() => "")).slice(0, 200)}` };
+    return { sent: true };
+  } catch (e) {
+    return { sent: false, error: String((e as any)?.message ?? e) };
+  }
+}
+
+// Private reply to a comment (opens a DM thread from a public comment). Facebook &
+// Instagram both accept recipient: { comment_id }. Best-effort.
+async function metaPrivateReplyToComment(commentId: string, text: string): Promise<{ sent: boolean; skipped?: string; error?: string }> {
+  if (!META_PAGE_ID || !META_PAGE_TOKEN) return { sent: false, skipped: "not_configured" };
+  if (!commentId) return { sent: false, skipped: "no_comment" };
+  try {
+    const res = await fetch(`${META_GRAPH}/${META_PAGE_ID}/messages?access_token=${encodeURIComponent(META_PAGE_TOKEN)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ recipient: { comment_id: commentId }, message: { text: text.slice(0, 1000) } }),
+    });
+    if (!res.ok) return { sent: false, error: `preply_${res.status}: ${(await res.text().catch(() => "")).slice(0, 200)}` };
+    return { sent: true };
+  } catch (e) {
+    return { sent: false, error: String((e as any)?.message ?? e) };
+  }
+}
+
+// Once-per-key-per-24h guard, reused for DMs (per sender) and comments (per id).
+async function autoReplyOnce(key: string): Promise<boolean> {
+  const guardKey = `meta:autoreply:${key}`;
+  const prev = (await kv.get(guardKey)) as { at?: string } | null;
+  const lastAt = prev?.at ? Date.parse(prev.at) : 0;
+  if (lastAt && (Date.now() - lastAt) < 24 * 60 * 60 * 1000) return false;
+  await kv.set(guardKey, { at: new Date().toISOString() });
+  return true;
+}
+
+async function notifyAdminSocial(subject: string, body: string): Promise<void> {
+  const to = ADMIN_EMAILS[0];
+  if (!to) return;
+  try {
+    await sendMail({ to, subject, text: body, html: `<p>${body.replace(/\n/g, "<br>")}</p>` });
+  } catch (_) { /* best-effort */ }
+}
+
+// GET — Meta verification challenge (hub.verify_token must match CRON_SECRET).
+app.get(`${P}/webhook/meta`, (c) => {
+  const mode = c.req.query("hub.mode");
+  const token = c.req.query("hub.verify_token");
+  const challenge = c.req.query("hub.challenge");
+  if (mode === "subscribe" && token === Deno.env.get("CRON_SECRET") && challenge) {
+    return new Response(challenge, { status: 200 });
+  }
+  return c.json({ error: "forbidden" }, 403);
+});
+
+// POST — Instagram + Facebook events (DMs and comments).
+app.post(`${P}/webhook/meta`, async (c) => {
+  try {
+    const body = await c.req.json().catch(() => ({} as any));
+    const isInstagram = body?.object === "instagram";
+    for (const entry of (body?.entry ?? [])) {
+      // ── Direct messages (Messenger + Instagram DM) ──────────────────────────
+      for (const m of (entry?.messaging ?? [])) {
+        const senderId = m?.sender?.id ?? "";
+        const incoming = m?.message?.text ?? "";
+        // Ignore echoes of our own outgoing messages and empty/non-text events.
+        if (!senderId || m?.message?.is_echo || !incoming) continue;
+        if (!(await autoReplyOnce(`dm:${senderId}`))) continue;
+        const answer = matchFaq(incoming) ?? META_WAIT_MSG;
+        await metaSendDM(senderId, answer);
+        await notifyAdminSocial(
+          `📩 ${isInstagram ? "Instagram" : "Messenger"} — message de ${senderId}`,
+          `Message reçu :\n\n${incoming}\n\nRéponse auto envoyée : ${matchFaq(incoming) ? "FAQ" : "message d'attente"}.\nRépondez vous-même dans la boîte de réception ${isInstagram ? "Instagram" : "Messenger"}.`,
+        );
+      }
+      // ── Comments (Facebook feed + Instagram comments) ───────────────────────
+      for (const ch of (entry?.changes ?? [])) {
+        const field = ch?.field;
+        const v = ch?.value ?? {};
+        const isComment = field === "comments" || (field === "feed" && v?.item === "comment");
+        if (!isComment || v?.verb === "remove") continue;
+        // Skip our own comments (avoid replying to ourselves / loops).
+        const fromId = v?.from?.id ?? "";
+        if (fromId && (fromId === META_PAGE_ID || fromId === META_IG_USER_ID)) continue;
+        const commentId = v?.comment_id ?? v?.id ?? "";
+        const commentText = v?.message ?? v?.text ?? "";
+        if (!commentId) continue;
+        if (!(await autoReplyOnce(`comment:${commentId}`))) continue;
+        // Public reply + a private DM so the conversation moves to the inbox.
+        await metaReplyToComment(commentId, META_COMMENT_REPLY, isInstagram);
+        const dm = matchFaq(commentText) ?? META_WAIT_MSG;
+        await metaPrivateReplyToComment(commentId, dm);
+        await notifyAdminSocial(
+          `💬 ${isInstagram ? "Instagram" : "Facebook"} — nouveau commentaire`,
+          `Commentaire :\n\n${commentText}\n\nRéponse publique + DM auto envoyés. Répondez vous-même si besoin.`,
+        );
+      }
+    }
+  } catch (e) {
+    console.error("[meta-webhook] error:", e);
+  }
+  // Always 200 quickly so Meta doesn't retry/disable the webhook.
   return c.json({ ok: true });
 });
 
