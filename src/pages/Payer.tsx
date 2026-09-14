@@ -5,33 +5,28 @@ import {
 import { useSettings } from "../context/AppSettings"
 import { CURRENCIES } from "../context/AppSettings"
 import { pricingServices } from "../data/services"
-import { api } from "../lib/api"
+import { api, type PaymentConfig } from "../lib/api"
 import { track } from "../lib/analytics"
 import type { Lang } from "../i18n/translations"
 
 /* ──────────────────────────────────────────────────────────────────────────
-   CONFIGURATION DES PAIEMENTS — à compléter par INOV
+   CONFIGURATION DES PAIEMENTS
    ──────────────────────────────────────────────────────────────────────────
-   Remplace les valeurs ci-dessous par tes vraies coordonnées.
+   Les coordonnées de paiement (numéros MonCash/NatCash, compte bancaire BUH,
+   e-mail Upwork, WhatsApp) NE SONT PLUS codées ici : elles vivent dans les
+   « secrets » Supabase (variables PAY_*) ou dans le panneau admin, et sont
+   servies au chargement via GET /settings → settings.payments. Ainsi le compte
+   bancaire ne se trouve jamais dans le dépôt de code.
    Rien n'est encaissé automatiquement : le client paie via le moyen choisi,
-   entre sa référence de transaction, et TU valides depuis /admin (onglet
-   « Paiements »).
+   entre sa référence, et l'admin valide depuis /admin.
    ────────────────────────────────────────────────────────────────────────── */
-const PAY_CONFIG = {
-  // Numéros mobile money (format international recommandé).
-  moncash: { number: "+509 3625-5920", holder: "REDACTED" },
-  natcash: { number: "+509 4315-6835", holder: "REDACTED" },
-  // Virement bancaire local (Haïti).
-  buh: {
-    bank: "Banque de l'Union Haïtienne (BUH)",
-    account: "REDACTED",
-    holder: "REDACTED",
-    type: "Épargne · USD",
-  },
-  // Carte de crédit / débit via Upwork Direct Contract : le client nous contacte
-  // (WhatsApp ou e-mail) et nous lui envoyons un lien de contrat direct Upwork sécurisé.
-  upwork: { email: "inov01contact@gmail.com" },
-  // Numéro WhatsApp pour envoyer une preuve de paiement (capture d'écran).
+const EMPTY_PAY: PaymentConfig = {
+  moncash: { number: "", holder: "" },
+  natcash: { number: "", holder: "" },
+  buh: { bank: "", account: "", holder: "", type: "" },
+  upwork: { email: "" },
+  // Le WhatsApp public de l'entreprise est déjà affiché partout sur le site ;
+  // on garde ce repli pour que la page reste fonctionnelle même hors ligne.
   whatsapp: "50936255920",
 }
 
@@ -110,8 +105,7 @@ type Copy = {
   steps: (m: Method) => string[]
 }
 
-function build(lang: Lang): Copy {
-  const c = PAY_CONFIG
+function build(lang: Lang, c: PaymentConfig): Copy {
   const dicts: Record<Lang, Omit<Copy, "steps">> = {
     fr: {
       tag: "Paiement", title: "Réglez votre commande", sub: "Choisissez le moyen le plus pratique selon votre localisation. Après paiement, indiquez votre référence — nous confirmons sous peu.",
@@ -289,7 +283,17 @@ type Status = "idle" | "loading" | "success" | "error"
 
 export default function Payer() {
   const { lang, region, currency, t, fmt, priceFor, rates } = useSettings()
-  const c = build(lang)
+  // Payment coordinates come from the server (Supabase secrets / admin panel),
+  // never hardcoded here. Until they load we use the empty config.
+  const [payCfg, setPayCfg] = useState<PaymentConfig>(EMPTY_PAY)
+  useEffect(() => {
+    let alive = true
+    api.getSettings().then((r) => {
+      if (alive && r?.settings?.payments) setPayCfg({ ...EMPTY_PAY, ...r.settings.payments })
+    }).catch(() => {})
+    return () => { alive = false }
+  }, [])
+  const c = build(lang, payCfg)
   const p = PICK[lang] ?? PICK.fr
   const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams()
 
@@ -443,7 +447,7 @@ export default function Payer() {
     setSiteBusy(false)
   }
 
-  const waHref = `https://wa.me/${PAY_CONFIG.whatsapp}?text=${encodeURIComponent(
+  const waHref = `https://wa.me/${payCfg.whatsapp}?text=${encodeURIComponent(
     [
       `Bonjour l'équipe INOV Digital Services ! 👋${name ? ` Ici ${name}.` : ""}`,
       `Je viens d'effectuer un paiement via ${c.names[method ?? "moncash"]}${amount ? ` d'un montant de ${amount} ${CURRENCIES[currency].symbol}` : ""}.`,
@@ -473,8 +477,8 @@ export default function Payer() {
     return lines.join("\n")
   }
   const upworkSummary = buildUpworkSummary()
-  const upworkWa = `https://wa.me/${PAY_CONFIG.whatsapp}?text=${encodeURIComponent(upworkSummary)}`
-  const upworkMail = `mailto:${PAY_CONFIG.upwork.email}?subject=${encodeURIComponent(u.subject)}&body=${encodeURIComponent(upworkSummary)}`
+  const upworkWa = `https://wa.me/${payCfg.whatsapp}?text=${encodeURIComponent(upworkSummary)}`
+  const upworkMail = `mailto:${payCfg.upwork.email}?subject=${encodeURIComponent(u.subject)}&body=${encodeURIComponent(upworkSummary)}`
 
   return (
     <section style={{ background: "var(--ds-bg)", padding: "72px 0 96px" }}>
@@ -629,9 +633,9 @@ export default function Payer() {
                 </ol>
 
                 {/* Copyable details / CTA */}
-                {method === "moncash" && <CopyRow label="MonCash" value={PAY_CONFIG.moncash.number} sub={PAY_CONFIG.moncash.holder} onCopy={copy} copied={copied} c={c} />}
-                {method === "natcash" && <CopyRow label="NatCash" value={PAY_CONFIG.natcash.number} sub={PAY_CONFIG.natcash.holder} onCopy={copy} copied={copied} c={c} />}
-                {method === "buh" && <CopyRow label={PAY_CONFIG.buh.bank} value={PAY_CONFIG.buh.account} sub={`${PAY_CONFIG.buh.holder} · ${PAY_CONFIG.buh.type}`} onCopy={copy} copied={copied} c={c} />}
+                {method === "moncash" && <CopyRow label="MonCash" value={payCfg.moncash.number} sub={payCfg.moncash.holder} onCopy={copy} copied={copied} c={c} />}
+                {method === "natcash" && <CopyRow label="NatCash" value={payCfg.natcash.number} sub={payCfg.natcash.holder} onCopy={copy} copied={copied} c={c} />}
+                {method === "buh" && <CopyRow label={payCfg.buh.bank} value={payCfg.buh.account} sub={`${payCfg.buh.holder} · ${payCfg.buh.type}`} onCopy={copy} copied={copied} c={c} />}
                 {method === "upwork" && (
                   <div style={{ display: "grid", gap: 10 }}>
                     <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 700, color: "var(--ds-text-faint)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{UPWORK_CTA[lang].optional}</div>
