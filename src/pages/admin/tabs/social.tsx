@@ -46,6 +46,12 @@ const DEFAULT_SOCIAL: SocialReplies = {
       text: "Pour aller plus vite, écrivez-nous sur WhatsApp au +509 3625 5920 📲 — on vous répond directement et on prépare votre devis gratuit !" },
     { title: "Répondre à un avis négatif",
       text: "Merci pour votre retour, on le prend au sérieux. 🙏 Écrivez-nous en privé pour qu'on comprenne ce qui n'a pas été et qu'on trouve une solution ensemble." },
+    { title: "TikTok — « Lien en bio »",
+      text: "Merci ! 🥰 Tout est dans notre bio 👆 (site + WhatsApp). Écris-nous, on te fait un devis gratuit en quelques minutes ! ⚡" },
+    { title: "TikTok — Réponse rapide (jeune audience)",
+      text: "Ça peut se faire ! 🔥 DM ou WhatsApp et on s'occupe de tout 💪 (logo, packaging, montage, site…). Devis gratuit 🙌" },
+    { title: "TikTok — Question sous une vidéo",
+      text: "Bonne question ! 💬 On t'explique tout en privé pour pas polluer les commentaires 😅 Écris-nous en DM 📩" },
   ],
 }
 
@@ -134,6 +140,12 @@ export function SocialRepliesTab() {
         (réponses auto aux DM et commentaires Instagram/Facebook) <em>et</em> vous pouvez les
         <strong> copier pour répondre à la main</strong> — par exemple aux commentaires sous vos
         vidéos — même avant que l'automatisation soit activée.
+      </p>
+      <p style={{ margin: 0, fontSize: 12.5, color: "var(--ds-text-muted)", lineHeight: 1.6, padding: "10px 12px", border: "1px solid var(--ds-border)", borderRadius: 10, background: "var(--ds-surface, transparent)" }}>
+        <strong>ℹ️ TikTok :</strong> l'API de TikTok ne permet pas (encore) la réponse automatique
+        aux DM/commentaires comme Meta. Utilisez la <strong>bibliothèque de réponses ci-dessous</strong>
+        pour répondre en un clic sur TikTok. L'<strong>auto-publication</strong> de vos vidéos TikTok,
+        elle, est possible : voir l'onglet dédié une fois votre compte développeur TikTok configuré.
       </p>
 
       {/* Message d'attente */}
