@@ -16,6 +16,7 @@ import PhoneField from "../components/PhoneField"
 export type Str = {
   eyebrow: string; title: string; intro: string; back: string
   free: string; paid: string; hours: string; from: string
+  freeHint: string; paidHint: string
   online: string; presential: string; hybrid: string
   beginner: string; intermediate: string; advanced: string
   seats: string; program: string; enroll: string; enrolled: string
@@ -35,6 +36,8 @@ export const TR: Record<Lang, Str> = {
     eyebrow: "Espace Formation", title: "Apprends le design avec INOV",
     intro: "Des formations concrètes, animées par des pros haïtiens, pour maîtriser le design, le branding et le web — à ton rythme.",
     back: "Retour à l'accueil", free: "Gratuite", paid: "Payante", hours: "h", from: "À partir de",
+    freeHint: "Pour comprendre la communication visuelle et le branding, sans prérequis technique.",
+    paidHint: "Pour apprendre un métier : graphic design, branding, montage vidéo et communication visuelle.",
     online: "En ligne", presential: "Présentiel", hybrid: "Hybride",
     beginner: "Débutant", intermediate: "Intermédiaire", advanced: "Avancé",
     seats: "places", program: "Au programme", enroll: "S'inscrire", enrolled: "Inscrit",
@@ -56,6 +59,8 @@ export const TR: Record<Lang, Str> = {
     eyebrow: "Training Space", title: "Learn design with INOV",
     intro: "Hands-on courses led by Haitian pros to master design, branding and the web — at your own pace.",
     back: "Back to home", free: "Free", paid: "Paid", hours: "h", from: "From",
+    freeHint: "To understand visual communication and branding — no technical background needed.",
+    paidHint: "To learn a craft: graphic design, branding, video editing and visual communication.",
     online: "Online", presential: "In person", hybrid: "Hybrid",
     beginner: "Beginner", intermediate: "Intermediate", advanced: "Advanced",
     seats: "seats", program: "Curriculum", enroll: "Enroll", enrolled: "Enrolled",
@@ -77,6 +82,8 @@ export const TR: Record<Lang, Str> = {
     eyebrow: "Espacio Formación", title: "Aprende diseño con INOV",
     intro: "Cursos prácticos con profesionales haitianos para dominar el diseño, el branding y la web — a tu ritmo.",
     back: "Volver al inicio", free: "Gratis", paid: "De pago", hours: "h", from: "Desde",
+    freeHint: "Para entender la comunicación visual y el branding, sin requisitos técnicos.",
+    paidHint: "Para aprender un oficio: diseño gráfico, branding, edición de video y comunicación visual.",
     online: "En línea", presential: "Presencial", hybrid: "Híbrido",
     beginner: "Principiante", intermediate: "Intermedio", advanced: "Avanzado",
     seats: "plazas", program: "Programa", enroll: "Inscribirse", enrolled: "Inscrito",
@@ -98,6 +105,8 @@ export const TR: Record<Lang, Str> = {
     eyebrow: "Espas Fòmasyon", title: "Aprann design ak INOV",
     intro: "Fòmasyon konkrè, anime pa pwofesyonèl ayisyen, pou w metrize design, branding ak entènèt — nan pwòp ritm pa w.",
     back: "Tounen nan akèy", free: "Gratis", paid: "Peye", hours: "è", from: "Apati",
+    freeHint: "Pou w konprann kominikasyon vizyèl ak branding, san okenn baz teknik.",
+    paidHint: "Pou w aprann yon metye : graphic design, branding, montaj videyo ak kominikasyon vizyèl.",
     online: "Sou entènèt", presential: "Anpèsòn", hybrid: "Ibrid",
     beginner: "Debitan", intermediate: "Mwayen", advanced: "Avanse",
     seats: "plas", program: "Sa w ap aprann", enroll: "Enskri", enrolled: "Enskri",
@@ -119,6 +128,8 @@ export const TR: Record<Lang, Str> = {
     eyebrow: "Espaço Formação", title: "Aprenda design com a INOV",
     intro: "Cursos práticos com profissionais haitianos para dominar design, branding e web — no seu ritmo.",
     back: "Voltar ao início", free: "Grátis", paid: "Pago", hours: "h", from: "A partir de",
+    freeHint: "Para entender a comunicação visual e o branding, sem pré-requisitos técnicos.",
+    paidHint: "Para aprender uma profissão: design gráfico, branding, edição de vídeo e comunicação visual.",
     online: "Online", presential: "Presencial", hybrid: "Híbrido",
     beginner: "Iniciante", intermediate: "Intermediário", advanced: "Avançado",
     seats: "vagas", program: "Programa", enroll: "Inscrever-se", enrolled: "Inscrito",
@@ -140,6 +151,8 @@ export const TR: Record<Lang, Str> = {
     eyebrow: "Spazio Formazione", title: "Impara il design con INOV",
     intro: "Corsi pratici tenuti da professionisti haitiani per padroneggiare design, branding e web — al tuo ritmo.",
     back: "Torna alla home", free: "Gratis", paid: "A pagamento", hours: "h", from: "Da",
+    freeHint: "Per capire la comunicazione visiva e il branding, senza prerequisiti tecnici.",
+    paidHint: "Per imparare un mestiere: graphic design, branding, montaggio video e comunicazione visiva.",
     online: "Online", presential: "In presenza", hybrid: "Ibrido",
     beginner: "Principiante", intermediate: "Intermedio", advanced: "Avanzato",
     seats: "posti", program: "Programma", enroll: "Iscriviti", enrolled: "Iscritto",
@@ -161,6 +174,8 @@ export const TR: Record<Lang, Str> = {
     eyebrow: "Weiterbildung", title: "Lerne Design mit INOV",
     intro: "Praxisnahe Kurse von haitianischen Profis, um Design, Branding und Web zu meistern — in deinem Tempo.",
     back: "Zur Startseite", free: "Kostenlos", paid: "Kostenpflichtig", hours: "Std.", from: "Ab",
+    freeHint: "Um visuelle Kommunikation und Branding zu verstehen — ohne technische Vorkenntnisse.",
+    paidHint: "Um einen Beruf zu erlernen: Grafikdesign, Branding, Videoschnitt und visuelle Kommunikation.",
     online: "Online", presential: "Vor Ort", hybrid: "Hybrid",
     beginner: "Anfänger", intermediate: "Mittelstufe", advanced: "Fortgeschritten",
     seats: "Plätze", program: "Lehrplan", enroll: "Anmelden", enrolled: "Angemeldet",
@@ -182,6 +197,8 @@ export const TR: Record<Lang, Str> = {
     eyebrow: "مساحة التدريب", title: "تعلّم التصميم مع INOV",
     intro: "دورات عملية يقدّمها محترفون هايتيون لإتقان التصميم والهوية والويب — على وتيرتك.",
     back: "العودة للرئيسية", free: "مجاني", paid: "مدفوع", hours: "س", from: "ابتداءً من",
+    freeHint: "لفهم التواصل البصري والعلامة التجارية، دون متطلبات تقنية.",
+    paidHint: "لتعلّم مهنة: التصميم الجرافيكي، العلامة التجارية، مونتاج الفيديو والتواصل البصري.",
     online: "عن بُعد", presential: "حضوري", hybrid: "مختلط",
     beginner: "مبتدئ", intermediate: "متوسط", advanced: "متقدّم",
     seats: "مقاعد", program: "المنهج", enroll: "سجّل", enrolled: "مسجّل",
@@ -397,6 +414,20 @@ export default function Formation() {
                 </button>
               )
             })}
+          </div>
+        )}
+
+        {/* Free vs paid: clarify the intent behind each track, not the "level". */}
+        {courses && courses.length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 22px", marginBottom: 32 }}>
+            <span style={{ display: "inline-flex", alignItems: "flex-start", gap: 8, maxWidth: 440, fontFamily: "'Outfit', sans-serif", fontSize: 13.5, lineHeight: 1.5, color: "var(--ds-text-muted)" }}>
+              <span aria-hidden style={{ flexShrink: 0, width: 9, height: 9, borderRadius: "50%", background: "#16A34A", marginTop: 5 }} />
+              <span><strong style={{ color: "var(--ds-text)", fontWeight: 700 }}>{s.free} —</strong> {s.freeHint}</span>
+            </span>
+            <span style={{ display: "inline-flex", alignItems: "flex-start", gap: 8, maxWidth: 440, fontFamily: "'Outfit', sans-serif", fontSize: 13.5, lineHeight: 1.5, color: "var(--ds-text-muted)" }}>
+              <span aria-hidden style={{ flexShrink: 0, width: 9, height: 9, borderRadius: "50%", background: "var(--ds-accent)", marginTop: 5 }} />
+              <span><strong style={{ color: "var(--ds-text)", fontWeight: 700 }}>{s.paid} —</strong> {s.paidHint}</span>
+            </span>
           </div>
         )}
 
