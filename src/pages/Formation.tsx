@@ -10,8 +10,9 @@ import type { Lang } from "../i18n/translations"
 import { applyPageMeta } from "../lib/seo"
 import { track } from "../lib/analytics"
 import { api, type Formation as Course } from "../lib/api"
+import ShareButtons from "../components/ShareButtons"
 
-type Str = {
+export type Str = {
   eyebrow: string; title: string; intro: string; back: string
   free: string; paid: string; hours: string; from: string
   online: string; presential: string; hybrid: string
@@ -28,7 +29,7 @@ type Str = {
   recordedOn: string; resources: string
 }
 
-const TR: Record<Lang, Str> = {
+export const TR: Record<Lang, Str> = {
   fr: {
     eyebrow: "Espace Formation", title: "Apprends le design avec INOV",
     intro: "Des formations concrètes, animées par des pros haïtiens, pour maîtriser le design, le branding et le web — à ton rythme.",
@@ -205,18 +206,18 @@ const card: React.CSSProperties = {
   background: "var(--ds-bg-card)", border: "1px solid var(--ds-border)",
   borderRadius: "var(--r-xl)", overflow: "hidden", display: "flex", flexDirection: "column",
 }
-const badge: React.CSSProperties = {
+export const badge: React.CSSProperties = {
   display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 10px",
   borderRadius: "var(--r-full)", fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
 }
-const inputStyle: React.CSSProperties = {
+export const inputStyle: React.CSSProperties = {
   width: "100%", padding: "12px 14px", borderRadius: "var(--r-md)",
   border: "1px solid var(--ds-border)", background: "var(--ds-bg)",
   color: "var(--ds-text)", fontSize: 15, fontFamily: "'Outfit', sans-serif",
 }
 
 /** Format a duration until a future ISO date as "Xh Ym" or "Xm Ys". */
-function useCountdown(isoDate?: string) {
+export function useCountdown(isoDate?: string) {
   const [diff, setDiff] = useState<number | null>(null)
   useEffect(() => {
     if (!isoDate) return
@@ -240,14 +241,14 @@ function useCountdown(isoDate?: string) {
 }
 
 /** Determine if a session is within the next 24 hours. */
-function isWithin24h(isoDate?: string) {
+export function isWithin24h(isoDate?: string) {
   if (!isoDate) return false
   const ms = new Date(isoDate).getTime() - Date.now()
   return ms > 0 && ms < 86_400_000
 }
 
 /** Build a Google Calendar add-event URL. */
-function gcalUrl(c: Course) {
+export function gcalUrl(c: Course) {
   const start = c.startDateTime ? new Date(c.startDateTime).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z" : ""
   const end = c.endDateTime ? new Date(c.endDateTime).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z" :
     c.startDateTime ? new Date(new Date(c.startDateTime).getTime() + 60 * 60 * 1000).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z" : ""
@@ -263,21 +264,21 @@ function gcalUrl(c: Course) {
 }
 
 /** Detect YouTube URL and return an embeddable src. */
-function toYoutubeEmbed(url: string) {
+export function toYoutubeEmbed(url: string) {
   const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]+)/)
   if (m) return `https://www.youtube.com/embed/${m[1]}`
   return url
 }
 
 /** Type icon mapping */
-function TypeIcon({ type }: { type?: Course["type"] }) {
+export function TypeIcon({ type }: { type?: Course["type"] }) {
   if (type === "live") return <Radio size={13} />
   if (type === "conference") return <Mic2 size={13} />
   if (type === "replay") return <PlayCircle size={13} />
   return <BookOpen size={13} />
 }
 
-function typeColor(type?: Course["type"]) {
+export function typeColor(type?: Course["type"]) {
   if (type === "live") return { bg: "rgba(220,38,38,0.12)", color: "#DC2626" }
   if (type === "conference") return { bg: "rgba(109,40,217,0.12)", color: "#7C3AED" }
   if (type === "replay") return { bg: "rgba(14,165,233,0.12)", color: "#0EA5E9" }
@@ -480,7 +481,11 @@ function CourseCard({ c, s, fmt, lang, lvlLabel, fmtLabel, fmtIcon, onEnroll }: 
           </span>
         </div>
 
-        <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 20, fontWeight: 800, color: "var(--ds-text)", margin: "0 0 8px", lineHeight: 1.2 }}>{c.title}</h2>
+        <h2 style={{ fontSize: 20, fontWeight: 800, margin: "0 0 8px", lineHeight: 1.2 }}>
+          <Link to={`/formation/${c.slug ?? c.id}`} style={{ fontFamily: "'Outfit', sans-serif", color: "var(--ds-text)", textDecoration: "none" }}>
+            {c.title}
+          </Link>
+        </h2>
         <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 14.5, lineHeight: 1.55, color: "var(--ds-text-muted)", margin: "0 0 16px", flex: 1 }}>{c.summary}</p>
 
         {/* Countdown for upcoming lives within 24h */}
@@ -537,6 +542,11 @@ function CourseCard({ c, s, fmt, lang, lvlLabel, fmtLabel, fmtIcon, onEnroll }: 
               <GraduationCap size={16} /> {s.enroll}
             </button>
           </div>
+        </div>
+
+        {/* Shareable link + social share for this specific formation */}
+        <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid var(--ds-border)" }}>
+          <ShareButtons url={`${window.location.origin}/formation/${c.slug ?? c.id}`} title={c.title} compact />
         </div>
       </div>
     </article>
