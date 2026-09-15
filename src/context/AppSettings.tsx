@@ -36,6 +36,8 @@ export interface AppSettings {
   /** Active pricing region (auto-detected, overridable). */
   region: RegionCode
   setRegion: (r: RegionCode) => void
+  /** Detected ISO 3166-1 alpha-2 country of the visitor ("" until resolved). Used to preselect the phone dial code. */
+  country: string
   /** Apply the region's purchasing-power factor to a USD base price (returns adjusted USD). */
   priceFor: (usd: number) => number
   /** Scale a revision window (days) by the region factor: cheaper region = shorter, pricier = longer. */
