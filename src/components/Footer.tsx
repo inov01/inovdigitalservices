@@ -28,15 +28,15 @@ const CLIENT_LABELS: Record<string, { title: string; account: string; quote: str
   ar: { title: "منطقة العميل", account: "حسابي", quote: "عرض سعر مجاني", ambassador: "برنامج السفراء", pay: "الدفع عبر الإنترنت", formation: "التدريب" },
 }
 
-const LEGAL_LABELS: Record<string, { blog: string; terms: string; privacy: string; pay: string; collaborateur: string; soon: string }> = {
-  fr: { blog: "Blog", terms: "Mentions légales", privacy: "Confidentialité", pay: "Payer", collaborateur: "Devenir collaborateur", soon: "Bientôt" },
-  en: { blog: "Blog", terms: "Legal notice", privacy: "Privacy", pay: "Pay", collaborateur: "Become a collaborator", soon: "Soon" },
-  es: { blog: "Blog", terms: "Aviso legal", privacy: "Privacidad", pay: "Pagar", collaborateur: "Ser colaborador", soon: "Pronto" },
-  ht: { blog: "Blog", terms: "Mansyon legal", privacy: "Konfidansyalite", pay: "Peye", collaborateur: "Vin kolaboratè", soon: "Talè" },
-  pt: { blog: "Blog", terms: "Aviso legal", privacy: "Privacidade", pay: "Pagar", collaborateur: "Seja colaborador", soon: "Em breve" },
-  it: { blog: "Blog", terms: "Note legali", privacy: "Privacy", pay: "Paga", collaborateur: "Diventa collaboratore", soon: "Presto" },
-  de: { blog: "Blog", terms: "Impressum", privacy: "Datenschutz", pay: "Bezahlen", collaborateur: "Kollaborateur werden", soon: "Bald" },
-  ar: { blog: "المدونة", terms: "إشعار قانوني", privacy: "الخصوصية", pay: "ادفع", collaborateur: "كن متعاوناً", soon: "قريبًا" },
+const LEGAL_LABELS: Record<string, { blog: string; terms: string; privacy: string; pay: string; collaborateur: string; soon: string; about: string }> = {
+  fr: { blog: "Blog", terms: "Mentions légales", privacy: "Confidentialité", pay: "Payer", collaborateur: "Devenir collaborateur", soon: "Bientôt", about: "À propos" },
+  en: { blog: "Blog", terms: "Legal notice", privacy: "Privacy", pay: "Pay", collaborateur: "Become a collaborator", soon: "Soon", about: "About" },
+  es: { blog: "Blog", terms: "Aviso legal", privacy: "Privacidad", pay: "Pagar", collaborateur: "Ser colaborador", soon: "Pronto", about: "Acerca de" },
+  ht: { blog: "Blog", terms: "Mansyon legal", privacy: "Konfidansyalite", pay: "Peye", collaborateur: "Vin kolaboratè", soon: "Talè", about: "Konsènan nou" },
+  pt: { blog: "Blog", terms: "Aviso legal", privacy: "Privacidade", pay: "Pagar", collaborateur: "Seja colaborador", soon: "Em breve", about: "Sobre" },
+  it: { blog: "Blog", terms: "Note legali", privacy: "Privacy", pay: "Paga", collaborateur: "Diventa collaboratore", soon: "Presto", about: "Chi siamo" },
+  de: { blog: "Blog", terms: "Impressum", privacy: "Datenschutz", pay: "Bezahlen", collaborateur: "Kollaborateur werden", soon: "Bald", about: "Über uns" },
+  ar: { blog: "المدونة", terms: "إشعار قانوني", privacy: "الخصوصية", pay: "ادفع", collaborateur: "كن متعاوناً", soon: "قريبًا", about: "من نحن" },
 }
 
 export default function Footer() {
@@ -155,6 +155,7 @@ export default function Footer() {
           <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
             <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: "rgba(255,255,255,0.72)" }}>{t.footer.tagline}</span>
             <Link to="/paiement" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.pay}</Link>
+            <Link to="/a-propos" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.about}</Link>
             <Link to="/blog" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.blog}</Link>
             <Link to="/mentions-legales" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.terms}</Link>
             <Link to="/confidentialite" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.privacy}</Link>
