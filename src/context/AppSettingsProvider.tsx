@@ -36,6 +36,15 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     const saved = typeof localStorage !== "undefined" ? localStorage.getItem("inov-region") : null
     return saved && saved in REGIONS ? (saved as RegionCode) : "OTHER"
   })
+  // Precise ISO country of the visitor (for the phone dial code). "" until resolved.
+  const [country, setCountry] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      const q = new URLSearchParams(window.location.search).get("country")
+      if (q && /^[A-Za-z]{2}$/.test(q)) return q.toUpperCase()
+    }
+    const saved = typeof localStorage !== "undefined" ? localStorage.getItem("inov-country") : null
+    return saved && /^[A-Za-z]{2}$/.test(saved) ? saved.toUpperCase() : ""
+  })
 
   // A dedicated share link carrying ?region= / ?currency= counts as an explicit
   // choice: persist it and set the "chosen" flags so auto-detection never
@@ -212,6 +221,43 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  // Resolve the visitor's precise country (ISO alpha-2) for the phone dial code.
+  // Privacy-first, same as region detection: try local, no-network signals first
+  // (timezone → browser locale), then fall back to an IP lookup only if needed.
+  useEffect(() => {
+    if (country) return
+    function saveCountry(cc?: string | null) {
+      if (!cc || !/^[A-Za-z]{2}$/.test(cc)) return false
+      const up = cc.toUpperCase()
+      setCountry(up)
+      try { localStorage.setItem("inov-country", up) } catch {}
+      return true
+    }
+
+    // 1) Local signals — no network, no data shared.
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""
+      if (tz.includes("Port-au-Prince") && saveCountry("HT")) return
+    } catch {}
+    const loc = (typeof navigator !== "undefined" && navigator.language) || ""
+    if (saveCountry(loc.split("-")[1])) return
+
+    // 2) IP lookup as a last resort — deferred, aborted on timeout.
+    const controller = new AbortController()
+    const abortTimer = setTimeout(() => controller.abort(), 6000)
+    const startTimer = setTimeout(() => {
+      fetch("https://ipapi.co/json/", { signal: controller.signal })
+        .then((r) => r.json())
+        .then((d) => saveCountry(d && d.country_code))
+        .catch(() => {})
+    }, 800)
+    return () => {
+      clearTimeout(startTimer)
+      clearTimeout(abortTimer)
+      controller.abort()
+    }
+  }, [country])
+
   function fmt(usd: number) {
     const c = CURRENCIES[currency]
     const val = Math.round(usd * (rates[currency] ?? 1))
@@ -236,7 +282,7 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <Ctx.Provider value={{ lang, setLang, t, currency, setCurrency, rates, fmt, region, setRegion, priceFor, revisionDaysFor, revisionsFor }}>
+    <Ctx.Provider value={{ lang, setLang, t, currency, setCurrency, rates, fmt, region, setRegion, country, priceFor, revisionDaysFor, revisionsFor }}>
       {children}
     </Ctx.Provider>
   )
