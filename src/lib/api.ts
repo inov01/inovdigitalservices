@@ -239,6 +239,7 @@ export interface SocialReplies {
 // ── Formations (espace Formation) ──────────────────────────────────────────────
 export interface Formation {
   id: string
+  slug?: string           // share slug (`${slugify(title)}-${id}`), set by the server
   createdAt?: string
   published?: boolean
   title: string
@@ -250,6 +251,7 @@ export interface Formation {
   free: boolean
   price: number
   image?: string
+  ogImage?: string        // 1200×630 preview shown when the link is shared
   instructor?: string
   startDate?: string
   seats?: number
@@ -422,6 +424,10 @@ export const api = {
   // Public: published formations for the Formation page.
   listFormations() {
     return pub<{ formations: Formation[] }>("/formations")
+  },
+  // Public: a single published formation by share slug (or raw id).
+  getFormation(slug: string) {
+    return pub<{ formation: Formation }>(`/formations/one/${encodeURIComponent(slug)}`)
   },
   // Public: enroll in a formation (records it as a lead for payment tracking).
   enrollFormation(input: EnrollInput) {
