@@ -58,3 +58,12 @@ export function isoForRegion(region?: string): string {
 export function findByIso(iso: string): DialCountry {
   return DIAL_COUNTRIES.find((c) => c.iso === iso) ?? DIAL_COUNTRIES[0]
 }
+
+// Pick the dial country from the visitor's precise ISO country when we recognise
+// it; otherwise fall back to the coarse pricing region. `country` wins because it
+// reflects the visitor's actual geographic position.
+export function resolveIso(country?: string, region?: string): string {
+  const cc = (country ?? "").toUpperCase()
+  if (cc && DIAL_COUNTRIES.some((c) => c.iso === cc)) return cc
+  return isoForRegion(region)
+}
