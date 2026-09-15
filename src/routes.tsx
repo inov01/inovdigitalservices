@@ -17,6 +17,7 @@ const Compte = lazy(() => import("./pages/Compte"))
 const Directions = lazy(() => import("./pages/Directions"))
 const Brief = lazy(() => import("./pages/Brief"))
 const Formation = lazy(() => import("./pages/Formation"))
+const FormationDetail = lazy(() => import("./pages/FormationDetail"))
 const Collaborateur = lazy(() => import("./pages/Collaborateur"))
 
 // Minimal fallback — keeps layout height stable while a route chunk loads.
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
       { path: "compte", element: L(<Compte />) },
       { path: "brief/:service", element: L(<Brief />) },
       { path: "formation", element: L(<Formation />) },
+      { path: "formation/:slug", element: L(<FormationDetail />) },
       { path: "collaborateur", element: L(<Collaborateur />) },
       { path: "mentions-legales", element: L(<Legal kind="terms" />) },
       { path: "confidentialite", element: L(<Legal kind="privacy" />) },
