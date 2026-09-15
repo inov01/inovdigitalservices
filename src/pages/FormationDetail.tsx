@@ -18,7 +18,7 @@ import {
 
 export default function FormationDetail() {
   const { slug = "" } = useParams()
-  const { lang, fmt, currency, region } = useSettings()
+  const { lang, fmt, currency, region, country } = useSettings()
   const s = TR[lang] ?? TR.fr
   const [course, setCourse] = useState<Course | null>(null)
   const [state, setState] = useState<"loading" | "ok" | "missing">("loading")
@@ -148,7 +148,7 @@ export default function FormationDetail() {
             )}
           </div>
 
-          <EnrollForm course={c} s={s} lang={lang} currency={currency} region={region} />
+          <EnrollForm course={c} s={s} lang={lang} currency={currency} region={region} country={country} />
         </div>
       </div>
     </section>
@@ -156,8 +156,8 @@ export default function FormationDetail() {
 }
 
 // ── Inline enrollment form (shareable-page variant of the modal) ────────────────
-function EnrollForm({ course, s, lang, currency, region }: {
-  course: Course; s: typeof TR["fr"]; lang: string; currency: string; region: string
+function EnrollForm({ course, s, lang, currency, region, country }: {
+  course: Course; s: typeof TR["fr"]; lang: string; currency: string; region: string; country: string
 }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" })
   const [busy, setBusy] = useState(false)
@@ -240,7 +240,7 @@ function EnrollForm({ course, s, lang, currency, region }: {
           onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
         <input style={inputStyle} type="email" placeholder={s.email} value={form.email} aria-label={s.email}
           onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} required />
-        <PhoneField label={s.whatsapp} placeholder={s.whatsappPh} value={form.phone} region={region} required
+        <PhoneField label={s.whatsapp} placeholder={s.whatsappPh} value={form.phone} country={country} region={region} required
           onChange={(phone) => setForm((f) => ({ ...f, phone }))} />
         <textarea style={{ ...inputStyle, minHeight: 80, resize: "vertical" }} placeholder={s.msgPh} value={form.message} aria-label={s.msg}
           onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))} />
