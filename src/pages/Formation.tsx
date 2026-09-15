@@ -302,7 +302,7 @@ function LiveBadge({ label }: { label: string }) {
 }
 
 export default function Formation() {
-  const { lang, fmt, currency, region } = useSettings()
+  const { lang, fmt, currency, region, country } = useSettings()
   const s = TR[lang] ?? TR.fr
   const [courses, setCourses] = useState<Course[] | null>(null)
   const [active, setActive] = useState<Course | null>(null)
@@ -423,7 +423,7 @@ export default function Formation() {
       </div>
 
       {active && (
-        <EnrollModal course={active} s={s} lang={lang} currency={currency} region={region} fmt={fmt}
+        <EnrollModal course={active} s={s} lang={lang} currency={currency} region={region} country={country} fmt={fmt}
           lvlLabel={lvlLabel} fmtLabel={fmtLabel} onClose={() => setActive(null)} />
       )}
     </section>
@@ -556,9 +556,9 @@ function CourseCard({ c, s, fmt, lang, lvlLabel, fmtLabel, fmtIcon, onEnroll }: 
 
 // ── Enroll Modal ───────────────────────────────────────────────────────────────
 function EnrollModal({
-  course, s, lang, currency, region, fmt, lvlLabel, fmtLabel, onClose,
+  course, s, lang, currency, region, country, fmt, lvlLabel, fmtLabel, onClose,
 }: {
-  course: Course; s: Str; lang: Lang; currency: string; region: string
+  course: Course; s: Str; lang: Lang; currency: string; region: string; country: string
   fmt: (usd: number) => string
   lvlLabel: (l: Course["level"]) => string; fmtLabel: (f: Course["format"]) => string
   onClose: () => void
@@ -735,7 +735,7 @@ function EnrollModal({
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
               <input style={inputStyle} type="email" placeholder={s.email} value={form.email} aria-label={s.email}
                 onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} required />
-              <PhoneField label={s.whatsapp} placeholder={s.whatsappPh} value={form.phone} region={region} required
+              <PhoneField label={s.whatsapp} placeholder={s.whatsappPh} value={form.phone} country={country} region={region} required
                 onChange={(phone) => setForm((f) => ({ ...f, phone }))} />
               <textarea style={{ ...inputStyle, minHeight: 80, resize: "vertical" }} placeholder={s.msgPh} value={form.message} aria-label={s.msg}
                 onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))} />
