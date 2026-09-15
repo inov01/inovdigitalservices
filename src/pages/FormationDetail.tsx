@@ -10,6 +10,7 @@ import { applyPageMeta } from "../lib/seo"
 import { track } from "../lib/analytics"
 import { api, type Formation as Course } from "../lib/api"
 import ShareButtons from "../components/ShareButtons"
+import PhoneField from "../components/PhoneField"
 import {
   TR, inputStyle, typeColor, TypeIcon, gcalUrl, toYoutubeEmbed,
   useCountdown, isWithin24h,
@@ -169,7 +170,7 @@ function EnrollForm({ course, s, lang, currency, region }: {
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setError("")
-    if (!form.name.trim() || !form.email.trim()) { setError(s.required); return }
+    if (!form.name.trim() || !form.email.trim() || !form.phone.trim()) { setError(s.required); return }
     setBusy(true)
     try {
       await api.enrollFormation({
@@ -239,8 +240,8 @@ function EnrollForm({ course, s, lang, currency, region }: {
           onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
         <input style={inputStyle} type="email" placeholder={s.email} value={form.email} aria-label={s.email}
           onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} required />
-        <input style={inputStyle} placeholder={s.whatsapp} value={form.phone} aria-label={s.whatsapp}
-          onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} />
+        <PhoneField label={s.whatsapp} placeholder={s.whatsappPh} value={form.phone} region={region} required
+          onChange={(phone) => setForm((f) => ({ ...f, phone }))} />
         <textarea style={{ ...inputStyle, minHeight: 80, resize: "vertical" }} placeholder={s.msgPh} value={form.message} aria-label={s.msg}
           onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))} />
         {error && <p role="alert" style={{ color: "var(--ds-danger)", fontSize: 13.5, fontFamily: "'Outfit', sans-serif", margin: 0 }}>{error}</p>}
