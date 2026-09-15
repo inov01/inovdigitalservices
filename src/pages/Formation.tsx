@@ -11,6 +11,7 @@ import { applyPageMeta } from "../lib/seo"
 import { track } from "../lib/analytics"
 import { api, type Formation as Course } from "../lib/api"
 import ShareButtons from "../components/ShareButtons"
+import PhoneField from "../components/PhoneField"
 
 export type Str = {
   eyebrow: string; title: string; intro: string; back: string
@@ -19,7 +20,7 @@ export type Str = {
   beginner: string; intermediate: string; advanced: string
   seats: string; program: string; enroll: string; enrolled: string
   instructor: string; empty: string; emptyHint: string; starts: string
-  name: string; email: string; whatsapp: string; msg: string
+  name: string; email: string; whatsapp: string; whatsappPh: string; msg: string
   msgPh: string; submit: string; sending: string
   okFree: string; okPaid: string; payCta: string; required: string; error: string
   // types
@@ -39,12 +40,12 @@ export const TR: Record<Lang, Str> = {
     seats: "places", program: "Au programme", enroll: "S'inscrire", enrolled: "Inscrit",
     instructor: "Formateur", empty: "Bientôt de nouvelles formations",
     emptyHint: "Reviens vite — le catalogue s'enrichit régulièrement.", starts: "Débute le",
-    name: "Nom complet", email: "E-mail", whatsapp: "WhatsApp (optionnel)",
+    name: "Nom complet", email: "E-mail", whatsapp: "Numéro WhatsApp", whatsappPh: "34 56 78 90",
     msg: "Message (optionnel)", msgPh: "Une question, un objectif d'apprentissage…",
     submit: "Confirmer mon inscription", sending: "Envoi…",
     okFree: "Inscription confirmée ! On te contacte très vite avec les accès. 🎉",
     okPaid: "Inscription reçue ! Finalise le paiement pour réserver ta place.",
-    payCta: "Procéder au paiement", required: "Renseigne au moins ton nom et ton e-mail.",
+    payCta: "Procéder au paiement", required: "Renseigne ton nom, ton e-mail et ton numéro WhatsApp.",
     error: "Un souci est survenu. Réessaie ou écris-nous sur WhatsApp.",
     all: "Tout", cours: "Cours", live: "Lives", conference: "Conférences", replay: "Replays",
     joinLive: "Rejoindre le live", watchReplay: "Voir le replay", downloadRes: "Télécharger les ressources",
@@ -60,12 +61,12 @@ export const TR: Record<Lang, Str> = {
     seats: "seats", program: "Curriculum", enroll: "Enroll", enrolled: "Enrolled",
     instructor: "Instructor", empty: "New courses coming soon",
     emptyHint: "Check back soon — the catalogue grows regularly.", starts: "Starts",
-    name: "Full name", email: "Email", whatsapp: "WhatsApp (optional)",
+    name: "Full name", email: "Email", whatsapp: "WhatsApp number", whatsappPh: "555 123 4567",
     msg: "Message (optional)", msgPh: "A question, a learning goal…",
     submit: "Confirm my enrollment", sending: "Sending…",
     okFree: "You're enrolled! We'll reach out shortly with access. 🎉",
     okPaid: "Enrollment received! Complete payment to reserve your seat.",
-    payCta: "Proceed to payment", required: "Please add at least your name and email.",
+    payCta: "Proceed to payment", required: "Please add your name, email and WhatsApp number.",
     error: "Something went wrong. Try again or message us on WhatsApp.",
     all: "All", cours: "Courses", live: "Lives", conference: "Conferences", replay: "Replays",
     joinLive: "Join the live", watchReplay: "Watch replay", downloadRes: "Download resources",
@@ -81,12 +82,12 @@ export const TR: Record<Lang, Str> = {
     seats: "plazas", program: "Programa", enroll: "Inscribirse", enrolled: "Inscrito",
     instructor: "Formador", empty: "Próximamente nuevos cursos",
     emptyHint: "Vuelve pronto — el catálogo crece a menudo.", starts: "Empieza el",
-    name: "Nombre completo", email: "Correo", whatsapp: "WhatsApp (opcional)",
+    name: "Nombre completo", email: "Correo", whatsapp: "Número de WhatsApp", whatsappPh: "612 34 56 78",
     msg: "Mensaje (opcional)", msgPh: "Una duda, un objetivo…",
     submit: "Confirmar inscripción", sending: "Enviando…",
     okFree: "¡Inscripción confirmada! Te contactamos pronto con los accesos. 🎉",
     okPaid: "¡Inscripción recibida! Completa el pago para reservar tu plaza.",
-    payCta: "Ir al pago", required: "Añade al menos tu nombre y correo.",
+    payCta: "Ir al pago", required: "Añade tu nombre, correo y número de WhatsApp.",
     error: "Algo salió mal. Inténtalo de nuevo o escríbenos por WhatsApp.",
     all: "Todo", cours: "Cursos", live: "Lives", conference: "Conferencias", replay: "Replays",
     joinLive: "Unirse al live", watchReplay: "Ver replay", downloadRes: "Descargar recursos",
@@ -102,12 +103,12 @@ export const TR: Record<Lang, Str> = {
     seats: "plas", program: "Sa w ap aprann", enroll: "Enskri", enrolled: "Enskri",
     instructor: "Fòmatè", empty: "Gen lòt fòmasyon k ap vini talè",
     emptyHint: "Tounen vin gade — katalòg la ap grandi souvan.", starts: "Kòmanse",
-    name: "Non konplè", email: "Imèl", whatsapp: "WhatsApp (opsyonèl)",
+    name: "Non konplè", email: "Imèl", whatsapp: "Nimewo WhatsApp", whatsappPh: "34 56 78 90",
     msg: "Mesaj (opsyonèl)", msgPh: "Yon kesyon, yon objektif…",
     submit: "Konfime enskripsyon m", sending: "N ap voye…",
     okFree: "Ou enskri! N ap kontakte w byen vit ak aksè yo. 🎉",
     okPaid: "Nou resevwa enskripsyon w! Fin peye pou w rezève plas ou.",
-    payCta: "Ale peye", required: "Mete omwen non w ak imèl ou.",
+    payCta: "Ale peye", required: "Mete non w, imèl ou ak nimewo WhatsApp ou.",
     error: "Gen yon pwoblèm. Eseye ankò oswa ekri nou sou WhatsApp.",
     all: "Tout", cours: "Kou", live: "Lives", conference: "Konferans", replay: "Replays",
     joinLive: "Rejwenn live a", watchReplay: "Gade replay a", downloadRes: "Telechaje resous yo",
@@ -123,12 +124,12 @@ export const TR: Record<Lang, Str> = {
     seats: "vagas", program: "Programa", enroll: "Inscrever-se", enrolled: "Inscrito",
     instructor: "Instrutor", empty: "Novos cursos em breve",
     emptyHint: "Volte logo — o catálogo cresce sempre.", starts: "Começa em",
-    name: "Nome completo", email: "E-mail", whatsapp: "WhatsApp (opcional)",
+    name: "Nome completo", email: "E-mail", whatsapp: "Número de WhatsApp", whatsappPh: "11 91234 5678",
     msg: "Mensagem (opcional)", msgPh: "Uma dúvida, um objetivo…",
     submit: "Confirmar inscrição", sending: "Enviando…",
     okFree: "Inscrição confirmada! Entraremos em contato com os acessos. 🎉",
     okPaid: "Inscrição recebida! Conclua o pagamento para reservar sua vaga.",
-    payCta: "Ir para o pagamento", required: "Informe ao menos nome e e-mail.",
+    payCta: "Ir para o pagamento", required: "Informe nome, e-mail e número de WhatsApp.",
     error: "Algo deu errado. Tente novamente ou fale no WhatsApp.",
     all: "Tudo", cours: "Cursos", live: "Lives", conference: "Conferências", replay: "Replays",
     joinLive: "Entrar no live", watchReplay: "Assistir replay", downloadRes: "Baixar recursos",
@@ -144,12 +145,12 @@ export const TR: Record<Lang, Str> = {
     seats: "posti", program: "Programma", enroll: "Iscriviti", enrolled: "Iscritto",
     instructor: "Docente", empty: "Nuovi corsi in arrivo",
     emptyHint: "Torna presto — il catalogo cresce spesso.", starts: "Inizia il",
-    name: "Nome completo", email: "E-mail", whatsapp: "WhatsApp (facoltativo)",
+    name: "Nome completo", email: "E-mail", whatsapp: "Numero WhatsApp", whatsappPh: "312 345 6789",
     msg: "Messaggio (facoltativo)", msgPh: "Una domanda, un obiettivo…",
     submit: "Conferma iscrizione", sending: "Invio…",
     okFree: "Iscrizione confermata! Ti contatteremo presto con gli accessi. 🎉",
     okPaid: "Iscrizione ricevuta! Completa il pagamento per riservare il posto.",
-    payCta: "Vai al pagamento", required: "Inserisci almeno nome ed e-mail.",
+    payCta: "Vai al pagamento", required: "Inserisci nome, e-mail e numero WhatsApp.",
     error: "Qualcosa è andato storto. Riprova o scrivici su WhatsApp.",
     all: "Tutto", cours: "Corsi", live: "Live", conference: "Conferenze", replay: "Replay",
     joinLive: "Entra nel live", watchReplay: "Guarda il replay", downloadRes: "Scarica risorse",
@@ -165,12 +166,12 @@ export const TR: Record<Lang, Str> = {
     seats: "Plätze", program: "Lehrplan", enroll: "Anmelden", enrolled: "Angemeldet",
     instructor: "Dozent", empty: "Bald neue Kurse",
     emptyHint: "Schau bald wieder vorbei — der Katalog wächst stetig.", starts: "Beginnt am",
-    name: "Vollständiger Name", email: "E-Mail", whatsapp: "WhatsApp (optional)",
+    name: "Vollständiger Name", email: "E-Mail", whatsapp: "WhatsApp-Nummer", whatsappPh: "151 23456789",
     msg: "Nachricht (optional)", msgPh: "Eine Frage, ein Lernziel…",
     submit: "Anmeldung bestätigen", sending: "Senden…",
     okFree: "Angemeldet! Wir melden uns bald mit den Zugängen. 🎉",
     okPaid: "Anmeldung erhalten! Schließe die Zahlung ab, um deinen Platz zu sichern.",
-    payCta: "Zur Zahlung", required: "Bitte mindestens Name und E-Mail angeben.",
+    payCta: "Zur Zahlung", required: "Bitte Name, E-Mail und WhatsApp-Nummer angeben.",
     error: "Etwas ist schiefgelaufen. Versuche es erneut oder schreib uns per WhatsApp.",
     all: "Alle", cours: "Kurse", live: "Lives", conference: "Konferenzen", replay: "Replays",
     joinLive: "Live beitreten", watchReplay: "Replay ansehen", downloadRes: "Ressourcen herunterladen",
@@ -186,12 +187,12 @@ export const TR: Record<Lang, Str> = {
     seats: "مقاعد", program: "المنهج", enroll: "سجّل", enrolled: "مسجّل",
     instructor: "المدرّب", empty: "دورات جديدة قريباً",
     emptyHint: "عُد قريباً — الكتالوج يتوسّع باستمرار.", starts: "يبدأ في",
-    name: "الاسم الكامل", email: "البريد", whatsapp: "واتساب (اختياري)",
+    name: "الاسم الكامل", email: "البريد", whatsapp: "رقم واتساب", whatsappPh: "50 123 4567",
     msg: "رسالة (اختياري)", msgPh: "سؤال أو هدف تعليمي…",
     submit: "تأكيد التسجيل", sending: "جارٍ الإرسال…",
     okFree: "تم التسجيل! سنتواصل معك قريباً بالوصول. 🎉",
     okPaid: "تم استلام تسجيلك! أكمل الدفع لحجز مقعدك.",
-    payCta: "المتابعة للدفع", required: "أضف اسمك وبريدك على الأقل.",
+    payCta: "المتابعة للدفع", required: "أضف اسمك وبريدك ورقم واتساب.",
     error: "حدث خطأ. حاول مجدداً أو راسلنا على واتساب.",
     all: "الكل", cours: "دورات", live: "بث مباشر", conference: "مؤتمرات", replay: "إعادة",
     joinLive: "انضم للبث", watchReplay: "شاهد الإعادة", downloadRes: "تحميل الموارد",
@@ -581,7 +582,7 @@ function EnrollModal({
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setError("")
-    if (!form.name.trim() || !form.email.trim()) { setError(s.required); return }
+    if (!form.name.trim() || !form.email.trim() || !form.phone.trim()) { setError(s.required); return }
     setBusy(true)
     try {
       await api.enrollFormation({
@@ -734,8 +735,8 @@ function EnrollModal({
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
               <input style={inputStyle} type="email" placeholder={s.email} value={form.email} aria-label={s.email}
                 onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} required />
-              <input style={inputStyle} placeholder={s.whatsapp} value={form.phone} aria-label={s.whatsapp}
-                onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} />
+              <PhoneField label={s.whatsapp} placeholder={s.whatsappPh} value={form.phone} region={region} required
+                onChange={(phone) => setForm((f) => ({ ...f, phone }))} />
               <textarea style={{ ...inputStyle, minHeight: 80, resize: "vertical" }} placeholder={s.msgPh} value={form.message} aria-label={s.msg}
                 onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))} />
               {error && <p role="alert" style={{ color: "var(--ds-danger)", fontSize: 13.5, fontFamily: "'Outfit', sans-serif", margin: 0 }}>{error}</p>}
