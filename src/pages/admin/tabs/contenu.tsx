@@ -30,7 +30,7 @@ import { SITE_URL, EMAIL_LOGO_DARK, NL_LANGS, NL_INTRO, STATUSES, STATUS_LABEL, 
 const emptyFormation: Formation = {
   id: "", published: false, title: "", summary: "", description: "",
   level: "debutant", format: "en-ligne", durationHours: 0, free: true, price: 0,
-  image: "", instructor: "", startDate: "", seats: 0, syllabus: [], order: 0,
+  image: "", ogImage: "", instructor: "", startDate: "", seats: 0, syllabus: [], order: 0,
   type: "cours", liveUrl: "", replayUrl: "", resourcesUrl: "",
   startDateTime: "", endDateTime: "", isLive: false, recordingDate: "", tags: [],
 }
@@ -181,6 +181,10 @@ function FormationTab() {
               <div><label style={fieldLabel}>Ordre d'affichage</label><input type="number" style={smallInput} value={draft.order ?? 0} onChange={(e) => setDraft({ ...draft, order: Number(e.target.value) })} /></div>
             </div>
             <div><label style={fieldLabel}>Image (URL)</label><input style={smallInput} value={draft.image ?? ""} onChange={(e) => setDraft({ ...draft, image: e.target.value })} /></div>
+            <div>
+              <label style={fieldLabel}>Image d'aperçu de partage (URL, idéalement 1200×630)</label>
+              <input style={smallInput} placeholder="Affichée quand le lien est partagé (WhatsApp, Facebook…). À défaut, l'image ci-dessus est utilisée." value={draft.ogImage ?? ""} onChange={(e) => setDraft({ ...draft, ogImage: e.target.value })} />
+            </div>
             <div>
               <label style={fieldLabel}>Programme (une ligne par module)</label>
               <textarea style={{ ...smallInput, minHeight: 90, resize: "vertical" }} value={(draft.syllabus ?? []).join("\n")}
