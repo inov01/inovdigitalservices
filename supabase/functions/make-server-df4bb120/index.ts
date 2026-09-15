@@ -2283,6 +2283,7 @@ function cleanFormation(b: any) {
     free,
     price: free ? 0 : num(b?.price, 0),
     image: str(b?.image, 600) || undefined,
+    ogImage: str(b?.ogImage, 600) || undefined,
     instructor: str(b?.instructor, 120) || undefined,
     startDate: str(b?.startDate, 40) || undefined,
     seats: num(b?.seats, 0),
@@ -2301,11 +2302,20 @@ function cleanFormation(b: any) {
   };
 }
 
+// URL-safe slug from a title (accents stripped, spaces → hyphens). The shareable
+// path is `${slug}-${id}` so links stay readable AND uniquely resolvable.
+function slugify(s: string): string {
+  return String(s ?? "")
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "formation";
+}
+const shareSlug = (f: any) => `${slugify(f?.title)}-${f?.id}`;
+
 // Public shape (a published formation, no admin-only noise).
 const publicFormation = (f: any) => ({
-  id: f.id, title: f.title, summary: f.summary, description: f.description,
+  id: f.id, slug: shareSlug(f), title: f.title, summary: f.summary, description: f.description,
   level: f.level, format: f.format, durationHours: f.durationHours,
-  free: f.free, price: f.price, image: f.image, instructor: f.instructor,
+  free: f.free, price: f.price, image: f.image, ogImage: f.ogImage, instructor: f.instructor,
   startDate: f.startDate, seats: f.seats, syllabus: f.syllabus, order: f.order,
   type: f.type, liveUrl: f.liveUrl, replayUrl: f.replayUrl,
   resourcesUrl: f.resourcesUrl, startDateTime: f.startDateTime,
@@ -2321,6 +2331,16 @@ app.get(`${P}/formations`, async (c) => {
     .sort((a, b) => (a.order - b.order) || (a.createdAt < b.createdAt ? 1 : -1))
     .map(publicFormation);
   return c.json({ formations: published });
+});
+
+// Public: a single published formation by share slug (or raw id). Used by the
+// detail page and the Vercel OG serverless function.
+app.get(`${P}/formations/one/:slug`, async (c) => {
+  const slug = c.req.param("slug");
+  const all = ((await kv.getByPrefix("formation:")) as any[]) ?? [];
+  const found = all.find((f) => f.published && (shareSlug(f) === slug || f.id === slug));
+  if (!found) return c.json({ error: "not found" }, 404);
+  return c.json({ formation: publicFormation(found) });
 });
 
 // Public: enroll in a formation. Stored as a lead (payment tracking reuse).
