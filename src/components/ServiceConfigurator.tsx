@@ -1,13 +1,14 @@
 import { useMemo, useState, useRef } from "react"
 import { createPortal } from "react-dom"
-import { X, Check, Share2, Sparkles } from "lucide-react"
+import { X, Check, Share2, Sparkles, Clock, RefreshCw, ShieldCheck, Target } from "lucide-react"
 import { SiWhatsapp } from "./SocialIcons"
 import useModal from "../hooks/useModal"
 import { track } from "../lib/analytics"
 import { api } from "../lib/api"
 import { useSettings } from "../context/AppSettings"
 import type { Lang } from "../i18n/translations"
-import { tierValues, type PricingService, type TierKey } from "../data/services"
+import { tierFeatureList } from "../data/tierFeatures"
+import { tierValues, TIER_KEYS, type PricingService, type TierKey } from "../data/services"
 import {
   optionsFor,
   defaultSelection,
@@ -20,24 +21,30 @@ import {
 type CfgKey =
   | "customize" | "options" | "estimated" | "priceNote" | "designOnly"
   | "order" | "share" | "shared" | "copied" | "close" | "from" | "included"
+  | "choosePlan" | "planIncluded" | "delivery" | "revisions" | "revisionWindow"
+  | "deposit" | "balance" | "whyItWorks" | "recommended" | "days"
 const L: Record<Lang, Record<CfgKey, string>> = {
-  fr: { customize: "Personnaliser", options: "Configurez votre commande", estimated: "Estimation", priceNote: "Estimation indicative — le devis final est confirmé après le brief.", designOnly: "Prix du design uniquement", order: "Commander sur WhatsApp", share: "Partager", shared: "Partagé", copied: "Lien copié", close: "Fermer", from: "à partir de", included: "inclus" },
-  en: { customize: "Customize", options: "Configure your order", estimated: "Estimate", priceNote: "Indicative estimate — the final quote is confirmed after the brief.", designOnly: "Design price only", order: "Order on WhatsApp", share: "Share", shared: "Shared", copied: "Link copied", close: "Close", from: "from", included: "included" },
-  es: { customize: "Personalizar", options: "Configura tu pedido", estimated: "Estimación", priceNote: "Estimación indicativa — el presupuesto final se confirma tras el brief.", designOnly: "Solo precio del diseño", order: "Pedir por WhatsApp", share: "Compartir", shared: "Compartido", copied: "Enlace copiado", close: "Cerrar", from: "desde", included: "incluido" },
-  ht: { customize: "Pèsonalize", options: "Konfigire kòmann ou", estimated: "Estimasyon", priceNote: "Estimasyon endikatif — devi final la konfime apre brief la.", designOnly: "Pri design lan sèlman", order: "Kòmande sou WhatsApp", share: "Pataje", shared: "Pataje", copied: "Lyen kopye", close: "Fèmen", from: "apati", included: "enkli" },
-  pt: { customize: "Personalizar", options: "Configure o seu pedido", estimated: "Estimativa", priceNote: "Estimativa indicativa — o orçamento final é confirmado após o briefing.", designOnly: "Apenas preço do design", order: "Pedir no WhatsApp", share: "Partilhar", shared: "Partilhado", copied: "Link copiado", close: "Fechar", from: "a partir de", included: "incluído" },
-  it: { customize: "Personalizza", options: "Configura il tuo ordine", estimated: "Stima", priceNote: "Stima indicativa — il preventivo finale è confermato dopo il brief.", designOnly: "Solo prezzo del design", order: "Ordina su WhatsApp", share: "Condividi", shared: "Condiviso", copied: "Link copiato", close: "Chiudi", from: "da", included: "incluso" },
-  de: { customize: "Anpassen", options: "Bestellung konfigurieren", estimated: "Schätzung", priceNote: "Richtwert — das endgültige Angebot wird nach dem Briefing bestätigt.", designOnly: "Nur Designpreis", order: "Auf WhatsApp bestellen", share: "Teilen", shared: "Geteilt", copied: "Link kopiert", close: "Schließen", from: "ab", included: "inklusive" },
-  ar: { customize: "تخصيص", options: "اضبط طلبك", estimated: "تقدير", priceNote: "تقدير إرشادي — يتم تأكيد العرض النهائي بعد الموجز.", designOnly: "سعر التصميم فقط", order: "اطلب عبر واتساب", share: "مشاركة", shared: "تمت المشاركة", copied: "تم نسخ الرابط", close: "إغلاق", from: "ابتداءً من", included: "متضمّن" },
+  fr: { customize: "Personnaliser", options: "Votre offre partagée", estimated: "Estimation", priceNote: "Estimation indicative — le devis final est confirmé après le brief.", designOnly: "Prix du design uniquement", order: "Commander sur WhatsApp", share: "Partager", shared: "Partagé", copied: "Lien copié", close: "Fermer", from: "à partir de", included: "inclus", choosePlan: "Choisissez votre formule", planIncluded: "Ce qui est inclus", delivery: "Livraison", revisions: "révisions", revisionWindow: "fenêtre de", deposit: "Acompte aujourd'hui", balance: "Solde à la livraison", whyItWorks: "Pourquoi ce service", recommended: "Recommandé", days: "jours" },
+  en: { customize: "Customize", options: "Your shared offer", estimated: "Estimate", priceNote: "Indicative estimate — the final quote is confirmed after the brief.", designOnly: "Design price only", order: "Order on WhatsApp", share: "Share", shared: "Shared", copied: "Link copied", close: "Close", from: "from", included: "included", choosePlan: "Choose your plan", planIncluded: "What's included", delivery: "Delivery", revisions: "revisions", revisionWindow: "window of", deposit: "Deposit today", balance: "Balance on delivery", whyItWorks: "Why this service", recommended: "Recommended", days: "days" },
+  es: { customize: "Personalizar", options: "Tu oferta compartida", estimated: "Estimación", priceNote: "Estimación indicativa — el presupuesto final se confirma tras el brief.", designOnly: "Solo precio del diseño", order: "Pedir por WhatsApp", share: "Compartir", shared: "Compartido", copied: "Enlace copiado", close: "Cerrar", from: "desde", included: "incluido", choosePlan: "Elige tu plan", planIncluded: "Qué incluye", delivery: "Entrega", revisions: "revisiones", revisionWindow: "ventana de", deposit: "Anticipo hoy", balance: "Saldo a la entrega", whyItWorks: "Por qué este servicio", recommended: "Recomendado", days: "días" },
+  ht: { customize: "Pèsonalize", options: "Òf yo pataje avè w la", estimated: "Estimasyon", priceNote: "Estimasyon endikatif — devi final la konfime apre brief la.", designOnly: "Pri design lan sèlman", order: "Kòmande sou WhatsApp", share: "Pataje", shared: "Pataje", copied: "Lyen kopye", close: "Fèmen", from: "apati", included: "enkli", choosePlan: "Chwazi fòmil ou", planIncluded: "Sa ki ladan", delivery: "Livrezon", revisions: "revizyon", revisionWindow: "fenèt", deposit: "Akont jodi a", balance: "Rès la lè n livre", whyItWorks: "Poukisa sèvis sa a", recommended: "Rekòmande", days: "jou" },
+  pt: { customize: "Personalizar", options: "A sua oferta partilhada", estimated: "Estimativa", priceNote: "Estimativa indicativa — o orçamento final é confirmado após o briefing.", designOnly: "Apenas preço do design", order: "Pedir no WhatsApp", share: "Partilhar", shared: "Partilhado", copied: "Link copiado", close: "Fechar", from: "a partir de", included: "incluído", choosePlan: "Escolha o seu plano", planIncluded: "O que está incluído", delivery: "Entrega", revisions: "revisões", revisionWindow: "janela de", deposit: "Sinal hoje", balance: "Saldo na entrega", whyItWorks: "Por que este serviço", recommended: "Recomendado", days: "dias" },
+  it: { customize: "Personalizza", options: "La tua offerta condivisa", estimated: "Stima", priceNote: "Stima indicativa — il preventivo finale è confermato dopo il brief.", designOnly: "Solo prezzo del design", order: "Ordina su WhatsApp", share: "Condividi", shared: "Condiviso", copied: "Link copiato", close: "Chiudi", from: "da", included: "incluso", choosePlan: "Scegli la formula", planIncluded: "Cosa è incluso", delivery: "Consegna", revisions: "revisioni", revisionWindow: "finestra di", deposit: "Acconto oggi", balance: "Saldo alla consegna", whyItWorks: "Perché questo servizio", recommended: "Consigliato", days: "giorni" },
+  de: { customize: "Anpassen", options: "Ihr geteiltes Angebot", estimated: "Schätzung", priceNote: "Richtwert — das endgültige Angebot wird nach dem Briefing bestätigt.", designOnly: "Nur Designpreis", order: "Auf WhatsApp bestellen", share: "Teilen", shared: "Geteilt", copied: "Link kopiert", close: "Schließen", from: "ab", included: "inklusive", choosePlan: "Paket auswählen", planIncluded: "Das ist enthalten", delivery: "Lieferung", revisions: "Korrekturen", revisionWindow: "Zeitraum", deposit: "Anzahlung heute", balance: "Rest bei Lieferung", whyItWorks: "Warum dieser Service", recommended: "Empfohlen", days: "Tage" },
+  ar: { customize: "تخصيص", options: "عرضك المشترك", estimated: "تقدير", priceNote: "تقدير إرشادي — يتم تأكيد العرض النهائي بعد الموجز.", designOnly: "سعر التصميم فقط", order: "اطلب عبر واتساب", share: "مشاركة", shared: "تمت المشاركة", copied: "تم نسخ الرابط", close: "إغلاق", from: "ابتداءً من", included: "متضمّن", choosePlan: "اختر الباقة", planIncluded: "ما تتضمنه", delivery: "التسليم", revisions: "تعديلات", revisionWindow: "نافذة", deposit: "العربون اليوم", balance: "الرصيد عند التسليم", whyItWorks: "لماذا هذه الخدمة", recommended: "موصى به", days: "أيام" },
 }
 
 export default function ServiceConfigurator({
-  service, name, tier, tierLabel, onClose,
+  service, name, description, advantage, tier, tierLabel, tierLabels, onTier, onClose,
 }: {
   service: PricingService
   name: string
+  description: string
+  advantage: string
   tier: TierKey
   tierLabel: string
+  tierLabels: { formula: string } & Record<TierKey, string>
+  onTier: (tier: TierKey) => void
   onClose: () => void
 }) {
   const { fmt, priceFor, lang, currency, region } = useSettings()
@@ -53,6 +60,10 @@ export default function ServiceConfigurator({
   const deltaUsd = selectionDelta(groups, sel)
   const totalUsd = basePrice + deltaUsd
   const totalDisplay = fmt(priceFor(totalUsd))
+  const tierDetails = tierValues(service, tier)
+  const features = tierFeatureList(service.id, tier, lang)
+  const depositDisplay = fmt(priceFor(totalUsd) * 0.7)
+  const balanceDisplay = fmt(priceFor(totalUsd) * 0.3)
 
   function toggle(g: ServiceOptionGroup, optId: string) {
     setSel((prev) => {
@@ -69,7 +80,7 @@ export default function ServiceConfigurator({
 
   function shareUrl(): string {
     const base = `${window.location.origin}/devis`
-    return `${base}?service=${service.id}`
+    return `${base}?service=${service.id}&tier=${tier}`
   }
 
   function captureLead() {
@@ -134,8 +145,8 @@ export default function ServiceConfigurator({
         ref={dialogRef}
         onClick={(e) => e.stopPropagation()}
         style={{
-          width: "100%", maxWidth: 520, maxHeight: "92vh", display: "flex", flexDirection: "column",
-          background: "var(--ds-bg)", borderRadius: "20px 20px 0 0", overflow: "hidden",
+          width: "100%", maxWidth: 640, maxHeight: "94vh", display: "flex", flexDirection: "column",
+          background: "var(--ds-bg)", borderRadius: "var(--r-xl) var(--r-xl) 0 0", overflow: "hidden",
           boxShadow: "0 -12px 48px rgba(0,0,0,0.28)",
         }}
       >
@@ -161,6 +172,69 @@ export default function ServiceConfigurator({
 
         {/* Options — scrollable */}
         <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
+          <div>
+            <p style={{ margin: 0, fontFamily: "'Outfit', sans-serif", fontSize: 14, color: "var(--ds-text-sec)", lineHeight: 1.55 }}>{description}</p>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 9, marginTop: 12, padding: "11px 12px", borderRadius: "var(--r-md)", background: "var(--ds-accent-a10)", color: "var(--ds-text-sec)" }}>
+              <Target size={17} color="var(--ds-accent-text)" aria-hidden="true" style={{ flexShrink: 0, marginTop: 2 }} />
+              <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12.5, lineHeight: 1.45 }}><strong style={{ color: "var(--ds-text)" }}>{l.whyItWorks} :</strong> {advantage}</span>
+            </div>
+          </div>
+
+          <fieldset style={{ border: "none", margin: 0, padding: 0 }}>
+            <legend style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 700, color: "var(--ds-text)", padding: 0, marginBottom: 9 }}>{l.choosePlan}</legend>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 7 }}>
+              {TIER_KEYS.map((key) => {
+                const active = key === tier
+                const values = tierValues(service, key)
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => onTier(key)}
+                    style={{
+                      position: "relative", minWidth: 0, padding: "11px 6px 9px", cursor: "pointer",
+                      borderRadius: "var(--r-md)", border: `1.5px solid ${active ? "var(--ds-accent)" : "var(--ds-border)"}`,
+                      background: active ? "var(--ds-accent-a10)" : "var(--ds-bg-card)", color: "var(--ds-text)",
+                      fontFamily: "'Outfit', sans-serif",
+                    }}
+                  >
+                    {key === "standard" && <span style={{ display: "block", color: "var(--ds-accent-text)", fontSize: 9, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 2 }}>{l.recommended}</span>}
+                    <span style={{ display: "block", fontSize: 12.5, fontWeight: 800 }}>{tierLabels[key]}</span>
+                    <span style={{ display: "block", fontSize: 12, fontWeight: 700, color: active ? "var(--ds-accent-text)" : "var(--ds-text-muted)", marginTop: 3 }}>{fmt(priceFor(values.price))}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </fieldset>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: "var(--r-md)", background: "var(--ds-bg-sec)" }}>
+              <Clock size={16} color="var(--ds-accent-text)" aria-hidden="true" />
+              <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, color: "var(--ds-text-sec)" }}><strong style={{ color: "var(--ds-text)" }}>{l.delivery}</strong><br />{service.deliveryDays} {l.days}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", borderRadius: "var(--r-md)", background: "var(--ds-bg-sec)" }}>
+              <RefreshCw size={16} color="var(--ds-accent-text)" aria-hidden="true" />
+              <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, color: "var(--ds-text-sec)" }}><strong style={{ color: "var(--ds-text)" }}>{tierDetails.revisions} {l.revisions}</strong><br />{l.revisionWindow} {tierDetails.revisionDays} {l.days}</span>
+            </div>
+          </div>
+
+          {features.length > 0 && (
+            <div>
+              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 700, color: "var(--ds-text)", marginBottom: 8 }}>{l.planIncluded}</div>
+              <div style={{ display: "grid", gap: 7 }}>
+                {features.map((feature) => (
+                  <div key={feature} style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "'Outfit', sans-serif", fontSize: 12.5, color: "var(--ds-text-sec)" }}>
+                    <span style={{ width: 18, height: 18, flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-full)", background: tier === "premium" ? "var(--ds-accent-btn-grad)" : "var(--ds-accent-a14)" }}>
+                      <Check size={12} strokeWidth={3} color={tier === "premium" ? "white" : "var(--ds-accent-text)"} aria-hidden="true" />
+                    </span>
+                    {feature}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {groups.map((g) => (
             <fieldset key={g.id} style={{ border: "none", margin: 0, padding: 0 }}>
               <legend style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 700, color: "var(--ds-text)", padding: 0, marginBottom: 8 }}>{g.label}</legend>
@@ -216,6 +290,14 @@ export default function ServiceConfigurator({
               ⚠︎ {service.priceNote}
             </p>
           )}
+
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px", border: "1px solid var(--ds-border)", borderRadius: "var(--r-md)" }}>
+            <ShieldCheck size={19} color="var(--ds-accent-text)" aria-hidden="true" />
+            <div style={{ flex: 1, display: "flex", justifyContent: "space-between", gap: 10, fontFamily: "'Outfit', sans-serif", fontSize: 12 }}>
+              <span style={{ color: "var(--ds-text-muted)" }}>{l.deposit}<br /><strong style={{ color: "var(--ds-text)" }}>{depositDisplay}</strong></span>
+              <span style={{ color: "var(--ds-text-muted)", textAlign: "right" }}>{l.balance}<br /><strong style={{ color: "var(--ds-text)" }}>{balanceDisplay}</strong></span>
+            </div>
+          </div>
         </div>
 
         {/* Sticky footer — live price + actions */}

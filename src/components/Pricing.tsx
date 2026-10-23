@@ -170,9 +170,14 @@ export default function Pricing() {
 
   // Deep-link: /devis?service=18 opens that service's configurator (shared links).
   useEffect(() => {
-    const raw = new URLSearchParams(window.location.search).get("service")
+    const params = new URLSearchParams(window.location.search)
+    const raw = params.get("service")
+    const sharedTier = params.get("tier")
     const id = raw ? Number(raw) : NaN
     if (!Number.isNaN(id)) {
+      if (sharedTier && TIER_KEYS.includes(sharedTier as TierKey)) {
+        setTier(id, sharedTier as TierKey)
+      }
       setAccordionOpen(true)
       setCfgId(id)
     }
@@ -729,8 +734,12 @@ export default function Pricing() {
                   <ServiceConfigurator
                     service={cs}
                     name={svcName(cs)}
+                    description={svcDesc(cs)}
+                    advantage={svcAdvantage(cs)}
                     tier={tierOf(cs)}
                     tierLabel={tl[tierOf(cs)]}
+                    tierLabels={tl}
+                    onTier={(tk) => setTier(cs.id, tk)}
                     onClose={() => setCfgId(null)}
                   />
                 )
@@ -1275,7 +1284,7 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl, onCo
   const [shared, setShared] = useState(false)
   async function shareService(e: React.MouseEvent) {
     e.stopPropagation()
-    const url = `${window.location.origin}/devis?service=${s.id}`
+    const url = `${window.location.origin}/devis?service=${s.id}&tier=${tier}`
     const text = `${name} · INOV Digital Services`
     try {
       if (navigator.share) await navigator.share({ title: name, text, url })
