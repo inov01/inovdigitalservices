@@ -21,11 +21,11 @@ import { registerStepUpVerifier } from "../../../lib/stepup"
 import { useAdminAuth } from "../../../hooks/useAdminAuth"
 import { useSessionTimeout, ADMIN_SESSION_POLICY } from "../../../hooks/useSessionTimeout"
 import { supabase } from "../../../lib/supabaseClient"
-import { adminApi, api, type Lead, type LeadItem, type Subscriber, type SiteSettings, type Campaign, type AdminService, type AdminWork, type AdminAlbum, type AdminBlog, type AssistantMessage, type Testimonial, type Formation, type Collaborateur, type Eventualite, type EventualiteInput } from "../../../lib/api"
+import { adminApi, api, type Lead, type LeadItem, type Subscriber, type SiteSettings, type Campaign, type AdminService, type AdminWork, type AdminAlbum, type AdminBlog, type AssistantMessage, type Testimonial, type Formation, type Collaborateur, type Eventualite, type EventualiteInput, type FollowUpPreview } from "../../../lib/api"
 import { useSettings } from "../../../context/AppSettings"
 import logoDark from "../../../imports/logo_pour_fond_noir.webp"
 import logoLight from "../../../imports/logo.webp"
-import { SITE_URL, EMAIL_LOGO_DARK, NL_LANGS, NL_INTRO, STATUSES, STATUS_LABEL, STATUS_COLOR, PAY_STATUS_LABEL, SORT_LABEL, TIER_FR, shell, card, btn, btnPrimary, input, STYLE, sectionTitle, smallLabel, Stat, Toolbar, Chip, matchLead, sortLeads, downloadCsv, withLocalAmounts, esc, fmtMoney, receiptNo, localMultiplier, svcLineAmount, firstName, replyGreeting, amountLabel, mailtoReply, waReply, waServiceReply, buildReceiptHtml, printReceipt, buildProformaHtml, buildDeliveryHtml, printDoc, ListSkeleton, Field, BriefAttachments, EditField, ProcedureCard, Empty, buildNewsletterHtml, AdminStyle, type SortKey, type SvcLine, type NlArticle } from "../shared"
+import { SITE_URL, EMAIL_LOGO_DARK, NL_LANGS, NL_INTRO, STATUSES, STATUS_LABEL, STATUS_COLOR, PAY_STATUS_LABEL, SORT_LABEL, TIER_FR, shell, card, btn, btnPrimary, input, STYLE, sectionTitle, smallLabel, Stat, Toolbar, Chip, matchLead, sortLeads, downloadCsv, withLocalAmounts, esc, fmtMoney, receiptNo, localMultiplier, svcLineAmount, firstName, replyGreeting, amountLabel, mailtoReply, waReply, waServiceReply, buildReceiptHtml, printReceipt, buildProformaHtml, buildDeliveryHtml, printDoc, ListSkeleton, Field, BriefAttachments, EditField, ProcedureCard, Empty, buildNewsletterHtml, buildReminderEmailHtml, AdminStyle, type SortKey, type SvcLine, type NlArticle, type ReminderEmailKind } from "../shared"
 
 function NewsletterTab({ subs, loading, onChange }: { subs: Subscriber[]; loading: boolean; onChange: () => void }) {
   const [query, setQuery] = useState("")
@@ -584,5 +584,119 @@ function LinksTab() {
   )
 }
 
+const REMINDER_OPTIONS: { kind: ReminderEmailKind; label: string; cadence: string; description: string }[] = [
+  { kind: "quote", label: "Devis sans réponse", cadence: "J+2 · J+7", description: "Un rappel posé pour rouvrir la discussion." },
+  { kind: "payment", label: "Paiement en attente", cadence: "J+1 · J+4", description: "Une confirmation claire, sans pression." },
+  { kind: "registration", label: "Inscription incomplète", cadence: "J+1 · J+3", description: "Ramène le participant vers sa dernière étape." },
+  { kind: "training", label: "Rappel formation", cadence: "J-7 · J-1 · H-1", description: "Les informations essentielles avant la session." },
+  { kind: "followup", label: "Prospect à relancer", cadence: "J+5 · J+12", description: "Une reprise de contact humaine et adaptée." },
+  { kind: "reactivation", label: "Client inactif", cadence: "Après 90 jours", description: "Un retour en douceur autour de ses projets." },
+]
 
-export { NewsletterTab, CampaignsTab, LinksTab }
+function RemindersEmailTab({ adminEmail }: { adminEmail: string }) {
+  const [kind, setKind] = useState<ReminderEmailKind>("quote")
+  const [lang, setLang] = useState<"fr" | "ht">("fr")
+  const [first, setFirst] = useState("Marie")
+  const [detail, setDetail] = useState("Votre devis INOV reste disponible. Nous pouvons aussi l’ajuster à votre calendrier ou à votre budget.")
+  const [url, setUrl] = useState(`${SITE_URL}/devis`)
+  const [copied, setCopied] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null)
+  const [eligible, setEligible] = useState<FollowUpPreview[]>([])
+  const [queueLoading, setQueueLoading] = useState(true)
+  const [sendingId, setSendingId] = useState("")
+  const current = REMINDER_OPTIONS.find((item) => item.kind === kind)!
+  const email = useMemo(() => buildReminderEmailHtml({ kind, lang, firstName: first, detail, actionUrl: url }), [kind, lang, first, detail, url])
+
+  async function loadQueue() {
+    setQueueLoading(true)
+    try { setEligible((await adminApi.previewFollowUps()).eligible) } catch { setEligible([]) }
+    finally { setQueueLoading(false) }
+  }
+  useEffect(() => { loadQueue() }, [])
+
+  async function sendLeadFollowUp(lead: FollowUpPreview) {
+    if (!confirm(`Envoyer une relance à ${lead.name || lead.email} ?`)) return
+    setSendingId(lead.id); setNotice(null)
+    try {
+      await adminApi.sendFollowUp(lead.id)
+      setNotice({ ok: true, text: `Relance envoyée à ${lead.email}.` })
+      await loadQueue()
+    } catch { setNotice({ ok: false, text: "La relance n’a pas pu être envoyée." }) }
+    finally { setSendingId("") }
+  }
+
+  async function copyHtml() {
+    try {
+      await navigator.clipboard.writeText(email.html)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1800)
+    } catch { setNotice({ ok: false, text: "La copie a été bloquée par le navigateur." }) }
+  }
+
+  async function sendTest() {
+    setSending(true); setNotice(null)
+    try {
+      const r = await adminApi.sendNewsletter({ subject: `[TEST] ${email.subject}`, html: email.html, test: true, testEmail: adminEmail })
+      setNotice({ ok: true, text: `Test envoyé à ${adminEmail} (${r.sent} reçu).` })
+    } catch { setNotice({ ok: false, text: "Le test n’a pas pu être envoyé. Vérifiez la configuration SMTP côté serveur." }) }
+    finally { setSending(false) }
+  }
+
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "minmax(310px, .9fr) minmax(340px, 1.1fr)", gap: 18, alignItems: "start" }} className="adm-doc-grid">
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ ...card, padding: 0, overflow: "hidden", borderColor: "color-mix(in srgb, var(--ds-accent) 36%, var(--ds-border))" }}>
+          <div style={{ padding: "20px 20px 16px", background: "linear-gradient(135deg, var(--ds-accent-a16), transparent)" }}>
+            <div style={{ ...smallLabel, color: "var(--ds-accent-text)" }}>Relances client</div>
+            <h2 style={{ ...sectionTitle, marginTop: 7, fontSize: 22 }}>Un message utile, au bon moment.</h2>
+            <p style={{ margin: "8px 0 0", fontSize: 13.5, lineHeight: 1.55, color: "var(--ds-text-muted)" }}>Choisissez un scénario, ajustez la voix, puis envoyez-vous un test avant toute automatisation.</p>
+          </div>
+          <div style={{ padding: 10, display: "grid", gap: 5 }}>
+            {REMINDER_OPTIONS.map((item) => {
+              const active = kind === item.kind
+              return <button key={item.kind} onClick={() => setKind(item.kind)} style={{ textAlign: "left", cursor: "pointer", padding: "12px 13px", borderRadius: "var(--r-md)", border: active ? "1px solid var(--ds-accent)" : "1px solid transparent", background: active ? "var(--ds-accent-a12)" : "transparent", color: "var(--ds-text)", fontFamily: "inherit", display: "grid", gridTemplateColumns: "1fr auto", gap: "2px 10px" }}>
+                <span style={{ fontSize: 14, fontWeight: 800 }}>{item.label}</span><span style={{ fontSize: 11, fontWeight: 800, color: active ? "var(--ds-accent-text)" : "var(--ds-text-faint)", letterSpacing: ".04em" }}>{item.cadence}</span>
+                <span style={{ gridColumn: "1 / -1", fontSize: 12.2, color: "var(--ds-text-muted)", lineHeight: 1.35 }}>{item.description}</span>
+              </button>
+            })}
+          </div>
+        </div>
+        <div style={{ ...card, display: "grid", gap: 12 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><h3 style={{ ...sectionTitle, fontSize: 16 }}>Personnaliser</h3><span style={{ ...smallLabel, color: "var(--ds-accent-text)" }}>{current.cadence}</span></div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 112px", gap: 10 }}>
+            <label style={{ display: "grid", gap: 5 }}><span style={smallLabel}>Prénom</span><input value={first} onChange={(e) => setFirst(e.target.value)} style={input} /></label>
+            <label style={{ display: "grid", gap: 5 }}><span style={smallLabel}>Langue</span><select value={lang} onChange={(e) => setLang(e.target.value as "fr" | "ht")} style={input}><option value="fr">Français</option><option value="ht">Kreyòl</option></select></label>
+          </div>
+          <label style={{ display: "grid", gap: 5 }}><span style={smallLabel}>Détail personnalisé</span><textarea value={detail} onChange={(e) => setDetail(e.target.value)} style={{ ...input, minHeight: 88, resize: "vertical", lineHeight: 1.5 }} /></label>
+          <label style={{ display: "grid", gap: 5 }}><span style={smallLabel}>Lien d’action</span><input value={url} onChange={(e) => setUrl(e.target.value)} style={input} /></label>
+        </div>
+        <div style={{ ...card, padding: 0, overflow: "hidden" }}>
+          <div style={{ padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, borderBottom: "1px solid var(--ds-border)" }}>
+            <div><div style={smallLabel}>File automatique — devis</div><div style={{ fontSize: 14, fontWeight: 800, marginTop: 3 }}>{queueLoading ? "Vérification…" : `${eligible.length} relance${eligible.length > 1 ? "s" : ""} prête${eligible.length > 1 ? "s" : ""}`}</div></div>
+            <button onClick={loadQueue} disabled={queueLoading} aria-label="Actualiser la file" style={{ ...btn, padding: "7px 9px" }}><RefreshCw size={14} style={queueLoading ? { animation: "spin .8s linear infinite" } : undefined} /></button>
+          </div>
+          {!queueLoading && eligible.length === 0 && <p style={{ padding: "14px 16px", margin: 0, color: "var(--ds-text-muted)", fontSize: 12.5, lineHeight: 1.5 }}>Aucun devis n’est éligible actuellement. La cadence et le plafond d’envoi sont appliqués côté serveur.</p>}
+          {eligible.slice(0, 3).map((lead) => <div key={lead.id} style={{ padding: "11px 16px", borderTop: "1px solid var(--ds-border)", display: "flex", alignItems: "center", gap: 9 }}><div style={{ minWidth: 0, flex: 1 }}><div style={{ fontSize: 13, fontWeight: 800, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{lead.name || lead.email}</div><div style={{ fontSize: 11.5, color: "var(--ds-text-faint)" }}>{lead.followUpCount === 0 ? "Premier rappel" : `Relance n°${lead.followUpCount + 1}`} · {lead.email}</div></div><button onClick={() => sendLeadFollowUp(lead)} disabled={sendingId === lead.id} style={{ ...btn, padding: "6px 9px", fontSize: 12 }}>{sendingId === lead.id ? <Loader2 size={13} style={{ animation: "spin .8s linear infinite" }} /> : <Send size={13} />}</button></div>)}
+        </div>
+      </div>
+      <div style={{ ...card, padding: 0, overflow: "hidden", background: "#ece9e4" }}>
+        <div style={{ background: "var(--ds-bg-card)", padding: "13px 16px", borderBottom: "1px solid var(--ds-border)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+          <div><div style={smallLabel}>Aperçu e-mail</div><div style={{ fontSize: 14, fontWeight: 800, marginTop: 3 }}>{email.subject}</div></div>
+          <span style={{ fontSize: 11.5, color: "var(--ds-text-faint)", whiteSpace: "nowrap" }}>600 px · compatible e-mail</span>
+        </div>
+        <div style={{ padding: "18px 12px", display: "grid", placeItems: "center", minHeight: 570 }}>
+          <iframe title="Aperçu de la relance" srcDoc={email.html} sandbox="allow-popups allow-popups-to-escape-sandbox" style={{ width: "min(100%, 600px)", height: 535, border: "none", background: "#f2f0ed", boxShadow: "0 12px 34px rgba(0,0,0,.16)" }} />
+        </div>
+        <div style={{ background: "var(--ds-bg-card)", padding: "14px 16px", borderTop: "1px solid var(--ds-border)", display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+          <button onClick={copyHtml} style={btn}>{copied ? <Check size={15} /> : <Copy size={15} />}{copied ? "HTML copié" : "Copier le HTML"}</button>
+          <button onClick={sendTest} disabled={sending} style={{ ...btnPrimary, opacity: sending ? .65 : 1 }}>{sending ? <Loader2 size={15} style={{ animation: "spin .8s linear infinite" }} /> : <Send size={15} />}{sending ? "Envoi…" : "M’envoyer un test"}</button>
+          {notice && <span style={{ fontSize: 12.5, color: notice.ok ? "var(--ds-success)" : "var(--ds-danger)", fontWeight: 700 }}>{notice.text}</span>}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
+export { NewsletterTab, CampaignsTab, LinksTab, RemindersEmailTab }

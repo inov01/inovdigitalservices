@@ -32,7 +32,7 @@ import HomeTab from "./HomeTab"
 import { StepUpModal } from "./auth"
 import { LeadsTab, PaymentsTab, ReviewsTab, DocumentsTab } from "./tabs/commercial"
 import { FormationTab, CollaborateursTab, PricingTab, ServicesTab, PortfolioTab, BlogTab } from "./tabs/contenu"
-import { NewsletterTab, CampaignsTab, LinksTab } from "./tabs/marketing"
+import { NewsletterTab, CampaignsTab, LinksTab, RemindersEmailTab } from "./tabs/marketing"
 import { SocialRepliesTab } from "./tabs/social"
 import { ProceduresTab, AssistantTab, RemindersTab, EventualitesTab } from "./tabs/outils"
 import { SettingsTab } from "./tabs/systeme"
@@ -267,6 +267,7 @@ function Dashboard({ email, onSignOut }: { email: string; onSignOut: () => void 
             {tab === "eventualites" && <EventualitesTab />}
             {tab === "newsletter" && <NewsletterTab subs={subs} loading={loading} onChange={refresh} />}
             {tab === "campaigns" && <CampaignsTab subs={subs} adminEmail={email} />}
+            {tab === "reminder-emails" && <RemindersEmailTab adminEmail={email} />}
             {tab === "settings" && <SettingsTab />}
           </main>
         </div>

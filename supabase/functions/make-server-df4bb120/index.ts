@@ -807,7 +807,10 @@ function buildProformaHtml(l: any): string {
 // ── Unified transactional email sender (Gmail SMTP) ───────────────────────────
 // Uses Gmail SMTP with an app password. Configure GMAIL_USER and
 // GMAIL_APP_PASSWORD as Supabase function secrets.
-async function sendMail(opts: { to: string | string[]; subject: string; html: string; text?: string }): Promise<void> {
+async function sendMail(opts: {
+  to: string | string[]; subject: string; html: string; text?: string;
+  attachments?: { filename: string; contentType: string; encoding: "base64"; content: string; contentID?: string }[];
+}): Promise<void> {
   const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
   const user = Deno.env.get("GMAIL_USER");
   const pass = Deno.env.get("GMAIL_APP_PASSWORD");
@@ -822,6 +825,7 @@ async function sendMail(opts: { to: string | string[]; subject: string; html: st
       subject: opts.subject,
       content: opts.text ?? "Cet e-mail contient du contenu HTML. Activez l'affichage HTML pour le voir.",
       html: opts.html,
+      ...(opts.attachments?.length ? { attachments: opts.attachments } : {}),
     });
   } finally {
     await client.close();
@@ -857,8 +861,56 @@ async function sendReceiptEmail(lead: any, subjectOverride?: string): Promise<vo
   });
 }
 
-// Emails the client the proforma they requested (same HTML rendered on the site),
-// and notifies the team. French-only copy, matching the receipt email's tone.
+// Branded e-mail wrapper for the proforma: a personal message, the proforma
+// PNG shown inline (same design as on the site), and a short "your preferences"
+// call to action. Falls back to the server-rendered sheet when no PNG was sent.
+function buildProformaEmailHtml(p: any, hasPng: boolean, first: string, no: string, totalStr: string): string {
+  const logoUrl = Deno.env.get("LOGO_URL") || EMAIL_LOGO;
+  const waText = encodeURIComponent(`Bonjour INOV, je souhaite confirmer ma proforma${no ? ` n° ${no}` : ""}.`);
+  const body = hasPng
+    ? `<img src="cid:proforma-png" alt="Facture proforma${no ? ` n° ${escH(no)}` : ""}" width="640" style="display:block;width:100%;max-width:640px;height:auto;border:1px solid #e5e5e5;border-radius:6px;">`
+    : buildProformaHtml(p).replace(/^[\s\S]*?<body[^>]*>/i, "").replace(/<\/body>[\s\S]*$/i, "");
+  const pref = (t: string) => `<li style="margin:0 0 6px;">${t}</li>`;
+  return `<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Votre facture proforma${no ? ` ${escH(no)}` : ""}</title></head>
+<body style="margin:0;padding:24px 12px;background:#f4f4f4;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#111;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
+  <table role="presentation" width="680" cellpadding="0" cellspacing="0" style="background:#fff;max-width:680px;width:100%;border-radius:10px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.10);">
+    <tr><td style="height:5px;background:#F7931E;line-height:5px;font-size:0;">&nbsp;</td></tr>
+    <tr><td style="padding:32px 36px 8px;">
+      ${logoUrl ? `<img src="${escH(logoUrl)}" alt="INOV Digital Services" height="48" style="height:48px;width:auto;max-width:200px;border:0;display:block;">` : `<div style="font-size:22px;font-weight:900;">INOV <span style="color:#F7931E;">Digital Services</span></div>`}
+    </td></tr>
+    <tr><td style="padding:16px 36px 4px;font-size:15px;line-height:1.7;">
+      <p style="margin:0 0 12px;font-size:20px;font-weight:800;">${first ? `Bonjour ${escH(first)},` : "Bonjour,"}</p>
+      <p style="margin:0 0 12px;">Merci pour votre intérêt pour nos services. Voici votre <strong>facture proforma${no ? ` n° ${escH(no)}` : ""}</strong>${totalStr ? `, d'un montant de <strong>${escH(totalStr)}</strong>` : ""}. Elle est jointe à cet e-mail en <strong>image PNG</strong>, à conserver ou à partager facilement.</p>
+    </td></tr>
+    <tr><td style="padding:8px 36px 20px;">${body}</td></tr>
+    <tr><td style="padding:0 36px 8px;font-size:14.5px;line-height:1.7;">
+      <p style="margin:0 0 8px;font-weight:800;">Dites-nous vos préférences</p>
+      <p style="margin:0 0 8px;color:#444;">Pour finaliser votre projet exactement comme vous le souhaitez, répondez simplement à cet e-mail en nous indiquant :</p>
+      <ul style="margin:0 0 14px;padding-left:20px;color:#444;">
+        ${pref("la formule choisie (Essentiel, Standard ou Premium) ou les ajustements souhaités ;")}
+        ${pref("vos délais idéaux et toute contrainte particulière ;")}
+        ${pref("votre moyen de paiement préféré pour l'acompte de 70 %.")}
+      </ul>
+      <p style="margin:0 0 6px;color:#666;font-size:13px;">Cette proforma est valable 15 jours et ne constitue pas un reçu de paiement.</p>
+    </td></tr>
+    <tr><td align="center" style="padding:12px 36px 8px;">
+      <a href="https://wa.me/50936255920?text=${waText}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;font-weight:800;font-size:14px;padding:13px 28px;border-radius:999px;">Confirmer sur WhatsApp</a>
+    </td></tr>
+    <tr><td style="padding:20px 36px 32px;font-size:13.5px;line-height:1.7;color:#444;">
+      À très vite,<br><strong style="color:#111;">L'équipe INOV Digital Services</strong><br>
+      @inov_digital_services &nbsp;·&nbsp; (+509) 3625-5920
+    </td></tr>
+  </table>
+  </td></tr></table>
+</body></html>`;
+}
+
+// Emails the client the proforma they requested (PNG rendered on the site, sent
+// inline + as an attachment) and notifies the team. French-only copy, matching
+// the receipt email's tone.
 async function sendProformaEmail(p: any): Promise<void> {
   const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
   const first = String(p.name ?? "").trim().split(/\s+/)[0] || "";
@@ -869,25 +921,36 @@ async function sendProformaEmail(p: any): Promise<void> {
   const textLines = [
     hello,
     "",
-    "Merci pour votre intérêt ! Vous trouverez ci-dessous votre facture proforma" +
+    "Merci pour votre intérêt ! Votre facture proforma" +
       (no ? ` (n° ${no})` : "") +
-      (totalStr ? `, d'un montant de ${totalStr}` : "") +
-      ".",
+      (totalStr ? `, d'un montant de ${totalStr},` : "") +
+      " est jointe à cet e-mail en image PNG.",
     "",
-    "Cette proforma est valable 15 jours. Pour confirmer votre commande ou pour toute question, répondez simplement à cet e-mail ou écrivez-nous sur WhatsApp au +509 3625 5920.",
+    "Dites-nous vos préférences en répondant à cet e-mail : formule choisie, délais souhaités et moyen de paiement préféré pour l'acompte de 70 %.",
+    "",
+    "Cette proforma est valable 15 jours. Pour toute question, écrivez-nous sur WhatsApp au +509 3625 5920.",
     "",
     "À très vite,",
     `L'équipe ${displayName}`,
   ];
-  // The proforma HTML is rendered SERVER-SIDE from the structured fields — never
-  // from client-supplied markup — so this route can't be used as an open relay.
-  const proformaHtml = buildProformaHtml(p);
+  // Validated PNG (base64) produced by the site. Only a real PNG is accepted, so
+  // this route can't be used as an open HTML / arbitrary-file mail relay. When
+  // absent, the sheet is rendered SERVER-SIDE from structured fields instead.
+  const png: string = typeof p.png === "string" ? p.png : "";
+  const fileName = `proforma${no ? `-${no}` : ""}.png`;
+  const pngAttachments = png
+    ? [{ filename: fileName, contentType: "image/png", encoding: "base64" as const, content: png }]
+    : undefined;
+  const html = buildProformaEmailHtml(p, !!png, first, no, totalStr);
   const subject = String(p.subject ?? "").trim() || `Votre facture proforma${no ? ` n° ${no}` : ""} — ${displayName}`;
   await sendMail({
     to: p.email,
     subject,
     text: textLines.join("\n"),
-    html: proformaHtml,
+    html,
+    attachments: pngAttachments
+      ? [{ ...pngAttachments[0], contentID: "proforma-png" }, ...pngAttachments]
+      : undefined,
   });
   // Notify the team (best-effort; never fails the client send).
   const notifyTo = ADMIN_EMAILS[0];
@@ -897,7 +960,8 @@ async function sendProformaEmail(p: any): Promise<void> {
         to: notifyTo,
         subject: `Nouvelle demande de proforma — ${p.name || p.email}${totalStr ? ` (${totalStr})` : ""}`,
         text: `Client : ${p.name || "—"}\nE-mail : ${p.email}\nWhatsApp : ${p.phone || "—"}\nProforma : ${no || "—"}\nTotal : ${totalStr || "—"}\nLangue : ${p.lang || "—"}\nRégion : ${p.region || "—"}`,
-        html: proformaHtml,
+        html: buildProformaHtml(p),
+        attachments: pngAttachments,
       });
     } catch (_) { /* team copy is best-effort */ }
   }
@@ -1191,6 +1255,14 @@ app.post(`${P}/guide`, async (c) => {
   return c.json({ ok: true });
 });
 
+// Accepts a base64 PNG (optionally a data URL) up to ~6 MB; returns "" if invalid.
+function cleanPng(v: unknown): string {
+  if (typeof v !== "string") return "";
+  const b64 = v.replace(/^data:image\/png;base64,/, "").trim();
+  if (!b64 || b64.length > 8_000_000 || !b64.startsWith("iVBORw0KGgo") || !/^[A-Za-z0-9+/=]+$/.test(b64)) return "";
+  return b64;
+}
+
 // ── Public: request the configured proforma by e-mail ─────────────────────────────
 app.post(`${P}/proforma`, async (c) => {
   if (!(await rateLimit(c, "proforma", 6))) return c.json({ error: "rate_limited" }, 429);
@@ -1229,7 +1301,7 @@ app.post(`${P}/proforma`, async (c) => {
   await kv.set(`lead:${id}`, lead);
   try {
     // Pass the sanitized lead (structured fields) — HTML is built server-side.
-    await sendProformaEmail({ ...lead, subject: typeof b.subject === "string" ? b.subject.slice(0, 200) : "" });
+    await sendProformaEmail({ ...lead, png: cleanPng(b.png), subject: typeof b.subject === "string" ? b.subject.slice(0, 200) : "" });
   } catch (e) {
     console.error("[proforma] email failed:", e);
     return c.json({ error: "email_failed", id }, 502);
@@ -1563,24 +1635,25 @@ function followUpDue(l: any, now: number, cfg: { delayDays: number; intervalDays
 
 function followUpText(l: any, attempt: number): string {
   const first = String(l.name ?? "").trim().split(/\s+/)[0] || "";
-  const hello = first ? `Bonjour ${first},` : "Bonjour,";
+  const ht = String(l.lang ?? "").toLowerCase() === "ht";
+  const hello = first ? (ht ? `Bonjou ${first},` : `Bonjour ${first},`) : (ht ? "Bonjou," : "Bonjour,");
   const displayName = Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services";
   const totalStr =
     typeof l.total === "number" ? `${l.total.toLocaleString("fr-FR")} ${l.currency ?? ""}`.trim() : "";
   const intro =
     attempt <= 1
-      ? "Nous revenons vers vous au sujet du devis que vous nous avez demandé. Avez-vous eu le temps d'y jeter un œil ?"
-      : "Nous nous permettons une dernière relance au sujet de votre devis. Si le moment n'est pas idéal, dites-le-nous simplement.";
+      ? (ht ? "Nou tounen vin jwenn ou konsènan devis ou te mande a. Eske ou te gen tan gade li?" : "Nous revenons vers vous au sujet du devis que vous nous avez demandé. Avez-vous eu le temps d'y jeter un œil ?")
+      : (ht ? "Sa se dènye ti rapèl nou sou devis ou a. Si moman an pa ideyal, di nou senpleman." : "Nous nous permettons une dernière relance au sujet de votre devis. Si le moment n'est pas idéal, dites-le-nous simplement.");
   return [
     hello,
     "",
     intro,
-    totalStr ? `Pour rappel, votre devis s'élève à ${totalStr}.` : "",
+    totalStr ? (ht ? `Pou rapèl, devis ou a se ${totalStr}.` : `Pour rappel, votre devis s'élève à ${totalStr}.`) : "",
     "",
-    `Pour avancer ou poser une question, répondez simplement à cet e-mail ou écrivez-nous sur WhatsApp au ${WHATSAPP_HUMAN}.`,
+    ht ? `Pou avanse oswa poze yon kesyon, reponn e-mail sa a oswa ekri nou sou WhatsApp nan ${WHATSAPP_HUMAN}.` : `Pour avancer ou poser une question, répondez simplement à cet e-mail ou écrivez-nous sur WhatsApp au ${WHATSAPP_HUMAN}.`,
     "",
-    "À très vite,",
-    `L'équipe ${displayName}`,
+    ht ? "Na wè talè," : "À très vite,",
+    ht ? `Ekip ${displayName} la` : `L'équipe ${displayName}`,
   ]
     .filter((x) => x !== "")
     .join("\n");
@@ -1588,7 +1661,8 @@ function followUpText(l: any, attempt: number): string {
 
 function buildFollowUpHtml(l: any, attempt: number): string {
   const first = escH(String(l.name ?? "").trim().split(/\s+/)[0] || "");
-  const hello = first ? `Bonjour ${first},` : "Bonjour,";
+  const ht = String(l.lang ?? "").toLowerCase() === "ht";
+  const hello = first ? (ht ? `Bonjou ${first},` : `Bonjour ${first},`) : (ht ? "Bonjou," : "Bonjour,");
   const displayName = escH(Deno.env.get("BUSINESS_NAME") ?? "INOV Digital Services");
   const totalStr =
     typeof l.total === "number" ? escH(`${l.total.toLocaleString("fr-FR")} ${l.currency ?? ""}`.trim()) : "";
@@ -1598,34 +1672,18 @@ function buildFollowUpHtml(l: any, attempt: number): string {
   );
   const intro =
     attempt <= 1
-      ? "Nous revenons vers vous au sujet du devis que vous nous avez demandé. Avez-vous eu le temps d'y jeter un œil ?"
-      : "Nous nous permettons une dernière relance au sujet de votre devis. Si le moment n'est pas idéal, dites-le-nous simplement.";
-  return `<!doctype html><html lang="fr"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${escH(displayName)} — suivi de votre devis</title></head>
-<body style="margin:0;background:#f4f4f5;padding:24px;font-family:'Segoe UI',Arial,sans-serif;color:#111;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
-  <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border:1.5px solid #111;">
-    <tr><td style="padding:28px 32px 8px;">
-      <img src="${EMAIL_LOGO}" alt="${escH(displayName)}" height="34" style="height:34px;width:auto;max-width:200px;border:0;outline:none;text-decoration:none;display:block;margin-bottom:20px;" />
-      <p style="font-size:15px;font-weight:700;margin:0 0 12px;">${hello}</p>
-      <p style="font-size:14px;line-height:1.6;margin:0 0 12px;">${intro}</p>
-      ${totalStr ? `<p style="font-size:14px;line-height:1.6;margin:0 0 12px;">Pour rappel, votre devis s'élève à <strong>${totalStr}</strong>.</p>` : ""}
-      <p style="font-size:14px;line-height:1.6;margin:0 0 20px;">Pour avancer ou poser une question, répondez simplement à cet e-mail — ou écrivez-nous directement sur WhatsApp, c'est souvent le plus rapide.</p>
-      <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 24px;"><tr>
-        <td style="background:#25D366;border-radius:6px;">
-          <a href="https://wa.me/${waDigits}?text=${waMsg}" style="display:inline-block;padding:12px 22px;color:#fff;font-weight:800;font-size:14px;text-decoration:none;">Répondre sur WhatsApp</a>
-        </td>
-      </tr></table>
-      <p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 4px;">À très vite,</p>
-      <p style="font-size:13px;color:#111;font-weight:700;margin:0 0 24px;">L'équipe ${displayName}</p>
-    </td></tr>
-    <tr><td style="padding:14px 32px;border-top:1.5px solid #111;font-size:11px;color:#888;">
-      Vous recevez cet e-mail car vous avez demandé un devis à ${displayName}. Si vous ne souhaitez plus être relancé, répondez simplement « STOP ».
-    </td></tr>
-  </table>
-  </td></tr></table>
-  </body></html>`;
+      ? (ht ? "Nou tounen vin jwenn ou konsènan devis ou te mande a. Eske ou te gen tan gade li?" : "Nous revenons vers vous au sujet du devis que vous nous avez demandé. Avez-vous eu le temps d'y jeter un œil ?")
+      : (ht ? "Sa se dènye ti rapèl nou sou devis ou a. Si moman an pa ideyal, di nou senpleman." : "Nous nous permettons une dernière relance au sujet de votre devis. Si le moment n'est pas idéal, dites-le-nous simplement.");
+  const title = ht ? "Pwojè ou toujou ap tann ou" : "Votre projet est toujours prêt";
+  const eyebrow = attempt <= 1 ? (ht ? "DEVIS INOV" : "DEVIS INOV") : (ht ? "DÈNYE RAPÈL" : "DERNIÈRE RELANCE");
+  const amount = totalStr ? (ht ? `Pou rapèl, devis ou a se <strong>${totalStr}</strong>.` : `Pour rappel, votre devis s'élève à <strong>${totalStr}</strong>.`) : "";
+  const closing = ht ? "Pou avanse oswa poze yon kesyon, reponn e-mail sa a oswa ekri nou dirèkteman sou WhatsApp." : "Pour avancer ou poser une question, répondez simplement à cet e-mail — ou écrivez-nous directement sur WhatsApp.";
+  const cta = ht ? "Reponn sou WhatsApp" : "Répondre sur WhatsApp";
+  const signoff = ht ? "Na wè talè," : "À très vite,";
+  const team = ht ? `Ekip ${displayName} la` : `L'équipe ${displayName}`;
+  const foot = ht ? `Ou resevwa e-mail sa a paske ou te mande yon devis nan men ${displayName}. Si ou pa vle lòt rapèl, reponn senpleman « STOP ».` : `Vous recevez cet e-mail car vous avez demandé un devis à ${displayName}. Si vous ne souhaitez plus être relancé, répondez simplement « STOP ».`;
+  return `<!doctype html><html lang="${ht ? "ht" : "fr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escH(displayName)} — ${escH(title)}</title></head>
+<body style="margin:0;padding:0;background:#f2f0ed;font-family:Arial,sans-serif;color:#171717;"><div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escH(title)}</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f2f0ed;padding:28px 12px;"><tr><td align="center"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#fff;"><tr><td style="background:#171717;padding:25px 32px 23px;border-bottom:4px solid #f7601b;"><img src="${EMAIL_LOGO}" alt="${displayName}" height="36" style="height:36px;width:auto;max-width:200px;border:0;display:block;"></td></tr><tr><td style="padding:30px 32px 10px;"><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:#c24400;text-transform:uppercase;margin-bottom:18px;">${eyebrow}</div><div style="font-size:30px;line-height:1.18;font-weight:800;letter-spacing:-.5px;color:#171717;margin-bottom:20px;">${title}</div><p style="font-size:16px;line-height:1.7;color:#4a4a58;margin:0 0 13px;">${hello}</p><p style="font-size:15px;line-height:1.7;color:#4a4a58;margin:0 0 16px;">${intro}</p>${amount ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff4ed;border-left:3px solid #f7601b;margin:0 0 17px;"><tr><td style="padding:13px 16px;font-size:14px;line-height:1.55;color:#553426;">${amount}</td></tr></table>` : ""}<p style="font-size:15px;line-height:1.7;color:#4a4a58;margin:0 0 22px;">${closing}</p><table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 24px;"><tr><td style="background:#b83a0c;border-radius:8px;"><a href="https://wa.me/${waDigits}?text=${waMsg}" style="display:inline-block;padding:14px 20px;color:#fff;font-weight:700;font-size:14px;text-decoration:none;">${cta} &rarr;</a></td></tr></table><p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 4px;">${signoff}</p><p style="font-size:13px;color:#171717;font-weight:700;margin:0 0 18px;">${team}</p></td></tr><tr><td style="background:#fafafa;border-top:1px solid #e6e3e0;padding:18px 32px 24px;text-align:center;font-size:11px;line-height:1.6;color:#888;">${foot}</td></tr></table></td></tr></table></body></html>`;
 }
 
 async function sendFollowUpEmail(l: any, attempt: number): Promise<void> {

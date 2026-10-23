@@ -11,7 +11,7 @@ export type Tab =
   | "home"
   | "leads" | "payments" | "reviews" | "documents"
   | "pricing" | "services" | "portfolio" | "blog" | "formation" | "collaborateurs"
-  | "newsletter" | "campaigns" | "links" | "social"
+  | "newsletter" | "campaigns" | "reminder-emails" | "links" | "social"
   | "assistant" | "reminders" | "procedures" | "eventualites" | "scripts"
   | "settings"
 
@@ -58,6 +58,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { key: "newsletter", label: "Newsletter", icon: <Mail {...ic} />, hint: "abonnés" },
       { key: "campaigns", label: "Campagnes e-mail", icon: <Send {...ic} /> },
+      { key: "reminder-emails", label: "Relances e-mail", icon: <Bell {...ic} />, hint: "devis paiement formation client inactif" },
       { key: "links", label: "Liens à partager", icon: <Link2 {...ic} /> },
       { key: "social", label: "Réponses sociales", icon: <MessagesSquare {...ic} />, hint: "instagram facebook commentaires dm faq réponses vidéo" },
     ],

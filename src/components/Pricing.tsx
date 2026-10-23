@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { createPortal } from "react-dom"
-import { ShoppingCart, FileText, X, Mail, CheckCircle, ChevronDown, Clock, RefreshCw, Package, PlayCircle, Eye, Coins, Check, ShieldCheck, Share2, SlidersHorizontal, Info } from "lucide-react"
+import { ShoppingCart, FileText, X, Mail, Download, CheckCircle, ChevronDown, Clock, RefreshCw, Package, PlayCircle, Eye, Coins, Check, ShieldCheck, Share2, SlidersHorizontal, Info } from "lucide-react"
 import { SiWhatsapp } from "./SocialIcons"
 import { smoothScrollToId } from "../lib/smoothScroll"
 import { pricingServices, tierValues, TIER_KEYS, type PricingService, type TierKey } from "../data/services"
@@ -109,6 +109,7 @@ export default function Pricing() {
   const [emailError, setEmailError] = useState(false)
   const [clientPhone, setClientPhone] = useState("")
   const [cartError, setCartError] = useState(false)
+  const [downloading, setDownloading] = useState(false)
   const nameInputRef = useRef<HTMLInputElement>(null)
   const emailInputRef = useRef<HTMLInputElement>(null)
   const [previewOpen, setPreviewOpen] = useState(false)
@@ -455,7 +456,7 @@ export default function Pricing() {
         total: t2,
         deposit,
         items,
-        html: buildProformaHtml(),
+        png: (await renderProformaPng().catch((e) => { console.error("[proforma] png failed:", e); return null }))?.dataUrl,
       })
       track("proforma_request", { value: t2, currency, items: selectedServices.length })
       setSentOk(true)
@@ -593,6 +594,48 @@ export default function Pricing() {
       </div>`
 
     return html
+  }
+
+  // Renders the exact proforma sheet shown on the site into a PNG (2x for crisp text).
+  async function renderProformaPng(): Promise<{ dataUrl: string; blob: Blob }> {
+    const host = document.createElement("div")
+    host.setAttribute("aria-hidden", "true")
+    host.style.cssText = `position:fixed;top:0;left:-10000px;width:${PROFORMA_W}px;background:#fff;pointer-events:none;`
+    host.innerHTML = buildProformaHtml()
+    document.body.appendChild(host)
+    try {
+      await document.fonts?.ready
+      await Promise.all(Array.from(host.querySelectorAll("img")).map((im) =>
+        im.complete ? Promise.resolve() : new Promise<void>((r) => { im.onload = im.onerror = () => r() })))
+      const { default: html2canvas } = await import("html2canvas")
+      const canvas = await html2canvas(host, { scale: 2, backgroundColor: "#ffffff", useCORS: true, logging: false, width: PROFORMA_W, windowWidth: PROFORMA_W })
+      const blob: Blob = await new Promise((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error("png"))), "image/png"))
+      return { dataUrl: canvas.toDataURL("image/png"), blob }
+    } finally {
+      host.remove()
+    }
+  }
+
+  async function downloadProforma() {
+    if (downloading) return
+    setDownloading(true)
+    try {
+      const { blob } = await renderProformaPng()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `proforma-${proformaNo}.png`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      setTimeout(() => URL.revokeObjectURL(url), 1500)
+      track("proforma_download", { currency, items: selectedServices.length })
+    } catch (e) {
+      console.error("[proforma] download failed:", e)
+      setSentErr(true)
+    } finally {
+      setDownloading(false)
+    }
   }
 
   function openPreview() {
@@ -1157,6 +1200,21 @@ export default function Pricing() {
                     style={{ width: 32, height: 32, border: "none", background: "transparent", cursor: "pointer", fontSize: 18, fontWeight: 700, color: "#333", display: "flex", alignItems: "center", justifyContent: "center" }}
                   >+</button>
                 </div>
+
+                <button
+                  onClick={downloadProforma}
+                  disabled={downloading}
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 8,
+                    color: "#111", background: "var(--ds-bg-sec)",
+                    border: "1.5px solid rgba(0,0,0,0.14)", borderRadius: "var(--r-full)",
+                    padding: "9px 16px",
+                    fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 700,
+                    cursor: downloading ? "wait" : "pointer", opacity: downloading ? 0.7 : 1,
+                  }}
+                >
+                  <Download size={15} aria-hidden="true" />{t.pricing.downloadPng ?? "PNG"}
+                </button>
 
                 {/* ── E-mail + envoi : demandé seulement après l'aperçu ── */}
                 <input

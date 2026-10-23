@@ -133,6 +133,16 @@ export interface Campaign {
   htmlLength: number
   result: { sent?: number; failed?: number; errors?: string[]; error?: string; dispatchedAt?: string } | null
 }
+export interface FollowUpPreview {
+  id: string
+  name: string
+  email: string
+  source: string
+  total: number | null
+  currency: string
+  createdAt: string
+  followUpCount: number
+}
 // Admin-managed service card added from the dashboard (mirrors PricingService,
 // minus the runtime `qty`). Images are URLs (external or /public-hosted).
 export interface AdminService {
@@ -374,6 +384,8 @@ export const api = {
     /** Deprecated: the proforma HTML is now rendered server-side and this field
      *  is ignored by the API. Kept optional for backward compatibility. */
     html?: string
+    /** Proforma rendered as a PNG data URL, attached to the e-mail. */
+    png?: string
   }) {
     const ref = getStoredRef()
     // Drop the (now unused) client-rendered HTML so we don't ship ~400 KB per request.
@@ -507,6 +519,12 @@ export const adminApi = {
   },
   deleteCampaign(id: string) {
     return auth<{ ok: boolean }>(`/newsletter/campaigns/${id}`, { method: "DELETE" })
+  },
+  previewFollowUps() {
+    return auth<{ config: { delayDays: number; intervalDays: number; max: number }; eligible: FollowUpPreview[] }>("/leads/follow-up/preview")
+  },
+  sendFollowUp(id: string) {
+    return auth<{ ok: boolean; sentTo: string; attempt: number }>(`/leads/${id}/follow-up`, { method: "POST" })
   },
   getSettings() {
     return auth<{ settings: SiteSettings }>("/settings")

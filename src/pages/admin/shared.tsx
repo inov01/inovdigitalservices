@@ -866,6 +866,50 @@ function buildNewsletterHtml(args: { subject: string; intro: string; articles: N
 </body></html>`
 }
 
+type ReminderEmailKind = "quote" | "payment" | "registration" | "training" | "followup" | "reactivation"
+
+type ReminderEmailArgs = {
+  kind: ReminderEmailKind
+  lang: "fr" | "ht"
+  firstName: string
+  detail: string
+  actionUrl: string
+}
+
+/**
+ * A deliberately table-based, inline-styled template. It is safe to hand to
+ * Gmail SMTP later and still renders cleanly in Outlook and on small screens.
+ */
+function buildReminderEmailHtml({ kind, lang, firstName, detail, actionUrl }: ReminderEmailArgs): { subject: string; html: string } {
+  const ht = lang === "ht"
+  const copy = {
+    quote: ht
+      ? { eyebrow: "DEVIS INOV", title: "Pwojè ou toujou ap tann ou", body: "Nou rete disponib pou nou avanse sou pwojè ou a. Si ou gen yon kesyon oswa si ou vle ajiste yon pwen, reponn nou senpleman.", action: "Wè devis mwen", subject: "Pwojè ou ak INOV toujou disponib" }
+      : { eyebrow: "DEVIS INOV", title: "Votre projet est toujours prêt", body: "Nous restons disponibles pour faire avancer votre projet. Une question, une modification à prévoir ? Répondez-nous simplement.", action: "Voir mon devis", subject: "Votre projet avec INOV est toujours disponible" },
+    payment: ht
+      ? { eyebrow: "PEMAN AN ATANT", title: "Ann fini sa ansanm", body: "Nou poko resevwa konfimasyon peman an. Tout enfòmasyon yo rete disponib pou ou; si peman an deja fèt, voye prèv la ba nou.", action: "Ouvri peman mwen", subject: "Yon ti rapèl pou peman ou" }
+      : { eyebrow: "PAIEMENT EN ATTENTE", title: "Finalisons cela ensemble", body: "Nous n’avons pas encore reçu la confirmation de paiement. Toutes les informations restent disponibles ; si le paiement est déjà fait, envoyez-nous simplement votre preuve.", action: "Ouvrir mon paiement", subject: "Un petit rappel pour votre paiement" },
+    registration: ht
+      ? { eyebrow: "FÒMASYON INOV", title: "Plas ou prèske konfime", body: "Enskripsyon ou kòmanse deja. Yon dènye etap sèlman separe ou ak fòmasyon an.", action: "Konplete enskripsyon", subject: "Konplete enskripsyon ou nan fòmasyon an" }
+      : { eyebrow: "FORMATION INOV", title: "Votre place est presque confirmée", body: "Votre inscription est déjà commencée. Il ne reste qu’une dernière étape pour rejoindre la formation.", action: "Finaliser mon inscription", subject: "Finalisez votre inscription à la formation" },
+    training: ht
+      ? { eyebrow: "RAPÈL FÒMASYON", title: "Nou kontan wè ou byento", body: "Fòmasyon ou ap pwoche. Kenbe detay sa yo toupre ou epi konekte kèk minit avan lè a.", action: "Wè detay fòmasyon an", subject: "Rapèl : fòmasyon INOV ou ap rive" }
+      : { eyebrow: "RAPPEL FORMATION", title: "Nous avons hâte de vous retrouver", body: "Votre formation approche. Gardez ces détails à portée de main et rejoignez-nous quelques minutes avant l’heure.", action: "Voir les détails de la formation", subject: "Rappel : votre formation INOV approche" },
+    followup: ht
+      ? { eyebrow: "NOUVELLES OU", title: "Ki kote pwojè ou a rive?", body: "Nou t ap reflechi ak pwojè ou a. Si priyorite yo chanje, di nou; n ap adapte pwopozisyon an avè w.", action: "Pale ak ekip INOV", subject: "Nou pran nouvèl pwojè ou a" }
+      : { eyebrow: "PRENONS DE VOS NOUVELLES", title: "Où en est votre projet ?", body: "Nous pensions à votre projet. Si vos priorités ont changé, dites-le-nous : nous adapterons la proposition avec vous.", action: "Échanger avec INOV", subject: "Nous prenons des nouvelles de votre projet" },
+    reactivation: ht
+      ? { eyebrow: "BONJOU ANKÒ", title: "Nou toujou la pou mak ou", body: "Sa fè yon ti tan depi nou pa pale. Lè moman an bon, ekip INOV la pare pou ede w bay pwochen lide ou a fòm.", action: "Dekouvri sèvis nou yo", subject: "Nou toujou la pou pwochen lide ou a" }
+      : { eyebrow: "BONJOUR À NOUVEAU", title: "Nous sommes toujours là pour votre marque", body: "Cela fait un moment que nous n’avons pas échangé. Quand le moment sera juste, l’équipe INOV est prête à donner forme à votre prochaine idée.", action: "Découvrir nos services", subject: "Nous sommes là pour votre prochaine idée" },
+  }[kind]
+  const name = firstName.trim() || (ht ? "zanmi" : "bonjour")
+  const greeting = ht ? `Bonjou ${name},` : `Bonjour ${name},`
+  const detailBlock = detail.trim() ? `<tr><td style="padding:0 32px 22px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff4ed;border-left:3px solid #f7601b;"><tr><td style="padding:14px 16px;font-size:14px;line-height:1.55;color:#553426;">${esc(detail.trim()).replace(/\n/g, "<br>")}</td></tr></table></td></tr>` : ""
+  const safeUrl = esc(actionUrl.trim() || SITE_URL)
+  const html = `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light"><title>${esc(copy.subject)}</title></head><body style="margin:0;padding:0;background:#f2f0ed;font-family:Arial,sans-serif;"><div style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(copy.title)}</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f2f0ed;padding:28px 12px;"><tr><td align="center"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#ffffff;"><tr><td style="background:#171717;padding:25px 32px 23px;border-bottom:4px solid #f7601b;"><img src="${esc(EMAIL_LOGO_DARK)}" alt="INOV Digital Services" height="36" style="height:36px;width:auto;display:block;"></td></tr><tr><td style="padding:30px 32px 12px;"><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:#c24400;text-transform:uppercase;margin-bottom:18px;">${copy.eyebrow}</div><div style="font-size:30px;line-height:1.18;font-weight:800;color:#171717;letter-spacing:-.5px;margin-bottom:20px;">${copy.title}</div><div style="font-size:16px;line-height:1.7;color:#4a4a58;margin-bottom:17px;">${greeting}</div><div style="font-size:15px;line-height:1.7;color:#4a4a58;padding-bottom:6px;">${copy.body}</div></td></tr>${detailBlock}<tr><td style="padding:4px 32px 34px;"><a href="${safeUrl}" style="display:inline-block;background:#b83a0c;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:14px 20px;border-radius:8px;">${copy.action} &rarr;</a></td></tr><tr><td style="background:#fafafa;border-top:1px solid #e6e3e0;padding:22px 32px 28px;text-align:center;"><div style="font-size:12.5px;line-height:1.7;color:#77727a;"><strong style="color:#171717;">INOV Digital Services</strong><br>Design · Branding · Web · Formations<br><a href="${esc(SITE_URL)}" style="color:#c24400;text-decoration:none;">inovdigitalservices.com</a> &nbsp;·&nbsp; (+509) 3625-5920</div></td></tr></table></td></tr></table></body></html>`
+  return { subject: copy.subject, html }
+}
+
 
 function EditField({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
@@ -961,5 +1005,5 @@ function Empty({ text }: { text: string }) {
 
 export type { SortKey, SvcLine, NlArticle }
 export {
-  SITE_URL, EMAIL_LOGO_DARK, NL_LANGS, NL_INTRO, STATUSES, STATUS_LABEL, STATUS_COLOR, PAY_STATUS_LABEL, SORT_LABEL, TIER_FR, shell, card, btn, btnPrimary, input, STYLE, sectionTitle, smallLabel, Stat, Toolbar, Chip, matchLead, sortLeads, downloadCsv, withLocalAmounts, esc, fmtMoney, receiptNo, localMultiplier, svcLineAmount, firstName, replyGreeting, amountLabel, mailtoReply, waReply, waServiceReply, buildReceiptHtml, printReceipt, buildProformaHtml, buildDeliveryHtml, printDoc, ListSkeleton, Field, BriefAttachments, EditField, ProcedureCard, Empty, buildNewsletterHtml,
+  SITE_URL, EMAIL_LOGO_DARK, NL_LANGS, NL_INTRO, STATUSES, STATUS_LABEL, STATUS_COLOR, PAY_STATUS_LABEL, SORT_LABEL, TIER_FR, shell, card, btn, btnPrimary, input, STYLE, sectionTitle, smallLabel, Stat, Toolbar, Chip, matchLead, sortLeads, downloadCsv, withLocalAmounts, esc, fmtMoney, receiptNo, localMultiplier, svcLineAmount, firstName, replyGreeting, amountLabel, mailtoReply, waReply, waServiceReply, buildReceiptHtml, printReceipt, buildProformaHtml, buildDeliveryHtml, printDoc, ListSkeleton, Field, BriefAttachments, EditField, ProcedureCard, Empty, buildNewsletterHtml, buildReminderEmailHtml, type ReminderEmailKind,
 }
