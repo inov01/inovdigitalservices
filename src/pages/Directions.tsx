@@ -164,7 +164,7 @@ export default function Directions() {
             <div style={{ position: "relative" }}>
               <div style={{ position: "absolute", inset: "-14px -14px auto auto", width: 120, height: 120, background: "#e0a72e", borderRadius: "50%", zIndex: 0 }} />
               <div style={{ position: "relative", zIndex: 1, borderRadius: 20, overflow: "hidden", boxShadow: "0 30px 60px -20px rgba(28,21,14,0.4)", background: "#ddd", aspectRatio: "4/5" }}>
-                <img src={IMG(IMG_PAPER, 720, 900)} alt="Papier aux dégradés colorés" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                <img loading="lazy" decoding="async" src={IMG(IMG_PAPER, 720, 900)} alt="Papier aux dégradés colorés" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
               </div>
               <div style={{ position: "absolute", left: -18, bottom: 26, zIndex: 2, background: "#0e7a6b", color: "#fff", padding: "12px 18px", borderRadius: 14, fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: 14, boxShadow: "0 12px 30px rgba(14,122,107,0.4)" }}>
                 Branding complet ✦
@@ -334,7 +334,7 @@ function ConceptLabel({ n, name, tag, fonts, palette, dark }: { n: string; name:
 function BentoImg({ src, alt, label, span2 }: { src: string; alt: string; label: string; span2?: boolean }) {
   return (
     <div className="dir-card-hover" style={{ position: "relative", gridColumn: span2 ? "span 2" : undefined, gridRow: span2 ? "span 2" : undefined, borderRadius: 16, overflow: "hidden", background: "#15151f", border: "1px solid rgba(255,255,255,0.08)" }}>
-      <img src={src} alt={alt} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+      <img loading="lazy" decoding="async" src={src} alt={alt} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
       <span style={{ position: "absolute", left: 14, bottom: 12, background: "rgba(7,7,12,0.6)", backdropFilter: "blur(6px)", color: "#fff", padding: "5px 12px", borderRadius: 100, fontFamily: "'Instrument Sans', sans-serif", fontSize: 12.5, fontWeight: 600 }}>
         {label}
       </span>

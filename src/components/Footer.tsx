@@ -51,7 +51,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div style={{ marginBottom: 16 }}>
-              <img src={logoDark} alt="INOV Digital Services" style={{ height: 48, width: "auto", display: "block", objectFit: "contain" }} />
+              <img loading="lazy" decoding="async" src={logoDark} alt="INOV Digital Services" style={{ height: 48, width: "auto", display: "block", objectFit: "contain" }} />
             </div>
             <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, color: "rgba(255,255,255,0.7)", lineHeight: 1.7, maxWidth: 300, marginBottom: 24 }}>
               {t.footer.brandDesc}

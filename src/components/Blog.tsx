@@ -577,7 +577,7 @@ function ArticleModal({ article, slug, lang, ui, onClose }: {
             <video src={vid.url} poster={img?.url} autoPlay muted loop playsInline preload="metadata" aria-label={vid.alt}
               style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           ) : img && (
-            <img src={img.url} alt={img.alt} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            <img loading="lazy" decoding="async" src={img.url} alt={img.alt} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           )}
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.12) 0%, transparent 45%, rgba(0,0,0,0.45) 100%)" }} />
           <div style={{
@@ -707,7 +707,7 @@ export default function Blog() {
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 7, fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700, color: "var(--ds-accent-text)" }}>
                     {ui.cta} <ArrowRight size={16} />
                   </span>
-                  <img src={logo} alt="INOV" style={{ height: 20, width: "auto", objectFit: "contain", opacity: 0.5 }} />
+                  <img loading="lazy" decoding="async" src={logo} alt="INOV" style={{ height: 20, width: "auto", objectFit: "contain", opacity: 0.5 }} />
                 </div>
               </div>
             </article>

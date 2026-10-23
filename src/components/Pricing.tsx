@@ -10,6 +10,8 @@ import type { Lang } from "../i18n/translations"
 import useModal from "../hooks/useModal"
 import { track } from "../lib/analytics"
 import { api } from "../lib/api"
+import { computeQuote } from "../lib/quoteMath"
+import { buildProformaSheet, escHtml } from "../lib/proformaSheet"
 import ServiceConfigurator from "./ServiceConfigurator"
 import logo from "../imports/logo.webp"
 
@@ -89,6 +91,8 @@ const PACK_LABELS: Record<Lang, { heading: string } & Record<PackKey, string>> =
   ar: { heading: "باقات سريعة", identity: "باقة الهوية", product: "باقة المنتج", social: "باقة الشبكات" },
 }
 
+const DRAFT_KEY = "inov-quote-draft-v1"
+
 export default function Pricing() {
   const { t, fmt, currency, setCurrency, rates, lang, priceFor, region } = useSettings()
   const [services, setServices] = useState<PricingService[]>(pricingServices)
@@ -117,6 +121,45 @@ export default function Pricing() {
   const [sentOk, setSentOk] = useState(false)
   const [sentErr, setSentErr] = useState(false)
   const cartRef = useRef<HTMLDivElement>(null)
+  const draftLoaded = useRef(false)
+
+  // Restore an in-progress quote (quantities, formulas, contact) on return visits.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY)
+      if (raw) {
+        const d = JSON.parse(raw)
+        if (d && typeof d === "object" && Date.now() - (d.at ?? 0) < 14 * 86400000) {
+          if (d.qty && typeof d.qty === "object") {
+            setServices((prev) => prev.map((s) => (typeof d.qty[s.id] === "number" ? { ...s, qty: Math.max(0, Math.min(99, d.qty[s.id])) } : s)))
+          }
+          if (d.tiers && typeof d.tiers === "object") setTierById(d.tiers)
+          if (typeof d.name === "string") setClientName(d.name)
+          if (typeof d.email === "string") setClientEmail(d.email)
+          if (typeof d.phone === "string") setClientPhone(d.phone)
+          if (d.qty && Object.values(d.qty as Record<string, number>).some((q) => q > 0)) setAccordionOpen(true)
+        }
+      }
+    } catch { /* corrupted draft: ignore */ }
+    draftLoaded.current = true
+  }, [])
+
+  // Save the draft (debounced) whenever the quote changes.
+  useEffect(() => {
+    if (!draftLoaded.current) return
+    const id = window.setTimeout(() => {
+      try {
+        const qty: Record<number, number> = {}
+        services.forEach((s) => { if (s.qty > 0) qty[s.id] = s.qty })
+        if (Object.keys(qty).length === 0 && !clientName && !clientEmail && !clientPhone) {
+          localStorage.removeItem(DRAFT_KEY)
+        } else {
+          localStorage.setItem(DRAFT_KEY, JSON.stringify({ at: Date.now(), qty, tiers: tierById, name: clientName, email: clientEmail, phone: clientPhone }))
+        }
+      } catch { /* storage unavailable */ }
+    }, 400)
+    return () => window.clearTimeout(id)
+  }, [services, tierById, clientName, clientEmail, clientPhone])
   const previewBoxRef = useRef<HTMLDivElement>(null)
   const previewInnerRef = useRef<HTMLDivElement>(null)
 
@@ -137,12 +180,9 @@ export default function Pricing() {
   const svcDesc = (s: PricingService) => t.pricing.services[s.id]?.desc ?? s.desc
   const svcAdvantage = (s: PricingService) => t.pricing.services[s.id]?.advantage ?? s.advantage
 
-  const totalQty = services.reduce((sum, s) => sum + s.qty, 0)
-  const subtotal = services.reduce((sum, s) => sum + priceFor(eff(s).price) * s.qty, 0)
-  const discountPct = totalQty >= 10 ? 0.15 : totalQty >= 5 ? 0.1 : 0
-  const discount = Math.round(subtotal * discountPct)
-  const total = subtotal - discount
-  const acompte = Math.round(total * 0.7)
+  const { totalQty, subtotal, discountPct, discount, total, deposit: acompte } = computeQuote(
+    services.map((s) => ({ unitPrice: priceFor(eff(s).price), qty: s.qty })),
+  )
 
   const ux = UX_LABELS[lang] ?? UX_LABELS.fr
 
@@ -460,7 +500,7 @@ export default function Pricing() {
       })
       track("proforma_request", { value: t2, currency, items: selectedServices.length })
       setSentOk(true)
-      setPreviewOpen(false)
+      try { localStorage.removeItem(DRAFT_KEY) } catch { /* ignore */ }
     } catch (e) {
       // Surface the real reason (CORS/origin, email_failed, rate limit…) so a
       // failed proforma is diagnosable instead of a silent generic error.
@@ -478,122 +518,31 @@ export default function Pricing() {
 
   function buildProformaHtml() {
     const pf = t.pricing.proforma
-    const dateStr = now.toLocaleDateString(CURRENCIES[currency].locale)
-    // Escape any user-typed text before it enters the innerHTML string, so a
-    // name or "other" value can never inject markup into the proforma.
-    const esc = (v: string) => v.replace(/[&<>"']/g, (c) => (
-      { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] as string
-    ))
-    const clientLabel = esc((clientName || pf.client).toUpperCase())
-
     const slaText = (s: PricingService) => {
       const ev = eff(s)
       const del = t.pricing.slaDelivery.replace("{n}", String(s.deliveryDays))
       const rev = ev.revisions <= 1
         ? t.pricing.slaRevisionsUnlimited
         : t.pricing.slaRevisions.replace("{r}", String(ev.revisions)).replace("{d}", String(ev.revisionDays))
-      const formula = `${tl.formula}: ${tl[tierOf(s)]}`
-      return `${formula} · ${del} · ${rev}`
+      return `${tl.formula}: ${tl[tierOf(s)]} · ${del} · ${rev}`
     }
-
-    const rows = selectedServices.map((s) => {
-      const label = (s.qty > 1 ? `${svcName(s)} (×${s.qty})` : svcName(s)).toUpperCase()
-      return `
-        <tr>
-          <td style="padding:13px 18px;border:1.5px solid #111;font-weight:700;font-size:13px;letter-spacing:0.01em;">${label}<div style="margin-top:4px;font-weight:600;font-size:10.5px;color:var(--ds-accent);letter-spacing:0.01em;">${slaText(s)}</div></td>
-          <td style="padding:13px 18px;border:1.5px solid #111;text-align:right;font-weight:800;font-size:13px;white-space:nowrap;">${fmt(priceFor(eff(s).price) * s.qty)}</td>
-        </tr>`
-    }).join("")
-
-    const otherRow = otherChecked && otherText
-      ? `<tr>
-          <td style="padding:13px 18px;border:1.5px solid #111;font-weight:700;font-size:13px;">${esc(otherText.toUpperCase())}</td>
-          <td style="padding:13px 18px;border:1.5px solid #111;text-align:right;font-weight:800;font-size:13px;white-space:nowrap;">—</td>
-        </tr>`
-      : ""
-
-    const html = `
-      <div dir="${lang === "ar" ? "rtl" : "ltr"}" style="position:relative;font-family:'Outfit',sans-serif;width:780px;margin:0 auto;padding:48px 44px;background:#fff;color:#111;overflow:hidden;">
-        <!-- Watermark -->
-        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden;">
-          <img src="${logo}" alt="" style="width:560px;height:auto;object-fit:contain;transform:rotate(-45deg);opacity:0.05;" />
-        </div>
-
-        <div style="position:relative;">
-          <!-- Header -->
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:44px;">
-            <div style="height:64px;flex-shrink:0;display:flex;align-items:center;">
-              <img src="${logo}" alt="INOV" style="height:64px;width:auto;object-fit:contain;display:block;" />
-            </div>
-            <div style="text-align:right;">
-              <h1 style="font-size:38px;font-weight:900;color:#111;margin:0;letter-spacing:-0.01em;">${pf.docTitle}</h1>
-              <div style="margin-top:6px;font-size:14px;">
-                <span style="font-weight:800;color:#111;">${pf.no} ${proformaNo}</span>
-                <span style="font-weight:800;color:var(--ds-accent);margin-left:16px;">${pf.validity}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Info boxes -->
-          <div style="display:flex;justify-content:space-between;gap:24px;margin-bottom:36px;">
-            <table style="border-collapse:collapse;">
-              <tr>
-                <td style="padding:14px 20px;border:1.5px solid #111;background:#e2e2e2;font-weight:800;font-size:13px;letter-spacing:0.03em;">${pf.inNameOf}</td>
-                <td style="padding:14px 20px;border:1.5px solid #111;font-weight:700;font-size:13px;">${clientLabel}</td>
-              </tr>
-            </table>
-            <table style="border-collapse:collapse;">
-              <tr>
-                <td style="padding:14px 20px;border:1.5px solid #111;background:#e2e2e2;font-weight:800;font-size:13px;letter-spacing:0.03em;">${pf.date}</td>
-                <td style="padding:14px 28px;border:1.5px solid #111;font-weight:700;font-size:13px;text-align:center;">${dateStr}</td>
-              </tr>
-            </table>
-          </div>
-
-          <!-- Services table -->
-          <table style="width:100%;border-collapse:collapse;margin-bottom:40px;">
-            <thead>
-              <tr style="background:#111;color:#fff;">
-                <th style="padding:13px 18px;border:1.5px solid #111;text-align:left;font-size:13px;font-weight:800;letter-spacing:0.03em;">${pf.serviceCol}</th>
-                <th style="padding:13px 18px;border:1.5px solid #111;text-align:left;font-size:13px;font-weight:800;letter-spacing:0.03em;width:130px;">${pf.priceCol}</th>
-              </tr>
-            </thead>
-            <tbody>${rows}${otherRow}</tbody>
-          </table>
-
-          <!-- Footer -->
-          <div style="display:flex;justify-content:space-between;align-items:flex-end;">
-            <div style="font-size:14px;line-height:2;">
-              <div style="font-weight:700;display:flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>@inov_digital_services</div>
-              <div style="font-weight:700;display:flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>(+509) 3625-5920</div>
-            </div>
-            <div style="text-align:right;">
-              <table style="border-collapse:collapse;">
-                ${discount > 0 ? `
-                <tr>
-                  <td style="padding:9px 22px;border:1.5px solid #111;font-weight:700;font-size:13px;">${t.pricing.subtotal}</td>
-                  <td style="padding:9px 22px;border:1.5px solid #111;font-weight:700;font-size:13px;text-align:right;white-space:nowrap;">${fmt(subtotal)}</td>
-                </tr>
-                <tr>
-                  <td style="padding:9px 22px;border:1.5px solid #111;font-weight:700;font-size:13px;color:var(--ds-accent-text);">${t.pricing.discountLabel} -${Math.round(discountPct * 100)}%</td>
-                  <td style="padding:9px 22px;border:1.5px solid #111;font-weight:800;font-size:13px;text-align:right;white-space:nowrap;color:var(--ds-accent-text);">-${fmt(discount)}</td>
-                </tr>` : ""}
-                <tr>
-                  <td style="padding:13px 22px;border:1.5px solid #111;background:#e2e2e2;font-weight:800;font-size:15px;">${pf.total}</td>
-                  <td style="padding:13px 22px;border:1.5px solid #111;font-weight:900;font-size:15px;text-align:right;white-space:nowrap;">${fmt(total)}</td>
-                </tr>
-              </table>
-              <div style="margin-top:10px;font-weight:800;font-size:15px;color:var(--ds-accent-text);">${pf.deposit70}</div>
-              <div style="margin-top:18px;padding:12px 16px;border:1.5px dashed #111;background:#fafafa;font-size:11.5px;line-height:1.6;color:#333;">
-                <strong style="display:block;font-size:12px;color:#111;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.03em;">${pf.noticeTitle}</strong>
-                ${pf.notReceipt}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>`
-
-    return html
+    return buildProformaSheet({
+      pf,
+      labels: { subtotal: t.pricing.subtotal, discountLabel: t.pricing.discountLabel },
+      rtl: lang === "ar",
+      logo,
+      proformaNo,
+      dateStr: now.toLocaleDateString(CURRENCIES[currency].locale),
+      clientLabel: escHtml((clientName || pf.client).toUpperCase()),
+      rows: selectedServices.map((s) => ({
+        label: (s.qty > 1 ? `${svcName(s)} (×${s.qty})` : svcName(s)).toUpperCase(),
+        sla: slaText(s),
+        amount: fmt(priceFor(eff(s).price) * s.qty),
+      })),
+      otherText: otherChecked && otherText ? otherText : "",
+      discount: discount > 0 ? { pct: discountPct, amountLabel: fmt(discount), subtotalLabel: fmt(subtotal) } : null,
+      totalLabel: fmt(total),
+    })
   }
 
   // Renders the exact proforma sheet shown on the site into a PNG (2x for crisp text).
@@ -1279,9 +1228,22 @@ export default function Pricing() {
                   </p>
                 )}
                 {sentOk && (
-                  <p role="status" aria-live="polite" style={{ display: "flex", alignItems: "center", gap: 8, margin: 0, fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: "var(--ds-success, #16a34a)" }}>
-                    <CheckCircle size={16} aria-hidden="true" /> {t.pricing.proformaSent}
-                  </p>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+                    <p role="status" aria-live="polite" style={{ display: "flex", alignItems: "center", gap: 8, margin: 0, fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: "var(--ds-success, #16a34a)" }}>
+                      <CheckCircle size={16} aria-hidden="true" /> {t.pricing.proformaSent}
+                    </p>
+                    <button
+                      onClick={orderWhatsApp}
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: 8,
+                        background: "#111", color: "#fff", border: "none", borderRadius: "var(--r-full)",
+                        padding: "9px 18px", cursor: "pointer",
+                        fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 700,
+                      }}
+                    >
+                      <SiWhatsapp size={15} /> {t.pricing.orderWhatsApp}
+                    </button>
+                  </div>
                 )}
                 {sentErr && (
                   <p role="alert" style={{ margin: 0, fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: "var(--ds-danger)" }}>

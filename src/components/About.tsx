@@ -12,7 +12,7 @@ const regionFlags = ["🇭🇹", "🇨🇦", "🇻🇪", "🇺🇸", "🌍"]
 function renderTitleWithLogo(str: string) {
   return str.split(/(\{logo\})/g).map((part, i) =>
     part === "{logo}" ? (
-      <img
+      <img loading="lazy" decoding="async"
         key={i}
         src={logo}
         alt="INOV Digital Services"

@@ -107,7 +107,7 @@ export default function BlogArticle() {
             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
           />
         ) : img && (
-          <img
+          <img fetchPriority="high" decoding="async"
             src={img.url}
             alt={img.alt}
             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
@@ -193,7 +193,7 @@ export default function BlogArticle() {
 
         {/* Brand signature */}
         <div style={{ borderTop: "1px solid rgba(0,0,0,0.08)", marginTop: 32, paddingTop: 24, display: "flex", alignItems: "center", gap: 12 }}>
-          <img src={logo} alt="INOV Digital Services" style={{ height: 28, width: "auto", objectFit: "contain" }} />
+          <img loading="lazy" decoding="async" src={logo} alt="INOV Digital Services" style={{ height: 28, width: "auto", objectFit: "contain" }} />
           <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: "var(--ds-text-faint)" }}>INOV Digital Services</span>
         </div>
 

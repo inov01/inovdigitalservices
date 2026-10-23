@@ -100,7 +100,7 @@ function HeroShowcase({ isMobile, reduced }: { isMobile: boolean; reduced: boole
         const offset = (i - principal + total) % total
         return (
           <figure key={i} style={figStyle(offset)}>
-            <img src={src} alt="" fetchPriority="high" decoding="async" style={{ width: "100%", height: "auto", display: "block" }} />
+            <img src={src} alt={`Réalisation INOV Digital Services ${i + 1}`} fetchPriority="high" decoding="async" style={{ width: "100%", height: "auto", display: "block" }} />
           </figure>
         )
       })}

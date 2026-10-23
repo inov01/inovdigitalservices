@@ -40,7 +40,7 @@ export default function WhyUs() {
               <span key={i} style={{ display: "inline-flex", alignItems: "baseline", gap: "0.28em" }}>
                 {part.trim() && <span>{part.trim()}</span>}
                 {i < arr.length - 1 && (
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={logo}
                     alt="INOV"
                     style={{ height: "0.82em", width: "auto", transform: "translateY(0.08em)", objectFit: "contain" }}

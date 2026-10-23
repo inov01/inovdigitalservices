@@ -87,7 +87,7 @@ export default function FormationDetail() {
 
         {cover && (
           <div style={{ aspectRatio: "16/9", overflow: "hidden", borderRadius: "var(--r-xl)", background: "var(--ds-bg-card-hover)", marginBottom: 24 }}>
-            <img src={cover} alt={c.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img loading="lazy" decoding="async" src={cover} alt={c.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
         )}
 

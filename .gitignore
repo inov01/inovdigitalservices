@@ -26,3 +26,9 @@ new-file.tsx
 whatsapp_automatisation.tsx
 
 new-file-1.tsx
+
+# Scratch files that may hold secrets — never commit
+new-file*.tsx
+*.secret
+.env*
+!.env.example

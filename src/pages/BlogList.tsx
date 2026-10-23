@@ -106,7 +106,7 @@ export default function BlogList() {
                     <span style={{ display: "inline-flex", alignItems: "center", gap: 7, fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700, color: "var(--ds-accent-text)" }}>
                       {ui.cta} <ArrowRight size={15} />
                     </span>
-                    <img src={logo} alt="INOV" style={{ height: 20, width: "auto", objectFit: "contain", opacity: 0.5 }} />
+                    <img loading="lazy" decoding="async" src={logo} alt="INOV" style={{ height: 20, width: "auto", objectFit: "contain", opacity: 0.5 }} />
                   </div>
                 </div>
               </Link>
