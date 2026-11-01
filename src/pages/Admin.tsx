@@ -11,7 +11,7 @@ import NotFound from "./NotFound"
 // Anti-scanning: /admin renders a normal 404 for anyone who is not signed in and
 // who did not arrive with the unlock token in the URL hash. The hash never hits
 // server logs. Bookmark `/admin#<token>` to reveal the login screen. This is
-// obscurity to cut bot noise — the real barrier stays login + MFA + allowlist.
+// obscurity to cut bot noise, the real barrier stays login + MFA + allowlist.
 // Overridable at build time via VITE_ADMIN_UNLOCK (kept out of the source repo).
 const ADMIN_UNLOCK = import.meta.env.VITE_ADMIN_UNLOCK || "hfdJ4HF7Fplo"
 const UNLOCK_KEY = "adm_unlocked"

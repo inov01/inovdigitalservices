@@ -228,7 +228,7 @@ function CampaignsTab({ subs, adminEmail }: { subs: Subscriber[]; adminEmail: st
             </div>
             <textarea style={{ ...input, minHeight: 96, resize: "vertical", lineHeight: 1.5 }} value={intro} onChange={(e) => { setIntro(e.target.value); setIntroTouched(true) }} />
             <span style={{ fontSize: 11.5, color: "var(--ds-text-faint)" }}>
-              {introTouched ? "Message personnalisé — l'adaptation automatique est désactivée." : "Adapté automatiquement à l'article sélectionné."}
+              {introTouched ? "Message personnalisé, l'adaptation automatique est désactivée." : "Adapté automatiquement à l'article sélectionné."}
             </span>
           </div>
 
@@ -361,14 +361,14 @@ const SECTION_LINKS: LinkItem[] = [
 // Tailored per-service brief forms the admin can send to clients so they answer
 // the essential questions (and upload references) before a project kicks off.
 const BRIEF_LINKS: LinkItem[] = [
-  { label: "Brief — Logo", path: "/brief/logo", hint: "Questions ciblées pour un logo" },
-  { label: "Brief — Branding & identité", path: "/brief/branding", hint: "Marque de A à Z" },
-  { label: "Brief — Site web", path: "/brief/site", hint: "Objectifs, pages, fonctionnalités" },
-  { label: "Brief — Montage vidéo", path: "/brief/video", hint: "Montage de vos propres rushes" },
-  { label: "Brief — Retouche photo", path: "/brief/retouche", hint: "Retouche de vos propres photos" },
-  { label: "Brief — Motion design", path: "/brief/motion", hint: "Animation, style, message" },
-  { label: "Brief — Présentation PowerPoint", path: "/brief/powerpoint", hint: "Occasion, slides, format" },
-  { label: "Brief — Autre projet", path: "/brief/other", hint: "Besoin sur mesure" },
+  { label: "Brief, Logo", path: "/brief/logo", hint: "Questions ciblées pour un logo" },
+  { label: "Brief, Branding & identité", path: "/brief/branding", hint: "Marque de A à Z" },
+  { label: "Brief, Site web", path: "/brief/site", hint: "Objectifs, pages, fonctionnalités" },
+  { label: "Brief, Montage vidéo", path: "/brief/video", hint: "Montage de vos propres rushes" },
+  { label: "Brief, Retouche photo", path: "/brief/retouche", hint: "Retouche de vos propres photos" },
+  { label: "Brief, Motion design", path: "/brief/motion", hint: "Animation, style, message" },
+  { label: "Brief, Présentation PowerPoint", path: "/brief/powerpoint", hint: "Occasion, slides, format" },
+  { label: "Brief, Autre projet", path: "/brief/other", hint: "Besoin sur mesure" },
 ]
 
 function LinkRow({ label, path, hint }: LinkItem) {
@@ -379,7 +379,7 @@ function LinkRow({ label, path, hint }: LinkItem) {
     try {
       await navigator.clipboard.writeText(url)
       setCopied(true); setTimeout(() => setCopied(false), 1800)
-    } catch { /* clipboard blocked — the field is still selectable below */ }
+    } catch { /* clipboard blocked, the field is still selectable below */ }
   }
   // Friendly, company-branded message so the client instantly knows the sender.
   const waText = `Bonjour ! Voici le lien vers « ${label} » sur INOV Digital Services :\n${url}`
@@ -412,7 +412,7 @@ function LinkRow({ label, path, hint }: LinkItem) {
 
 // Build a dedicated link for a given language and/or country: ?lang= sets the
 // interface language, ?region=/?currency= pin the pricing to that country so the
-// visitor lands already in their language and local prices — no auto-detection.
+// visitor lands already in their language and local prices, no auto-detection.
 const LINK_DESTINATIONS: LinkItem[] = [...PAGE_LINKS, ...BRIEF_LINKS]
 
 function LangCountryLinks() {
@@ -673,7 +673,7 @@ function RemindersEmailTab({ adminEmail }: { adminEmail: string }) {
         </div>
         <div style={{ ...card, padding: 0, overflow: "hidden" }}>
           <div style={{ padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, borderBottom: "1px solid var(--ds-border)" }}>
-            <div><div style={smallLabel}>File automatique — devis</div><div style={{ fontSize: 14, fontWeight: 800, marginTop: 3 }}>{queueLoading ? "Vérification…" : `${eligible.length} relance${eligible.length > 1 ? "s" : ""} prête${eligible.length > 1 ? "s" : ""}`}</div></div>
+            <div><div style={smallLabel}>File automatique, devis</div><div style={{ fontSize: 14, fontWeight: 800, marginTop: 3 }}>{queueLoading ? "Vérification…" : `${eligible.length} relance${eligible.length > 1 ? "s" : ""} prête${eligible.length > 1 ? "s" : ""}`}</div></div>
             <button onClick={loadQueue} disabled={queueLoading} aria-label="Actualiser la file" style={{ ...btn, padding: "7px 9px" }}><RefreshCw size={14} style={queueLoading ? { animation: "spin .8s linear infinite" } : undefined} /></button>
           </div>
           {!queueLoading && eligible.length === 0 && <p style={{ padding: "14px 16px", margin: 0, color: "var(--ds-text-muted)", fontSize: 12.5, lineHeight: 1.5 }}>Aucun devis n’est éligible actuellement. La cadence et le plafond d’envoi sont appliqués côté serveur.</p>}

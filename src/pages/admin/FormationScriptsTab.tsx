@@ -34,10 +34,10 @@ function scriptText(s: FormationScript): string {
   lines.push("ACCROCHE")
   lines.push(s.hook)
   lines.push("")
-  lines.push("INTRODUCTION — CE QUE COUVRE LA FORMATION")
+  lines.push("INTRODUCTION, CE QUE COUVRE LA FORMATION")
   s.intro.announce.forEach((a) => lines.push(`• ${a}`))
   lines.push("")
-  lines.push("INTRODUCTION — POURQUOI LA SUIVRE")
+  lines.push("INTRODUCTION, POURQUOI LA SUIVRE")
   s.intro.interest.forEach((i) => lines.push(`• ${i}`))
   lines.push("")
   lines.push("OBJECTIFS")
@@ -73,12 +73,12 @@ function scriptHtml(s: FormationScript): string {
   <h1>${esc(s.title)}</h1>
   <div class="meta">Public : ${esc(s.audience)} &nbsp;·&nbsp; Niveau : ${esc(s.level)} &nbsp;·&nbsp; Durée : ${esc(s.duration)}${s.price ? ` &nbsp;·&nbsp; Prix : ${esc(s.price)}` : ""}</div>
   <h2>Accroche</h2><p class="hook">${esc(s.hook)}</p>
-  <h2>Introduction — ce que couvre la formation</h2><ul>${s.intro.announce.map((a) => `<li>${esc(a)}</li>`).join("")}</ul>
-  <h2>Introduction — pourquoi la suivre</h2><ul>${s.intro.interest.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>
+  <h2>Introduction, ce que couvre la formation</h2><ul>${s.intro.announce.map((a) => `<li>${esc(a)}</li>`).join("")}</ul>
+  <h2>Introduction, pourquoi la suivre</h2><ul>${s.intro.interest.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>
   <h2>Objectifs</h2><ul>${s.objectives.map((o) => `<li>${esc(o)}</li>`).join("")}</ul>
-  ${s.sessions.map((sec) => `<h2>${esc(sec.title)} <span style="color:#999;font-weight:400">— ${esc(sec.duration)}</span></h2><ul>${sec.points.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>`).join("")}
+  ${s.sessions.map((sec) => `<h2>${esc(sec.title)} <span style="color:#999;font-weight:400">· ${esc(sec.duration)}</span></h2><ul>${sec.points.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>`).join("")}
   <div class="cta">${esc(s.cta)}</div>
-  <div class="foot">INOV Digital Services — Script de formation</div>
+  <div class="foot">INOV Digital Services, Script de formation</div>
   </body></html>`
 }
 
@@ -142,9 +142,9 @@ function ScriptCard({ s }: { s: FormationScript }) {
 
       {open && (
         <div style={{ marginTop: 14, borderTop: "1px solid var(--ds-border)", paddingTop: 14 }}>
-          <div style={secHd}>Introduction — ce que couvre la formation</div>
+          <div style={secHd}>Introduction, ce que couvre la formation</div>
           <ul style={ul}>{s.intro.announce.map((a, i) => <li key={i} style={li}>{a}</li>)}</ul>
-          <div style={{ ...secHd, marginTop: 14 }}>Introduction — pourquoi la suivre</div>
+          <div style={{ ...secHd, marginTop: 14 }}>Introduction, pourquoi la suivre</div>
           <ul style={ul}>{s.intro.interest.map((it, i) => <li key={i} style={li}>{it}</li>)}</ul>
           <div style={{ ...secHd, marginTop: 14 }}>Objectifs</div>
           <ul style={ul}>{s.objectives.map((o, i) => <li key={i} style={li}>{o}</li>)}</ul>
@@ -165,7 +165,7 @@ function ScriptCard({ s }: { s: FormationScript }) {
   )
 }
 
-// Pre-written formation & conference scripts — ready to animate, copy or export.
+// Pre-written formation & conference scripts, ready to animate, copy or export.
 export default function FormationScriptsTab() {
   const [q, setQ] = useState("")
   const [cat, setCat] = useState<"all" | ScriptCategory>("all")

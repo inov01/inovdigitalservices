@@ -5,7 +5,7 @@ import type { TierKey } from "./services"
    Avantages par formule (Essentiel / Standard / Premium)
    ──────────────────────────────────────────────────────────────────────────
    But : créer un vrai contraste entre les formules AU-DELÀ des révisions et de
-   la fenêtre de révision. Chaque formule livre un périmètre différent —
+   la fenêtre de révision. Chaque formule livre un périmètre différent
    l'essentiel pour "Essentiel", un peu plus pour "Standard", le package complet
    (niveau marché international) pour "Premium".
 

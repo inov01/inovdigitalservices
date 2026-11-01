@@ -30,7 +30,7 @@ export interface FormationScript {
   /** Durée totale indicative (somme des séances). */
   duration: string
   level: ScriptLevel
-  /** Prix affiché — uniquement pour les formations payantes. */
+  /** Prix affiché, uniquement pour les formations payantes. */
   price?: string
   hook: string
   /** Introduction : ce qui est annoncé au public avant de démarrer. */
@@ -66,7 +66,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     audience: "Clients & prospects",
     duration: "~1 h (4 séances de 10-25 min)",
     level: "Débutant",
-    hook: "En 3 secondes, un client décide s'il vous fait confiance — et il décide avec ses yeux, pas avec ses oreilles. Aujourd'hui je vous montre comment gagner ces 3 secondes.",
+    hook: "En 3 secondes, un client décide s'il vous fait confiance, et il décide avec ses yeux, pas avec ses oreilles. Aujourd'hui je vous montre comment gagner ces 3 secondes.",
     intro: {
       announce: [
         "Séance 1 : ce qu'est vraiment la communication visuelle (et ce qu'elle n'est pas).",
@@ -87,7 +87,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     ],
     sessions: [
       {
-        title: "Séance 1 — Qu'est-ce que la communication visuelle ?",
+        title: "Séance 1, Qu'est-ce que la communication visuelle ?",
         duration: "15 min",
         points: [
           "Définition simple : transmettre un message, une émotion et une promesse par l'image plutôt que par le texte seul.",
@@ -97,7 +97,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 2 — Pourquoi c'est vital pour votre business",
+        title: "Séance 2, Pourquoi c'est vital pour votre business",
         duration: "15 min",
         points: [
           "La cohérence visuelle crée la confiance : une marque qui « se tient » paraît sérieuse et fiable.",
@@ -107,7 +107,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 3 — Les 4 bases à connaître",
+        title: "Séance 3, Les 4 bases à connaître",
         duration: "18 min",
         points: [
           "La cohérence : mêmes couleurs, mêmes polices, même ton partout (logo, réseaux, factures).",
@@ -117,7 +117,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 4 — 3 réflexes à appliquer dès demain",
+        title: "Séance 4, 3 réflexes à appliquer dès demain",
         duration: "12 min",
         points: [
           "Choisissez 2 couleurs + 1 police et tenez-vous-y sur TOUTES vos publications.",
@@ -140,7 +140,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     hook: "Poster ne suffit pas. La différence entre un post qui vend et un post ignoré tient à quelques règles visuelles simples que personne ne vous a expliquées.",
     intro: {
       announce: [
-        "Séance 1 : le « scroll-stop » — capter l'attention en une seule image.",
+        "Séance 1 : le « scroll-stop », capter l'attention en une seule image.",
         "Séance 2 : l'anatomie d'un post qui vend.",
         "Séance 3 : les bases visuelles à respecter à chaque publication.",
         "Séance 4 : gagner du temps avec des gabarits réutilisables.",
@@ -159,7 +159,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     ],
     sessions: [
       {
-        title: "Séance 1 — Le scroll-stop : capter l'attention en 1 image",
+        title: "Séance 1, Le scroll-stop : capter l'attention en 1 image",
         duration: "14 min",
         points: [
           "La première image doit stopper le pouce : contraste fort, visage ou produit net, texte court et gros.",
@@ -168,7 +168,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 2 — Anatomie d'un post qui vend",
+        title: "Séance 2, Anatomie d'un post qui vend",
         duration: "18 min",
         points: [
           "Accroche (le problème ou le désir du client) → Preuve (photo, avis, résultat) → Offre → Appel à l'action.",
@@ -177,7 +177,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 3 — Les bases visuelles à respecter",
+        title: "Séance 3, Les bases visuelles à respecter",
         duration: "16 min",
         points: [
           "Cohérence de marque : mêmes couleurs et police que votre logo.",
@@ -187,7 +187,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 4 — Gagner du temps avec un gabarit",
+        title: "Séance 4, Gagner du temps avec un gabarit",
         duration: "12 min",
         points: [
           "Créez 3 modèles : promo, témoignage client, conseil/astuce.",
@@ -196,7 +196,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 5 — Introduction au marketing digital (les fondations)",
+        title: "Séance 5, Introduction au marketing digital (les fondations)",
         duration: "20 min",
         points: [
           "Connaître sa cible : à qui je parle, quel problème je résous.",
@@ -237,7 +237,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     ],
     sessions: [
       {
-        title: "Séance 1 — C'est quoi le marketing digital ?",
+        title: "Séance 1, C'est quoi le marketing digital ?",
         duration: "13 min",
         points: [
           "Attirer, convaincre et fidéliser des clients grâce aux outils en ligne.",
@@ -246,7 +246,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 2 — Les 4 piliers à connaître",
+        title: "Séance 2, Les 4 piliers à connaître",
         duration: "16 min",
         points: [
           "Le contenu : ce que vous publiez pour être utile et crédible.",
@@ -256,7 +256,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 3 — Par où commencer avec peu",
+        title: "Séance 3, Par où commencer avec peu",
         duration: "15 min",
         points: [
           "Choisir UN réseau où est votre client plutôt que d'être partout.",
@@ -265,7 +265,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 4 — Les erreurs à éviter",
+        title: "Séance 4, Les erreurs à éviter",
         duration: "12 min",
         points: [
           "Parler de soi au lieu de parler du problème du client.",
@@ -311,7 +311,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     ],
     sessions: [
       {
-        title: "Séance 1 — Stratégie & positionnement",
+        title: "Séance 1, Stratégie & positionnement",
         duration: "22 min",
         points: [
           "Définir le persona : douleurs, désirs, objections, langage.",
@@ -320,7 +320,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 2 — Le tunnel de conversion (funnel)",
+        title: "Séance 2, Le tunnel de conversion (funnel)",
         duration: "22 min",
         points: [
           "Découverte → Considération → Décision → Fidélisation : un contenu par étape.",
@@ -329,7 +329,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 3 — Contenu qui convertit",
+        title: "Séance 3, Contenu qui convertit",
         duration: "20 min",
         points: [
           "Le calendrier éditorial : piliers de contenu et rythme.",
@@ -338,7 +338,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 4 — Copywriting & preuves sociales",
+        title: "Séance 4, Copywriting & preuves sociales",
         duration: "20 min",
         points: [
           "Accroches et storytelling qui retiennent l'attention.",
@@ -347,7 +347,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 5 — Publicité & acquisition",
+        title: "Séance 5, Publicité & acquisition",
         duration: "22 min",
         points: [
           "Bases des campagnes payantes (objectif, audience, budget, créa).",
@@ -356,7 +356,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 6 — Mesure & optimisation",
+        title: "Séance 6, Mesure & optimisation",
         duration: "18 min",
         points: [
           "KPIs qui comptent vs vanity metrics.",
@@ -400,7 +400,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     ],
     sessions: [
       {
-        title: "Séance 1 — Les principes fondamentaux",
+        title: "Séance 1, Les principes fondamentaux",
         duration: "22 min",
         points: [
           "Composition & grille : alignement, proximité, équilibre, espace blanc.",
@@ -409,7 +409,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 2 — La couleur",
+        title: "Séance 2, La couleur",
         duration: "20 min",
         points: [
           "Roue chromatique, harmonies, température.",
@@ -418,7 +418,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 3 — La typographie",
+        title: "Séance 3, La typographie",
         duration: "20 min",
         points: [
           "Familles de polices et personnalités.",
@@ -427,7 +427,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 4 — La méthode de projet",
+        title: "Séance 4, La méthode de projet",
         duration: "22 min",
         points: [
           "Lire un brief et poser les bonnes questions.",
@@ -436,7 +436,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 5 — Outils du designer",
+        title: "Séance 5, Outils du designer",
         duration: "18 min",
         points: [
           "Panorama des outils (vectoriel, mise en page, retouche).",
@@ -445,7 +445,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 6 — Construire son portfolio",
+        title: "Séance 6, Construire son portfolio",
         duration: "18 min",
         points: [
           "Choisir et présenter 3 projets solides.",
@@ -488,7 +488,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     ],
     sessions: [
       {
-        title: "Séance 1 — Les fondations de la marque",
+        title: "Séance 1, Les fondations de la marque",
         duration: "24 min",
         points: [
           "Mission, vision, valeurs et personnalité de marque.",
@@ -497,7 +497,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 2 — Le système d'identité visuelle",
+        title: "Séance 2, Le système d'identité visuelle",
         duration: "24 min",
         points: [
           "Logo et ses déclinaisons (responsive branding).",
@@ -506,7 +506,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 3 — La cohérence sur tous les supports",
+        title: "Séance 3, La cohérence sur tous les supports",
         duration: "20 min",
         points: [
           "Applications : réseaux, packaging, papeterie, web.",
@@ -514,7 +514,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 4 — La charte graphique (brand guidelines)",
+        title: "Séance 4, La charte graphique (brand guidelines)",
         duration: "22 min",
         points: [
           "Règles d'usage : ce qu'on peut / ne peut pas faire.",
@@ -523,7 +523,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 5 — Présenter & vendre la marque",
+        title: "Séance 5, Présenter & vendre la marque",
         duration: "18 min",
         points: [
           "Raconter l'histoire de la marque au client.",
@@ -544,7 +544,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     duration: "~2 h 10 (6 séances de 10-25 min)",
     level: "Intermédiaire",
     price: "109 $ US",
-    hook: "Le mouvement attire l'œil et retient l'attention. Le motion design, c'est raconter une histoire en quelques secondes — apprenons ses principes.",
+    hook: "Le mouvement attire l'œil et retient l'attention. Le motion design, c'est raconter une histoire en quelques secondes, apprenons ses principes.",
     intro: {
       announce: [
         "Séance 1 : les principes d'animation.",
@@ -567,7 +567,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     ],
     sessions: [
       {
-        title: "Séance 1 — Les principes d'animation",
+        title: "Séance 1, Les principes d'animation",
         duration: "20 min",
         points: [
           "Timing & espacement : la base de toute animation crédible.",
@@ -576,7 +576,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 2 — Timing, easing & rythme",
+        title: "Séance 2, Timing, easing & rythme",
         duration: "20 min",
         points: [
           "Lire et régler des courbes de vitesse.",
@@ -585,7 +585,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 3 — Composition & storytelling en mouvement",
+        title: "Séance 3, Composition & storytelling en mouvement",
         duration: "18 min",
         points: [
           "Guider le regard dans le temps, pas seulement dans l'espace.",
@@ -594,7 +594,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 4 — Workflow technique",
+        title: "Séance 4, Workflow technique",
         duration: "22 min",
         points: [
           "Préparer ses fichiers (calques, vectoriel) pour l'animation.",
@@ -603,7 +603,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 5 — Exports & plateformes",
+        title: "Séance 5, Exports & plateformes",
         duration: "16 min",
         points: [
           "Exports optimisés pour réseaux et web.",
@@ -612,7 +612,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 6 — Projet guidé",
+        title: "Séance 6, Projet guidé",
         duration: "22 min",
         points: [
           "Animer un pack de stories / une intro de marque.",
@@ -632,7 +632,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     duration: "~1 h 10 (4 séances de 10-25 min)",
     level: "Intermédiaire",
     price: "49 $ US",
-    hook: "Un logo animé, c'est votre signature en mouvement — la touche pro qui rend une marque mémorable en intro de vidéo. Voici comment le réussir.",
+    hook: "Un logo animé, c'est votre signature en mouvement, la touche pro qui rend une marque mémorable en intro de vidéo. Voici comment le réussir.",
     intro: {
       announce: [
         "Séance 1 : lire le logo avant d'animer.",
@@ -653,7 +653,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     ],
     sessions: [
       {
-        title: "Séance 1 — Lire le logo avant d'animer",
+        title: "Séance 1, Lire le logo avant d'animer",
         duration: "16 min",
         points: [
           "Décomposer les éléments (symbole, typo, ligne).",
@@ -662,7 +662,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 2 — Techniques d'animation",
+        title: "Séance 2, Techniques d'animation",
         duration: "22 min",
         points: [
           "Reveal (tracé, masque, fondu), assemblage, morphing léger.",
@@ -671,7 +671,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 3 — Son & finition",
+        title: "Séance 3, Son & finition",
         duration: "12 min",
         points: [
           "Ajouter un logo sound / whoosh discret.",
@@ -679,7 +679,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 4 — Exports & usages",
+        title: "Séance 4, Exports & usages",
         duration: "14 min",
         points: [
           "Intro vidéo, stories, site web, signature e-mail.",
@@ -721,7 +721,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     ],
     sessions: [
       {
-        title: "Séance 1 — Stratégie visuelle",
+        title: "Séance 1, Stratégie visuelle",
         duration: "24 min",
         points: [
           "Objectifs de communication et messages clés.",
@@ -730,7 +730,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 2 — Système de contenus",
+        title: "Séance 2, Système de contenus",
         duration: "22 min",
         points: [
           "Piliers de contenu et gabarits réutilisables.",
@@ -739,7 +739,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 3 — Production & organisation",
+        title: "Séance 3, Production & organisation",
         duration: "20 min",
         points: [
           "Chaîne de production efficace, banque d'assets.",
@@ -747,7 +747,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 4 — Adapter le message",
+        title: "Séance 4, Adapter le message",
         duration: "20 min",
         points: [
           "Décliner un message clé par canal et par cible.",
@@ -756,7 +756,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 5 — Mesure & ajustement",
+        title: "Séance 5, Mesure & ajustement",
         duration: "18 min",
         points: [
           "Évaluer l'impact visuel et l'engagement.",
@@ -776,7 +776,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     duration: "~2 h 40 (8 séances de 10-25 min)",
     level: "Débutant",
     price: "149 $ US",
-    hook: "Vous êtes commerçant, pas designer ni marketeur — et c'est normal. Ce parcours vous donne l'essentiel des deux pour vendre plus, sans dépendre de personne.",
+    hook: "Vous êtes commerçant, pas designer ni marketeur, et c'est normal. Ce parcours vous donne l'essentiel des deux pour vendre plus, sans dépendre de personne.",
     intro: {
       announce: [
         "Séance 1 : les bases design pour non-designers.",
@@ -801,7 +801,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
     ],
     sessions: [
       {
-        title: "Séance 1 — Les bases design pour non-designers",
+        title: "Séance 1, Les bases design pour non-designers",
         duration: "20 min",
         points: [
           "Choisir couleurs et police de sa marque et s'y tenir.",
@@ -810,7 +810,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 2 — Créer des visuels avec des gabarits",
+        title: "Séance 2, Créer des visuels avec des gabarits",
         duration: "20 min",
         points: [
           "Créer des visuels clairs avec des gabarits simples.",
@@ -819,7 +819,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 3 — Photographier ses produits",
+        title: "Séance 3, Photographier ses produits",
         duration: "16 min",
         points: [
           "Photographier ses produits correctement au téléphone.",
@@ -828,7 +828,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 4 — Présence en ligne qui vend",
+        title: "Séance 4, Présence en ligne qui vend",
         duration: "20 min",
         points: [
           "Optimiser sa page (bio, catalogue, coordonnées, avis).",
@@ -837,7 +837,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 5 — Attirer & convertir",
+        title: "Séance 5, Attirer & convertir",
         duration: "20 min",
         points: [
           "Promotions et offres qui donnent envie.",
@@ -846,7 +846,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 6 — Preuve sociale & avis clients",
+        title: "Séance 6, Preuve sociale & avis clients",
         duration: "16 min",
         points: [
           "Récolter et mettre en avant les avis clients.",
@@ -855,7 +855,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 7 — Organisation & régularité",
+        title: "Séance 7, Organisation & régularité",
         duration: "18 min",
         points: [
           "Planifier une semaine de contenu en 1 h.",
@@ -864,7 +864,7 @@ export const FORMATION_SCRIPTS: FormationScript[] = [
         ],
       },
       {
-        title: "Séance 8 — Autonomie",
+        title: "Séance 8, Autonomie",
         duration: "16 min",
         points: [
           "Une routine simple applicable seul.",

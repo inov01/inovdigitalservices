@@ -57,7 +57,7 @@ export default function BlogArticle() {
       const base = `${window.location.origin}/blog/${slugFor(article.id)}`
       const canonical = lang && lang !== "fr" ? `${base}?lang=${lang}` : base
       applyPageMeta({
-        title: `${article.title} — INOV Digital Services`,
+        title: `${article.title}, INOV Digital Services`,
         description: article.excerpt,
         url: canonical,
         image: imageFor(article.id)?.url,
@@ -78,7 +78,7 @@ export default function BlogArticle() {
   const inlineWork = !vid && showcase.length > 0 ? showcase[0] : null
   const gridWorks = inlineWork ? showcase.slice(1) : showcase
 
-  // Unknown slug — send back to the blog list.
+  // Unknown slug, send back to the blog list.
   useEffect(() => {
     if (slug && !article) navigate("/blog", { replace: true })
   }, [slug, article, navigate])
@@ -156,7 +156,7 @@ export default function BlogArticle() {
 
         <h1 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(1.9rem, 5vw, 2.6rem)", fontWeight: 800, color: "#000", lineHeight: 1.2, marginBottom: 22 }}>{article.title}</h1>
 
-        {/* Share — top of article */}
+        {/* Share, top of article */}
         <div style={{ borderTop: "1px solid rgba(0,0,0,0.08)", borderBottom: "1px solid rgba(0,0,0,0.08)", padding: "16px 0", marginBottom: 32 }}>
           <ShareBar title={article.title} text={article.excerpt} />
         </div>
@@ -179,14 +179,14 @@ export default function BlogArticle() {
                   />
                 </div>
                 <figcaption style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: "var(--ds-text-faint)", marginTop: 8, textAlign: "center" }}>
-                  {mc.work} — {inlineWork.title}
+                  {mc.work}, {inlineWork.title}
                 </figcaption>
               </figure>
             )}
           </Fragment>
         ))}
 
-        {/* Share — bottom of article */}
+        {/* Share, bottom of article */}
         <div style={{ borderTop: "1px solid rgba(0,0,0,0.08)", marginTop: 32, paddingTop: 24 }}>
           <ShareBar title={article.title} text={article.excerpt} />
         </div>
@@ -197,7 +197,7 @@ export default function BlogArticle() {
           <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: "var(--ds-text-faint)" }}>INOV Digital Services</span>
         </div>
 
-        {/* Portfolio showcase — real work matching this article's service */}
+        {/* Portfolio showcase, real work matching this article's service */}
         {gridWorks.length > 0 && (
           <div style={{ marginTop: 48 }}>
             <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 22, fontWeight: 800, color: "#000", marginBottom: 6 }}>{sc.title}</h2>

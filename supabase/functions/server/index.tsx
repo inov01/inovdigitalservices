@@ -12,10 +12,10 @@ import * as kv from "./kv_store.tsx";
 // user email is present in ADMIN_EMAILS.
 //
 // KV keys (shared table kv_store_df4bb120):
-//   lead:<id>        — a captured lead/quote/contact request
-//   sub:<email>      — a newsletter subscriber
-//   settings         — global SiteSettings ({ announcement })
-//   bootstrapped     — boolean flag, true once the first admin account exists
+//   lead:<id>        - a captured lead/quote/contact request
+//   sub:<email>      - a newsletter subscriber
+//   settings         - global SiteSettings ({ announcement })
+//   bootstrapped     - boolean flag, true once the first admin account exists
 
 const app = new Hono();
 const P = "/make-server-df4bb120";
@@ -91,7 +91,7 @@ async function ensureBriefBucket(): Promise<void> {
     await admin.storage.createBucket(BRIEF_BUCKET, {
       public: false,
       fileSizeLimit: BRIEF_MAX_BYTES,
-    }).catch(() => { /* concurrent create — ignore */ });
+    }).catch(() => { /* concurrent create, ignore */ });
   }
   briefBucketReady = true;
 }
@@ -103,7 +103,7 @@ function safeName(name: string): string {
     .replace(/^\.+/, "_");
 }
 
-// Admin allowlist — emails permitted to read/manage leads, subscribers, settings.
+// Admin allowlist, emails permitted to read/manage leads, subscribers, settings.
 // Falls back to the known owner account so the API is NEVER open to any
 // authenticated user (client signups share this Supabase project). Override or
 // extend via the ADMIN_EMAILS env (comma-separated).
@@ -145,7 +145,7 @@ function isAdmin(user: any): boolean {
 
 // True once a Supabase auth account exists for any allowlisted admin email.
 // Used to permanently close first-admin creation: once the owner account exists,
-// admin access is by logging into it — never by creating another admin account.
+// admin access is by logging into it, never by creating another admin account.
 async function adminAccountExists(): Promise<boolean> {
   try {
     const { data } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
@@ -330,14 +330,14 @@ function escH(s: unknown): string {
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
 }
 function fmtMoney(n: number | null | undefined, cur?: string): string {
-  return typeof n === "number" ? `${n.toLocaleString("fr-FR")}${cur ? ` ${cur}` : ""}` : "—";
+  return typeof n === "number" ? `${n.toLocaleString("fr-FR")}${cur ? ` ${cur}` : ""}` : "-";
 }
 function receiptNo(l: any): string {
   const y = new Date(l.createdAt).getFullYear();
   return `INOV-${y}-${String(l.id).slice(-6).toUpperCase()}`;
 }
 // A cart service line, always shown in the lead's own currency (matching the total).
-// The multiplier is DERIVED from the lead itself — total ÷ sum of base USD — so
+// The multiplier is DERIVED from the lead itself, total ÷ sum of base USD, so
 // every line uses the same effective rate that produced the paid total. Lines and
 // total stay reconciled and always reflect the applied rate. Stored `rate` is only
 // a fallback when there is no priced total to derive from.
@@ -356,7 +356,7 @@ function svcLineAmount(s: any, cur: string, mult: number | null): string {
 
 function buildReceiptHtml(l: any): string {
   const meta = (l.meta ?? {}) as Record<string, unknown>;
-  const method = (meta.paymentMethodLabel as string) || (meta.paymentMethod as string) || "—";
+  const method = (meta.paymentMethodLabel as string) || (meta.paymentMethod as string) || "-";
   const reference = (meta.reference as string) || "";
   const paid = l.status === "won";
   // Fall back to the email-safe PNG logo when LOGO_URL is unset (previously an
@@ -500,8 +500,8 @@ async function sendReceiptEmail(lead: any): Promise<void> {
     hello,
     "",
     amountStr
-      ? `Nous avons bien reçu votre paiement de ${amountStr} — un grand merci pour votre confiance ! 🙏`
-      : "Nous avons bien reçu votre paiement — un grand merci pour votre confiance ! 🙏",
+      ? `Nous avons bien reçu votre paiement de ${amountStr}, un grand merci pour votre confiance ! 🙏`
+      : "Nous avons bien reçu votre paiement, un grand merci pour votre confiance ! 🙏",
     "",
     `Vous trouverez votre reçu officiel (n° ${receiptNo(lead)}) ci-dessous. Conservez-le précieusement.`,
     "",
@@ -560,7 +560,7 @@ async function sendProformaEmail(p: any): Promise<void> {
     await client.send({
       from: `${displayName} <${user}>`,
       to: p.email,
-      subject: `Votre facture proforma${no ? ` n° ${no}` : ""} — ${displayName}`,
+      subject: `Votre facture proforma${no ? ` n° ${no}` : ""}, ${displayName}`,
       content: textLines.join("\n"),
       html: p.html,
     });
@@ -571,8 +571,8 @@ async function sendProformaEmail(p: any): Promise<void> {
         await client.send({
           from: `${displayName} <${user}>`,
           to: notifyTo,
-          subject: `Nouvelle demande de proforma — ${p.name || p.email}${totalStr ? ` (${totalStr})` : ""}`,
-          content: `Client : ${p.name || "—"}\nE-mail : ${p.email}\nProforma : ${no || "—"}\nTotal : ${totalStr || "—"}\nLangue : ${p.lang || "—"}\nRégion : ${p.region || "—"}`,
+          subject: `Nouvelle demande de proforma, ${p.name || p.email}${totalStr ? ` (${totalStr})` : ""}`,
+          content: `Client : ${p.name || "-"}\nE-mail : ${p.email}\nProforma : ${no || "-"}\nTotal : ${totalStr || "-"}\nLangue : ${p.lang || "-"}\nRégion : ${p.region || "-"}`,
           html: p.html,
         });
       } catch (_) { /* team copy is best-effort */ }
@@ -617,7 +617,7 @@ async function sendDeliveryEmail(p: any): Promise<void> {
     await client.send({
       from: `${displayName} <${user}>`,
       to: p.email,
-      subject: `Votre bon de livraison${no ? ` n° ${no}` : ""} — ${displayName}`,
+      subject: `Votre bon de livraison${no ? ` n° ${no}` : ""}, ${displayName}`,
       content: textLines.join("\n"),
       html: p.html,
     });
@@ -627,7 +627,7 @@ async function sendDeliveryEmail(p: any): Promise<void> {
         await client.send({
           from: `${displayName} <${user}>`,
           to: notifyTo,
-          subject: `Bon de livraison envoyé — ${p.name || p.email}`,
+          subject: `Bon de livraison envoyé, ${p.name || p.email}`,
           content: `Bon de livraison${no ? ` n° ${no}` : ""} envoyé à ${p.email}.`,
           html: p.html,
         });
@@ -1105,7 +1105,7 @@ app.post(`${P}/newsletter/dispatch`, async (c) => {
 // ── Auto follow-up (relance automatique) for quotes with no reply ──────────────
 // Nudges leads that asked for a quote/proforma, received it, but never reached a
 // concrete outcome (still "new"). A friendly reminder is emailed after a delay,
-// spaced out, up to a small cap — so a client is reminded, never spammed.
+// spaced out, up to a small cap, so a client is reminded, never spammed.
 //
 // Tunable via env (all optional, sensible defaults):
 //   FOLLOWUP_DELAY_DAYS     min age before the FIRST reminder   (default 3)
@@ -1194,7 +1194,7 @@ function buildFollowUpHtml(l: any, attempt: number): string {
       : "Nous nous permettons une dernière relance au sujet de votre devis. Si le moment n'est pas idéal, dites-le-nous simplement.";
   return `<!doctype html><html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${escH(displayName)} — suivi de votre devis</title></head>
+<title>${escH(displayName)}, suivi de votre devis</title></head>
 <body style="margin:0;background:#f4f4f5;padding:24px;font-family:'Segoe UI',Arial,sans-serif;color:#111;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
   <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border:1.5px solid #111;">
@@ -1203,7 +1203,7 @@ function buildFollowUpHtml(l: any, attempt: number): string {
       <p style="font-size:15px;font-weight:700;margin:0 0 12px;">${hello}</p>
       <p style="font-size:14px;line-height:1.6;margin:0 0 12px;">${intro}</p>
       ${totalStr ? `<p style="font-size:14px;line-height:1.6;margin:0 0 12px;">Pour rappel, votre devis s'élève à <strong>${totalStr}</strong>.</p>` : ""}
-      <p style="font-size:14px;line-height:1.6;margin:0 0 20px;">Pour avancer ou poser une question, répondez simplement à cet e-mail — ou écrivez-nous directement sur WhatsApp, c'est souvent le plus rapide.</p>
+      <p style="font-size:14px;line-height:1.6;margin:0 0 20px;">Pour avancer ou poser une question, répondez simplement à cet e-mail, ou écrivez-nous directement sur WhatsApp, c'est souvent le plus rapide.</p>
       <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 24px;"><tr>
         <td style="background:#25D366;border-radius:6px;">
           <a href="https://wa.me/${waDigits}?text=${waMsg}" style="display:inline-block;padding:12px 22px;color:#fff;font-weight:800;font-size:14px;text-decoration:none;">Répondre sur WhatsApp</a>
@@ -1231,8 +1231,8 @@ async function sendFollowUpEmail(l: any, attempt: number): Promise<void> {
   const first = String(l.name ?? "").trim().split(/\s+/)[0] || "";
   const subject =
     attempt <= 1
-      ? `${first ? first + ", v" : "V"}otre devis vous attend — ${displayName}`
-      : `Dernière relance concernant votre devis — ${displayName}`;
+      ? `${first ? first + ", v" : "V"}otre devis vous attend, ${displayName}`
+      : `Dernière relance concernant votre devis, ${displayName}`;
   try {
     await client.send({
       from: `${displayName} <${user}>`,
@@ -1413,7 +1413,7 @@ async function recentLeadsSnapshot(limit = 15): Promise<string> {
   if (!leads.length) return "Aucune demande enregistrée.";
   return leads
     .map((l) => {
-      const total = typeof l.total === "number" ? `${l.total} ${l.currency ?? ""}`.trim() : "—";
+      const total = typeof l.total === "number" ? `${l.total} ${l.currency ?? ""}`.trim() : "-";
       const msg = typeof l.message === "string" ? l.message.slice(0, 160) : "";
       return `- [${l.status}] ${l.name || "?"} (${l.source}) · ${new Date(l.createdAt).toLocaleDateString("fr-FR")} · total ${total}${msg ? ` · « ${msg} »` : ""}`;
     })
@@ -1440,7 +1440,7 @@ app.post(`${P}/assistant`, async (c) => {
   // Optional grounding in recent leads (only when the admin opts in).
   let sys = ASSISTANT_SYSTEM;
   if (b?.withLeads) {
-    sys += `\n\nContexte — dernières demandes reçues :\n${await recentLeadsSnapshot()}`;
+    sys += `\n\nContexte, dernières demandes reçues :\n${await recentLeadsSnapshot()}`;
   }
 
   const url =

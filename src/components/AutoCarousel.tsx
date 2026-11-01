@@ -10,7 +10,7 @@ interface Props {
   showDots?: boolean
   showArrows?: boolean
   mobileVisibleCount?: number
-  /** Fast spin on first scroll-into-view. Off by default — only useful where the
+  /** Fast spin on first scroll-into-view. Off by default, only useful where the
    *  quick preview of every card adds value (e.g. the services carousel). */
   burst?: boolean
 }
@@ -28,7 +28,7 @@ export default function AutoCarousel({
   const { t } = useSettings()
   const items = children as ReactNode[]
   const total = items.length
-  // Visible play/pause toggle — lets keyboard/touch users stop the motion (WCAG 2.2.2).
+  // Visible play/pause toggle, lets keyboard/touch users stop the motion (WCAG 2.2.2).
   const [playing, setPlaying] = useState(true)
 
   // Clone first `visibleCount` at end for seamless loop
@@ -138,7 +138,7 @@ export default function AutoCarousel({
     return () => clearInterval(timer)
   }, [bursting, total])
 
-  // Normal cadence — suspended while the intro burst is playing.
+  // Normal cadence, suspended while the intro burst is playing.
   useEffect(() => {
     if (reduced || !playing || bursting) return
     const timer = setInterval(advance, interval)

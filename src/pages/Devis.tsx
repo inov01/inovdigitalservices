@@ -25,7 +25,7 @@ export default function Devis() {
 
   useEffect(() => {
     applyPageMeta({
-      title: `${ui.title} — INOV Digital Services`,
+      title: `${ui.title}, INOV Digital Services`,
       description: ui.sub,
       type: "website",
     })

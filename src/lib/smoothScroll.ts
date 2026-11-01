@@ -2,7 +2,7 @@
 // scales its duration with distance, so long jumps feel slow. This keeps every
 // section-to-section scroll snappy and consistent regardless of distance.
 
-const DURATION = 460 // ms — capped so far jumps aren't sluggish
+const DURATION = 460 // ms, capped so far jumps aren't sluggish
 
 function easeInOutCubic(t: number): number {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2

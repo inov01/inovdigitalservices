@@ -5,18 +5,18 @@ import { createClient } from "jsr:@supabase/supabase-js@2.49.8";
 import * as kv from "./kv_store.tsx";
 
 // Dedicated function for client accounts + the ambassador (referral) program.
-// It NEVER touches the existing `make-server-df4bb120` function — it only reads
+// It NEVER touches the existing `make-server-df4bb120` function, it only reads
 // the shared KV table (lead:* / sub:*) and manages its own keys:
-//   profile:<userId>   — client profile { userId, email, refCode, isAmbassador, createdAt }
-//   refcode:<CODE>     — reverse lookup CODE -> userId (uniqueness guard)
-//   refconfig          — reward rule (admin-editable)
+//   profile:<userId>   - client profile { userId, email, refCode, isAmbassador, createdAt }
+//   refcode:<CODE>     - reverse lookup CODE -> userId (uniqueness guard)
+//   refconfig          - reward rule (admin-editable)
 
 const app = new Hono();
 const P = "/accounts";
 
 app.use("*", logger(console.log));
 
-// S3 — CORS allowlist. Set ALLOWED_ORIGINS to a comma-separated list of your
+// S3, CORS allowlist. Set ALLOWED_ORIGINS to a comma-separated list of your
 // site origins (e.g. "https://inovdigitalservices.com,https://www.inovdigitalservices.com").
 // If unset, falls back to "*" so local/dev still works, but SET IT IN PRODUCTION.
 const PROD_ORIGINS = [
@@ -50,7 +50,7 @@ app.use(
   }),
 );
 
-// S1 — admin allowlist. Set ADMIN_EMAILS to a comma-separated list of the email
+// S1, admin allowlist. Set ADMIN_EMAILS to a comma-separated list of the email
 // addresses permitted to edit global config. An authenticated but non-admin user
 // is rejected with 403.
 const ADMIN_EMAILS = (Deno.env.get("ADMIN_EMAILS") ?? "")
@@ -67,7 +67,7 @@ const admin = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 
-// Reward rule — parrain (referrer) only, editable from the admin.
+// Reward rule, parrain (referrer) only, editable from the admin.
 const DEFAULT_CONFIG = {
   enabled: true,
   // "percent" → value% of each confirmed referred order becomes referrer credit.
@@ -160,7 +160,7 @@ app.post(`${P}/me/ambassador`, async (c) => {
 app.get(`${P}/me/orders`, async (c) => {
   const user = await getUser(c);
   if (!user) return c.json({ error: "unauthorized" }, 401);
-  // S2 — orders are matched by email, so require a VERIFIED email. Otherwise a
+  // S2, orders are matched by email, so require a VERIFIED email. Otherwise a
   // user could register an unverified account under someone else's address and
   // read their orders (IDOR). Returns empty until the address is confirmed.
   if (!user.email_confirmed_at) return c.json({ orders: [], emailUnverified: true });

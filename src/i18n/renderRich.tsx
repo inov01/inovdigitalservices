@@ -63,7 +63,7 @@ export function renderRich(str: string, highlight = "var(--ds-accent)"): ReactNo
           </a>,
         )
       } else {
-        // Unsafe/unknown scheme — render the label as plain text, never as a link.
+        // Unsafe/unknown scheme, render the label as plain text, never as a link.
         pushHighlights(nodes, label, highlight)
       }
       last = m.index + m[0].length

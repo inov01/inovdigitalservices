@@ -22,9 +22,9 @@ const PLATFORMS: { key: string; label: string; Icon: IconCmp | LucideIcon }[] = 
 
 // How we run campaigns without ever asking for the client's password.
 const REASSURANCE: { Icon: LucideIcon; title: string; text: string }[] = [
-  { Icon: Users, title: "Une audience 100 % réelle", text: "Vos vues et votre portée viennent de vraies personnes, ciblées par centres d'intérêt et localisation — jamais de bots ni de faux comptes. Nous passons par la régie publicitaire officielle des plateformes (Meta, TikTok), la seule qui garantit un trafic authentique." },
+  { Icon: Users, title: "Une audience 100 % réelle", text: "Vos vues et votre portée viennent de vraies personnes, ciblées par centres d'intérêt et localisation, jamais de bots ni de faux comptes. Nous passons par la régie publicitaire officielle des plateformes (Meta, TikTok), la seule qui garantit un trafic authentique." },
   { Icon: UserCheck, title: "Accès partenaire, pas votre mot de passe", text: "Vous nous ajoutez comme partenaire dans Meta Business Suite ou TikTok Business Center. Nous gérons les pubs sans jamais voir vos identifiants." },
-  { Icon: Link2, title: "Un simple lien suffit", text: "Pour un boost rapide, envoyez-nous juste le lien de la publication à promouvoir et votre budget — rien d'autre." },
+  { Icon: Link2, title: "Un simple lien suffit", text: "Pour un boost rapide, envoyez-nous juste le lien de la publication à promouvoir et votre budget, rien d'autre." },
   { Icon: ShieldCheck, title: "Vous gardez le contrôle", text: "Vous restez propriétaire de vos comptes et pouvez révoquer notre accès à tout moment, en un clic." },
   { Icon: BarChart3, title: "Résultats transparents", text: "Vous recevez un suivi clair des performances : portée, vues et engagement de votre campagne." },
 ]
@@ -177,13 +177,13 @@ function CustomTier() {
         fontFamily: "'Outfit', sans-serif", fontSize: 12, lineHeight: 1.5, color: "var(--ds-text-muted)",
       }}>
         <Lock size={14} color="var(--ds-accent)" aria-hidden="true" style={{ flexShrink: 0, marginTop: 1 }} />
-        <span>Aucun mot de passe requis — nous lançons votre campagne via un accès partenaire sécurisé (Meta Business, etc.).</span>
+        <span>Aucun mot de passe requis, nous lançons votre campagne via un accès partenaire sécurisé (Meta Business, etc.).</span>
       </div>
     </div>
   )
 }
 
-// Online-promotion offer priced in gourdes — shown to Haitian visitors only.
+// Online-promotion offer priced in gourdes, shown to Haitian visitors only.
 // Rendered by App conditionally on region === "HT".
 export default function OnlinePromo() {
   const [open, setOpen] = useState(false)
@@ -217,7 +217,7 @@ export default function OnlinePromo() {
             Augmentez votre <span style={{ background: "var(--ds-accent-grad)", WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent" }}>visibilité en ligne</span>
           </h2>
           <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 17, color: "var(--ds-text-sec)", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>
-            Boostez votre présence sur Instagram, TikTok et Facebook. Des campagnes pensées pour le marché haïtien, à des tarifs en gourdes — devant une audience 100 % réelle, jamais des robots.
+            Boostez votre présence sur Instagram, TikTok et Facebook. Des campagnes pensées pour le marché haïtien, à des tarifs en gourdes, devant une audience 100 % réelle, jamais des robots.
           </p>
           <span style={{
             display: "inline-flex", alignItems: "center", gap: 8, marginTop: 22, padding: "9px 18px", borderRadius: "var(--r-full)",
@@ -266,7 +266,7 @@ export default function OnlinePromo() {
               </div>
 
               <a
-                href={waHref(`Bonjour INOV Digital Services, je suis intéressé par la Promotion en ligne — formule ${tier.name}.`)}
+                href={waHref(`Bonjour INOV Digital Services, je suis intéressé par la Promotion en ligne, formule ${tier.name}.`)}
                 target="_blank"
                 rel="noreferrer"
                 className="btn-orange"
@@ -285,7 +285,7 @@ export default function OnlinePromo() {
                 fontFamily: "'Outfit', sans-serif", fontSize: 12, lineHeight: 1.5, color: "var(--ds-text-muted)",
               }}>
                 <Lock size={14} color="var(--ds-accent)" aria-hidden="true" style={{ flexShrink: 0, marginTop: 1 }} />
-                <span>Aucun mot de passe requis — campagne lancée via un accès partenaire sécurisé (Meta Business, etc.).</span>
+                <span>Aucun mot de passe requis, campagne lancée via un accès partenaire sécurisé (Meta Business, etc.).</span>
               </div>
             </div>
           ))}
@@ -297,7 +297,7 @@ export default function OnlinePromo() {
           maxWidth: 900, margin: "0 auto",
         }}>
           <div style={{ flex: "1 1 260px", maxWidth: 360, borderRadius: "var(--r-lg)", overflow: "hidden", lineHeight: 0, border: "1px solid var(--ds-border)" }}>
-            <img src={promoFlyer} alt="Promotion en ligne INOV — augmentez votre visibilité" loading="lazy" style={{ width: "100%", height: "auto", display: "block" }} />
+            <img src={promoFlyer} alt="Promotion en ligne INOV, augmentez votre visibilité" loading="lazy" style={{ width: "100%", height: "auto", display: "block" }} />
           </div>
           <div style={{ flex: "1 1 260px", maxWidth: 420 }}>
             <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15.5, color: "var(--ds-text-sec)", lineHeight: 1.7, marginBottom: 18 }}>

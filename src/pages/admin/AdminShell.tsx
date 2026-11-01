@@ -116,7 +116,7 @@ function Dashboard({ email, onSignOut }: { email: string; onSignOut: () => void 
   const pendingReviews = useMemo(() => reviews.filter((r) => r.status === "pending").length, [reviews])
 
   // Payments tab groups declared payments (MonCash/NatCash/BUH) AND Upwork
-  // card requests — both need an action from us (verify a payment, or send the
+  // card requests, both need an action from us (verify a payment, or send the
   // Upwork contract link within 24h).
   const payLeads = useMemo(() => leads.filter((l) => l.source === "payment" || l.source === "upwork_request"), [leads])
   const otherLeads = useMemo(() => leads.filter((l) => l.source !== "payment" && l.source !== "upwork_request"), [leads])

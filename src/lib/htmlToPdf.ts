@@ -1,5 +1,5 @@
 // Renders branded HTML "pages" to a multi-page PDF and triggers an immediate
-// download — no browser print dialog. Each `.page` element becomes one A4 page.
+// download, no browser print dialog. Each `.page` element becomes one A4 page.
 
 const A4_W = 794
 const A4_H = 1123
@@ -28,7 +28,7 @@ export async function downloadHtmlPagesAsPdf(
   document.body.appendChild(container)
 
   try {
-    // Wait for every image (logos, etc.) to finish loading — otherwise capture is blank.
+    // Wait for every image (logos, etc.) to finish loading, otherwise capture is blank.
     const imgs = Array.from(container.querySelectorAll("img"))
     await Promise.all(
       imgs.map((img) =>

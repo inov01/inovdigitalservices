@@ -57,7 +57,7 @@ const BRIEF_CTA_LABEL: Record<string, string> = {
   ar: "ملء النموذج",
 }
 
-// WhatsApp number field copy — local so the 8 translation files stay untouched.
+// WhatsApp number field copy, local so the 8 translation files stay untouched.
 const WA_LABELS: Record<string, { label: string; placeholder: string }> = {
   fr: { label: "Numéro WhatsApp (optionnel)", placeholder: "+509 3625 5920" },
   en: { label: "WhatsApp number (optional)", placeholder: "+1 555 012 3456" },
@@ -308,7 +308,7 @@ export default function Contact() {
                       />
                     </div>
 
-                    {/* Dropdown panel — absolutely positioned, never pushes layout */}
+                    {/* Dropdown panel, absolutely positioned, never pushes layout */}
                     {serviceOpen && (
                       <div style={{
                         position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 50,

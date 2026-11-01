@@ -28,7 +28,7 @@ const TIER_LABELS: Record<Lang, { formula: string } & Record<TierKey, string>> =
   ar: { formula: "الباقة", essentiel: "أساسي", standard: "قياسي", premium: "بريميوم" },
 }
 
-// UX / marketing-psychology copy — kept local (like TIER_LABELS) so the 8
+// UX / marketing-psychology copy, kept local (like TIER_LABELS) so the 8
 // translation files stay untouched. {amt} is replaced with a formatted amount.
 type UxKey =
   | "popular" | "premiumValue" | "youSave"
@@ -45,7 +45,7 @@ const UX_LABELS: Record<Lang, Record<UxKey, string>> = {
   ar: { popular: "الأكثر طلبًا", premiumValue: "بريميوم", youSave: "وفّر ~{amt}", trustDeposit: "دفعة 70%، والباقي عند التسليم", trustRevisions: "تعديلات مشمولة", trustSatisfaction: "راضٍ أو نعدّل لك", reply24h: "ردّ خلال 24 ساعة", socialProof: "أكثر من 20 علامة تجارية · راضٍ أو نعدّل لك" },
 }
 
-// WhatsApp number field copy — kept local (like TIER_LABELS) so the 8 translation
+// WhatsApp number field copy, kept local (like TIER_LABELS) so the 8 translation
 // files stay untouched. Optional field so it never blocks the proforma flow.
 const WA_LABELS: Record<Lang, { label: string; placeholder: string }> = {
   fr: { label: "Numéro WhatsApp (optionnel)", placeholder: "+509 3625 5920" },
@@ -58,7 +58,7 @@ const WA_LABELS: Record<Lang, { label: string; placeholder: string }> = {
   ar: { label: "رقم واتساب (اختياري)", placeholder: "+509 3625 5920" },
 }
 
-// Per-row action copy — kept local so the 8 translation files stay untouched.
+// Per-row action copy, kept local so the 8 translation files stay untouched.
 type RowKey = "customize" | "share" | "copied"
 const ROW_LABELS: Record<Lang, Record<RowKey, string>> = {
   fr: { customize: "Personnaliser & commander", share: "Partager", copied: "Lien copié" },
@@ -71,7 +71,7 @@ const ROW_LABELS: Record<Lang, Record<RowKey, string>> = {
   ar: { customize: "تخصيص وطلب", share: "مشاركة", copied: "تم نسخ الرابط" },
 }
 
-// Curated starter bundles — reduce choice overload (Hick's law) and lift the
+// Curated starter bundles, reduce choice overload (Hick's law) and lift the
 // average basket by pre-selecting a coherent set of existing services. IDs map
 // to entries in `pricingServices`; clicking a pack sets each to qty 1.
 type PackKey = "identity" | "product" | "social"
@@ -421,7 +421,7 @@ export default function Pricing() {
     if (otherChecked && otherText) lines.push(`• ${wa.other} : ${otherText}`)
     const discLine = discount > 0 ? `\n${wa.reduction} (${Math.round(discountPct * 100)}%) : -${fmt(discount)}` : ""
     // Sign the message with the client's name so INOV recognizes the sender at a glance.
-    const signature = clientName.trim() ? `\n\n— ${clientName.trim()}` : ""
+    const signature = clientName.trim() ? `\n\n- ${clientName.trim()}` : ""
     const msg = `${wa.hello}\n\n${wa.intro}\n\n${lines.join("\n")}${discLine}\n\n${wa.total} : ${fmt(total)} (${currency})\n${wa.deposit} : ${fmt(acompte)}\n\n${wa.thanks}${signature}`
     track("order_click", { value: total, currency, items: selectedServices.length })
     captureQuoteLead()
@@ -430,7 +430,7 @@ export default function Pricing() {
 
   // Build the rate-adjusted quote payload. Every amount is converted to the
   // client's currency (like the proforma's fmt()) BEFORE leaving the browser, so
-  // the admin — which labels amounts with `currency` — shows figures that already
+  // the admin, which labels amounts with `currency`, shows figures that already
   // reflect the applied rate instead of raw USD. `meta.rate` records the rate used.
   function quoteLeadPayload() {
     const rate = rates[currency] ?? 1
@@ -606,13 +606,13 @@ export default function Pricing() {
             {t.pricing.subtitle}
           </p>
 
-          {/* Social proof — honest figures reused from the portfolio section */}
+          {/* Social proof, honest figures reused from the portfolio section */}
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 18, padding: "7px 16px", background: "var(--ds-accent-a08)", border: "1px solid var(--ds-accent-a18)", borderRadius: "var(--r-full)" }}>
             <ShieldCheck size={15} color="var(--ds-accent-text)" aria-hidden="true" />
             <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 700, color: "var(--ds-accent-text)" }}>{ux.socialProof}</span>
           </div>
 
-          {/* Currency selector — lives with the prices; discount tiers are surfaced
+          {/* Currency selector, lives with the prices; discount tiers are surfaced
               contextually by the cart's goal-gradient progress bar instead of here */}
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 24, padding: "8px 8px 8px 16px", background: "var(--ds-bg-sec)", borderRadius: "var(--r-full)" }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600, color: "var(--ds-text-muted)" }}>
@@ -629,7 +629,7 @@ export default function Pricing() {
               }}
             >
               {(Object.keys(CURRENCIES) as CurrencyCode[]).map((c) => (
-                <option key={c} value={c}>{CURRENCIES[c].flag} {c} — {CURRENCIES[c].label}</option>
+                <option key={c} value={c}>{CURRENCIES[c].flag} {c}, {CURRENCIES[c].label}</option>
               ))}
             </select>
           </div>
@@ -645,7 +645,7 @@ export default function Pricing() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: 32, alignItems: "start" }}>
           {/* Services list */}
           <div>
-            {/* Accordion toggle — orange call to action */}
+            {/* Accordion toggle, orange call to action */}
             <button
               onClick={() => setAccordionOpen(!accordionOpen)}
               aria-expanded={accordionOpen}
@@ -671,7 +671,7 @@ export default function Pricing() {
               <span style={{ transform: accordionOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s", color: "#fff", display: "inline-flex" }}><ChevronDown size={18} aria-hidden="true" /></span>
             </button>
 
-            {/* Quick packs — curated starter bundles to cut choice overload */}
+            {/* Quick packs, curated starter bundles to cut choice overload */}
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, margin: "4px 0 18px" }}>
               <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12.5, fontWeight: 700, color: "var(--ds-text-muted)", marginRight: 2 }}>
                 {PACK_LABELS[lang].heading}
@@ -693,14 +693,14 @@ export default function Pricing() {
               ))}
             </div>
 
-            {/* Services list — single stable list; rows never reorder when selected */}
+            {/* Services list, single stable list; rows never reorder when selected */}
             <div>
               {/* When collapsed, keep the current selection visible (stable order, no jump) */}
               {!accordionOpen && services.filter((s) => s.qty > 0).map((s) => (
                 <ServiceRow key={s.id} s={s} name={svcName(s)} desc={svcDesc(s)} idx={services.indexOf(s)} updateQty={updateQty} fmt={fmt} tier={tierOf(s)} onTier={(tk) => setTier(s.id, tk)} tl={tl} onConfigure={() => setCfgId(s.id)} />
               ))}
 
-              {/* Full list in original order — selecting a row keeps it in place */}
+              {/* Full list in original order, selecting a row keeps it in place */}
               <div
                 className="services-scroll"
                 style={{
@@ -835,7 +835,7 @@ export default function Pricing() {
                 </div>
               </div>
 
-              {/* Quantity progress — visual bar + money the client would save by
+              {/* Quantity progress, visual bar + money the client would save by
                   reaching the next volume tier (loss-aversion framing). */}
               {totalQty > 0 && nextAt && (
                 <div style={{ marginBottom: 16, padding: "12px 14px", background: "var(--ds-accent-a14)", borderRadius: "var(--r-md)" }}>
@@ -871,7 +871,7 @@ export default function Pricing() {
                 </div>
               )}
 
-              {/* Client name — asked just before ordering, in context */}
+              {/* Client name, asked just before ordering, in context */}
               <div style={{ marginBottom: 16 }}>
                 <label htmlFor="pricing-client-name" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.55)", display: "block", marginBottom: 6 }}>
                   {t.pricing.clientNameLabel}
@@ -903,7 +903,7 @@ export default function Pricing() {
               </div>
 
 
-              {/* Client WhatsApp — optional, lets INOV follow up on the quote fast */}
+              {/* Client WhatsApp, optional, lets INOV follow up on the quote fast */}
               <div style={{ marginBottom: 16 }}>
                 <label htmlFor="pricing-client-phone" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.55)", display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
                   <SiWhatsapp size={13} aria-hidden="true" /> {(WA_LABELS[lang] ?? WA_LABELS.fr).label}
@@ -928,7 +928,7 @@ export default function Pricing() {
                 />
               </div>
 
-              {/* Reassurance strip — reduces purchase friction (risk reversal) */}
+              {/* Reassurance strip, reduces purchase friction (risk reversal) */}
               <ul style={{ listStyle: "none", margin: "0 0 14px", padding: 0, display: "flex", flexDirection: "column", gap: 7 }}>
                 {[
                   { icon: <ShieldCheck size={13} aria-hidden="true" />, label: ux.trustDeposit },
@@ -942,7 +942,7 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              {/* Action buttons — single primary (preview → proforma), WhatsApp secondary */}
+              {/* Action buttons, single primary (preview → proforma), WhatsApp secondary */}
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <button
                   onClick={openPreview}
@@ -1052,7 +1052,7 @@ export default function Pricing() {
         }
       `}</style>
 
-      {/* Proforma preview — rendu via Portal dans document.body pour garantir
+      {/* Proforma preview, rendu via Portal dans document.body pour garantir
           que position:fixed est toujours relatif au vrai viewport,
           indépendamment de tout transform/overflow sur les ancêtres. */}
       {previewOpen && createPortal(
@@ -1066,7 +1066,7 @@ export default function Pricing() {
             }}
           />
 
-          {/* Dialog — occupe 100% de l'écran moins 20px de marge de chaque côté */}
+          {/* Dialog, occupe 100% de l'écran moins 20px de marge de chaque côté */}
           <div
             ref={previewDialogRef}
             tabIndex={-1}
@@ -1219,7 +1219,7 @@ export default function Pricing() {
               </div>
             </div>
 
-            {/* Send status / email validation — shown after the proforma request */}
+            {/* Send status / email validation, shown after the proforma request */}
             {(emailError || sentOk || sentErr) && (
               <div style={{ flexShrink: 0, padding: "10px 20px", borderBottom: "1px solid rgba(0,0,0,0.09)", background: "#fff" }}>
                 {emailError && (
@@ -1322,7 +1322,7 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl, onCo
       className={`tarifs-row ${s.qty > 0 ? "selected" : ""}`}
       style={{ marginBottom: 6 }}
     >
-      {/* Stepper — hidden for quote-only services */}
+      {/* Stepper, hidden for quote-only services */}
       {s.quoteOnly ? (
         <div style={{ flexShrink: 0, width: 80 }} />
       ) : (
@@ -1349,7 +1349,7 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl, onCo
         </div>
         <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: "var(--ds-text-muted)", marginTop: 2 }}>{desc}</div>
 
-        {/* Video example — plays inline for YouTube links, external link otherwise */}
+        {/* Video example, plays inline for YouTube links, external link otherwise */}
         {s.projectUrl && videoId && (
           <div onClick={(e) => e.stopPropagation()}>
             {!playing ? (
@@ -1419,7 +1419,7 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl, onCo
           </a>
         )}
 
-        {/* Image example — collapsible preview so clients can see what they're buying */}
+        {/* Image example, collapsible preview so clients can see what they're buying */}
         {s.exampleImg && (
           <div onClick={(e) => e.stopPropagation()}>
             <button
@@ -1440,7 +1440,7 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl, onCo
             <div style={{ display: "grid", gridTemplateRows: showImg ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
               <div style={{ overflow: "hidden" }}>
                 <div style={{ marginTop: 10, width: "100%", maxWidth: 280, borderRadius: "var(--r-md)", overflow: "hidden", border: "1px solid #EEE", lineHeight: 0, boxShadow: "0 8px 24px rgba(0,0,0,0.1)" }}>
-                  <img src={s.exampleImg} alt={`${name} — ${t.services.seeExample}`} loading="lazy" style={{ width: "100%", height: "auto", display: "block", objectFit: "contain" }} />
+                  <img src={s.exampleImg} alt={`${name}, ${t.services.seeExample}`} loading="lazy" style={{ width: "100%", height: "auto", display: "block", objectFit: "contain" }} />
                 </div>
               </div>
             </div>
@@ -1473,7 +1473,7 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl, onCo
           )}
         </div>
 
-        {/* Smart configurator + share — every orderable service gets a live-priced
+        {/* Smart configurator + share, every orderable service gets a live-priced
             "Personnaliser & commander" form (bespoke options when defined, a
             type-aware generic set otherwise). */}
         <div onClick={(e) => e.stopPropagation()} style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
@@ -1504,7 +1504,7 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl, onCo
           </button>
         </div>
 
-        {/* Tier selector — same three formulas for everyone, client's choice. */}
+        {/* Tier selector, same three formulas for everyone, client's choice. */}
         {!s.quoteOnly && (
           <div
             onClick={(e) => e.stopPropagation()}
@@ -1547,7 +1547,7 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl, onCo
           </div>
         )}
 
-        {/* Per-tier advantages — what actually changes between formulas, beyond
+        {/* Per-tier advantages, what actually changes between formulas, beyond
             revisions & window. Updates live when the client switches tier. */}
         {!s.quoteOnly && features.length > 0 && (
           <ul style={{ listStyle: "none", margin: "10px 0 0", padding: 0, display: "flex", flexDirection: "column", gap: 5 }}>

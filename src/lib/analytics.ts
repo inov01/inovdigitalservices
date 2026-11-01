@@ -8,7 +8,7 @@
 //                    (business.facebook.com → Gestionnaire d'événements → Pixel)
 //
 // Tant que ces champs restent vides, RIEN n'est chargé (aucun impact, aucune
-// erreur) — le site fonctionne normalement. Dès que tu les remplis, la mesure
+// erreur), le site fonctionne normalement. Dès que tu les remplis, la mesure
 // et le retargeting (Phase 4) s'activent automatiquement.
 // ──────────────────────────────────────────────────────────────────────────
 

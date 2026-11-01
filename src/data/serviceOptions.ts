@@ -5,8 +5,8 @@
 // base price at render time, so PPP + currency still apply everywhere.
 //
 // Group kinds:
-//   • "single" — pick exactly one option (radio). First option is the default.
-//   • "multi"  — pick any number (checkbox). Each checked option adds its delta.
+//   • "single", pick exactly one option (radio). First option is the default.
+//   • "multi"  - pick any number (checkbox). Each checked option adds its delta.
 
 export interface ServiceOption {
   id: string
@@ -61,7 +61,7 @@ const SOURCE_GROUP: ServiceOptionGroup = {
 // need an entry; a missing entry falls back to the generic groups below.
 
 export const SERVICE_OPTIONS: Record<number, ServiceOptionGroup[]> = {
-  // 18 — Flyer Événementiel (Festival, Concert…)
+  // 18, Flyer Événementiel (Festival, Concert…)
   18: [
     {
       id: "pack",
@@ -78,7 +78,7 @@ export const SERVICE_OPTIONS: Record<number, ServiceOptionGroup[]> = {
     RUSH_GROUP,
   ],
 
-  // 29 — Animation de Flyer Événementiel (concert, DJ, festival)
+  // 29, Animation de Flyer Événementiel (concert, DJ, festival)
   29: [
     {
       id: "duration",
@@ -114,7 +114,7 @@ export const SERVICE_OPTIONS: Record<number, ServiceOptionGroup[]> = {
     RUSH_GROUP,
   ],
 
-  // 19 — Design de T-shirt
+  // 19, Design de T-shirt
   19: [
     {
       id: "sides",
@@ -139,7 +139,7 @@ export const SERVICE_OPTIONS: Record<number, ServiceOptionGroup[]> = {
     RUSH_GROUP,
   ],
 
-  // 20 — Design de Cover Téléphone
+  // 20, Design de Cover Téléphone
   20: [
     {
       id: "models",
@@ -154,7 +154,7 @@ export const SERVICE_OPTIONS: Record<number, ServiceOptionGroup[]> = {
     RUSH_GROUP,
   ],
 
-  // 21 — Carte d'Invitation & Faire-part
+  // 21, Carte d'Invitation & Faire-part
   21: [
     {
       id: "kind",
@@ -179,7 +179,7 @@ export const SERVICE_OPTIONS: Record<number, ServiceOptionGroup[]> = {
     RUSH_GROUP,
   ],
 
-  // 22 — Vectorisation de Logo
+  // 22, Vectorisation de Logo
   22: [
     {
       id: "complexity",
@@ -203,7 +203,7 @@ export const SERVICE_OPTIONS: Record<number, ServiceOptionGroup[]> = {
     RUSH_GROUP,
   ],
 
-  // 23 — Retouche & Manipulation Photo
+  // 23, Retouche & Manipulation Photo
   23: [
     {
       id: "level",
@@ -228,7 +228,7 @@ export const SERVICE_OPTIONS: Record<number, ServiceOptionGroup[]> = {
     RUSH_GROUP,
   ],
 
-  // 24 — Profil Réseaux Sociaux Pro
+  // 24, Profil Réseaux Sociaux Pro
   24: [
     {
       id: "platforms",
@@ -254,7 +254,7 @@ export const SERVICE_OPTIONS: Record<number, ServiceOptionGroup[]> = {
     RUSH_GROUP,
   ],
 
-  // 25 — Mockups Produit
+  // 25, Mockups Produit
   25: [
     {
       id: "scenes",
@@ -270,7 +270,7 @@ export const SERVICE_OPTIONS: Record<number, ServiceOptionGroup[]> = {
     RUSH_GROUP,
   ],
 
-  // 26 — Menu (Restaurant / Bar)
+  // 26, Menu (Restaurant / Bar)
   26: [
     {
       id: "pages",
@@ -295,7 +295,7 @@ export const SERVICE_OPTIONS: Record<number, ServiceOptionGroup[]> = {
     RUSH_GROUP,
   ],
 
-  // 27 — CV / Résumé Professionnel
+  // 27, CV / Résumé Professionnel
   27: [
     {
       id: "extras",
@@ -310,7 +310,7 @@ export const SERVICE_OPTIONS: Record<number, ServiceOptionGroup[]> = {
     RUSH_GROUP,
   ],
 
-  // 28 — Stickers & Autocollants
+  // 28, Stickers & Autocollants
   28: [
     {
       id: "count",
@@ -337,7 +337,7 @@ export const SERVICE_OPTIONS: Record<number, ServiceOptionGroup[]> = {
 // Generic fallback for any static service without a bespoke entry.
 export const GENERIC_OPTIONS: ServiceOptionGroup[] = [FILES_GROUP, SOURCE_GROUP, RUSH_GROUP]
 
-// Generic fallback for video/motion services (no print PDF — formats & duration
+// Generic fallback for video/motion services (no print PDF, formats & duration
 // are what actually varies) so the "Personnaliser & commander" button stays
 // relevant on every service, not only the ones with a bespoke configurator.
 export const GENERIC_VIDEO_OPTIONS: ServiceOptionGroup[] = [
@@ -356,9 +356,9 @@ export const GENERIC_VIDEO_OPTIONS: ServiceOptionGroup[] = [
     label: "Formats livrés",
     kind: "multi",
     options: [
-      { id: "vertical", label: "Vertical (9:16 — Story / Reel / TikTok)", delta: 0 },
+      { id: "vertical", label: "Vertical (9:16, Story / Reel / TikTok)", delta: 0 },
       { id: "square", label: "Carré (1:1)", delta: 10 },
-      { id: "wide", label: "Paysage (16:9 — YouTube)", delta: 10 },
+      { id: "wide", label: "Paysage (16:9, YouTube)", delta: 10 },
     ],
   },
   RUSH_GROUP,

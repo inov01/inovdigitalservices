@@ -10,7 +10,7 @@ export default function ShareButtons({ url, title, compact = false }: {
   compact?: boolean
 }) {
   const [copied, setCopied] = useState(false)
-  const shareText = `${title} — ${url}`
+  const shareText = `${title}, ${url}`
   const wa = `https://wa.me/?text=${encodeURIComponent(shareText)}`
   const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
 
@@ -20,7 +20,7 @@ export default function ShareButtons({ url, title, compact = false }: {
       setCopied(true)
       setTimeout(() => setCopied(false), 1800)
     } catch {
-      // Clipboard blocked (older browsers / insecure context) — fall back to
+      // Clipboard blocked (older browsers / insecure context), fall back to
       // the native share sheet if present, otherwise a prompt.
       if (navigator.share) { try { await navigator.share({ title, url }) } catch { /* cancelled */ } }
       else window.prompt("Copiez le lien :", url)

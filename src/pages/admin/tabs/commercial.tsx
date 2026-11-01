@@ -232,7 +232,7 @@ function PaymentCoordsCard() {
       </button>
       <p style={{ ...smallLabel, marginTop: 8 }}>
         Ces coordonnées s'affichent sur la page de paiement du site. Elles sont stockées ici
-        (hors du code) — modifiez-les à tout moment sans redéployer.
+        (hors du code), modifiez-les à tout moment sans redéployer.
       </p>
 
       {open && (
@@ -319,7 +319,7 @@ function PaymentsTab({ leads, loading, onChange }: { leads: Lead[]; loading: boo
     // Objet auto-généré, modifiable avant envoi.
     const first = firstName(l)
     const autoSubject = `Merci ${first ? first + " " : ""}! Voici votre reçu ${receiptNo(l)}`
-    const subject = window.prompt("Objet de l'e-mail (généré automatiquement — modifiez-le si vous voulez) :", autoSubject)
+    const subject = window.prompt("Objet de l'e-mail (généré automatiquement, modifiez-le si vous voulez) :", autoSubject)
     if (subject === null) return // annulé
     setSendingId(l.id)
     try {
@@ -375,7 +375,7 @@ function PaymentsTab({ leads, loading, onChange }: { leads: Lead[]; loading: boo
         <div style={{ ...card, padding: 0, overflow: "hidden" }}>
           {view.map((l) => {
             const meta = (l.meta ?? {}) as Record<string, unknown>
-            const methodLabel = (meta.paymentMethodLabel as string) || (meta.paymentMethod as string) || "—"
+            const methodLabel = (meta.paymentMethodLabel as string) || (meta.paymentMethod as string) || "-"
             const reference = (meta.reference as string) || ""
             // Upwork = client requests a card contract link (not yet paid); the rest
             // are declared payments awaiting our verification.
@@ -403,7 +403,7 @@ function PaymentsTab({ leads, loading, onChange }: { leads: Lead[]; loading: boo
                       )}
                     </div>
                     <div style={{ fontSize: 12.5, color: "var(--ds-text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {l.email || "—"}{reference ? ` · réf. ${reference}` : ""}
+                      {l.email || "-"}{reference ? ` · réf. ${reference}` : ""}
                     </div>
                   </div>
                   <div style={{ textAlign: "right", fontSize: 13 }}>
@@ -762,7 +762,7 @@ function DocumentsTab({ leads, onChange }: { leads: Lead[]; onChange: () => void
           </div>
           {clientMode === "existing" && (
             <select style={{ ...input, marginBottom: 10 }} value={leadId} onChange={(e) => pickLead(e.target.value)}>
-              <option value="">— Choisir un contact —</option>
+              <option value="">- Choisir un contact -</option>
               {leads.map((l) => (
                 <option key={l.id} value={l.id}>{l.name || "Sans nom"}{l.email ? ` · ${l.email}` : ""}</option>
               ))}

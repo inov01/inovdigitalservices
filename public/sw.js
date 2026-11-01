@@ -1,4 +1,4 @@
-// INOV Digital Services — service worker.
+// INOV Digital Services, service worker.
 //
 // Goal: the installed app (Add to Home Screen / Install) must always reflect the
 // latest deployed site. Strategy is NETWORK-FIRST for same-origin GET requests,

@@ -12,10 +12,10 @@ import * as kv from "./kv_store.tsx";
 // user email is present in ADMIN_EMAILS.
 //
 // KV keys (shared table kv_store_df4bb120):
-//   lead:<id>        — a captured lead/quote/contact request
-//   sub:<email>      — a newsletter subscriber
-//   settings         — global SiteSettings ({ announcement })
-//   bootstrapped     — boolean flag, true once the first admin account exists
+//   lead:<id>        - a captured lead/quote/contact request
+//   sub:<email>      - a newsletter subscriber
+//   settings         - global SiteSettings ({ announcement })
+//   bootstrapped     - boolean flag, true once the first admin account exists
 
 const app = new Hono();
 const P = "/make-server-df4bb120";
@@ -91,7 +91,7 @@ async function ensureBriefBucket(): Promise<void> {
     await admin.storage.createBucket(BRIEF_BUCKET, {
       public: false,
       fileSizeLimit: BRIEF_MAX_BYTES,
-    }).catch(() => { /* concurrent create — ignore */ });
+    }).catch(() => { /* concurrent create, ignore */ });
   }
   briefBucketReady = true;
 }
@@ -103,7 +103,7 @@ function safeName(name: string): string {
     .replace(/^\.+/, "_");
 }
 
-// Admin allowlist — emails permitted to read/manage leads, subscribers, settings.
+// Admin allowlist, emails permitted to read/manage leads, subscribers, settings.
 // Falls back to the known owner account so the API is NEVER open to any
 // authenticated user (client signups share this Supabase project). Override or
 // extend via the ADMIN_EMAILS env (comma-separated).
@@ -161,7 +161,7 @@ const META_APP_SECRET = Deno.env.get("META_APP_SECRET") ?? "";
 // true only when a secret is configured AND the signature matches. Fails closed.
 async function verifyMetaSignature(c: any, raw: string): Promise<boolean> {
   if (!META_APP_SECRET) {
-    console.error("[webhook] META_APP_SECRET not set — rejecting unsigned delivery");
+    console.error("[webhook] META_APP_SECRET not set, rejecting unsigned delivery");
     return false;
   }
   const header = c.req.header("x-hub-signature-256") ?? "";
@@ -183,7 +183,7 @@ async function verifyMetaSignature(c: any, raw: string): Promise<boolean> {
   return diff === 0;
 }
 
-// SHA-256 of a normalised value (trimmed + lowercased), hex-encoded — the exact
+// SHA-256 of a normalised value (trimmed + lowercased), hex-encoded, the exact
 // format Meta expects for hashed user_data. Empty input yields an empty string.
 async function sha256Hex(value: string): Promise<string> {
   const normalised = String(value ?? "").trim().toLowerCase();
@@ -278,7 +278,7 @@ function isAdmin(user: any): boolean {
 
 // True once a Supabase auth account exists for any allowlisted admin email.
 // Used to permanently close first-admin creation: once the owner account exists,
-// admin access is by logging into it — never by creating another admin account.
+// admin access is by logging into it, never by creating another admin account.
 async function adminAccountExists(): Promise<boolean> {
   try {
     const { data } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
@@ -554,14 +554,14 @@ function escH(s: unknown): string {
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
 }
 function fmtMoney(n: number | null | undefined, cur?: string): string {
-  return typeof n === "number" ? `${n.toLocaleString("fr-FR")}${cur ? ` ${cur}` : ""}` : "—";
+  return typeof n === "number" ? `${n.toLocaleString("fr-FR")}${cur ? ` ${cur}` : ""}` : "-";
 }
 function receiptNo(l: any): string {
   const y = new Date(l.createdAt).getFullYear();
   return `INOV-${y}-${String(l.id).slice(-6).toUpperCase()}`;
 }
 // A cart service line, always shown in the lead's own currency (matching the total).
-// The multiplier is DERIVED from the lead itself — total ÷ sum of base USD — so
+// The multiplier is DERIVED from the lead itself, total ÷ sum of base USD, so
 // every line uses the same effective rate that produced the paid total. Lines and
 // total stay reconciled and always reflect the applied rate. Stored `rate` is only
 // a fallback when there is no priced total to derive from.
@@ -580,7 +580,7 @@ function svcLineAmount(s: any, cur: string, mult: number | null): string {
 
 function buildReceiptHtml(l: any): string {
   const meta = (l.meta ?? {}) as Record<string, unknown>;
-  const method = (meta.paymentMethodLabel as string) || (meta.paymentMethod as string) || "—";
+  const method = (meta.paymentMethodLabel as string) || (meta.paymentMethod as string) || "-";
   const reference = (meta.reference as string) || "";
   const paid = l.status === "won";
   // Fall back to the email-safe PNG logo when LOGO_URL is unset (an empty env
@@ -842,8 +842,8 @@ async function sendReceiptEmail(lead: any, subjectOverride?: string): Promise<vo
     hello,
     "",
     amountStr
-      ? `Nous avons bien reçu votre paiement de ${amountStr} — un grand merci pour votre confiance ! 🙏`
-      : "Nous avons bien reçu votre paiement — un grand merci pour votre confiance ! 🙏",
+      ? `Nous avons bien reçu votre paiement de ${amountStr}, un grand merci pour votre confiance ! 🙏`
+      : "Nous avons bien reçu votre paiement, un grand merci pour votre confiance ! 🙏",
     "",
     `Vous trouverez votre reçu officiel (n° ${receiptNo(lead)}) ci-dessous. Conservez-le précieusement.`,
     "",
@@ -942,7 +942,7 @@ async function sendProformaEmail(p: any): Promise<void> {
     ? [{ filename: fileName, contentType: "image/png", encoding: "base64" as const, content: png }]
     : undefined;
   const html = buildProformaEmailHtml(p, !!png, first, no, totalStr);
-  const subject = String(p.subject ?? "").trim() || `Votre facture proforma${no ? ` n° ${no}` : ""} — ${displayName}`;
+  const subject = String(p.subject ?? "").trim() || `Votre facture proforma${no ? ` n° ${no}` : ""}, ${displayName}`;
   await sendMail({
     to: p.email,
     subject,
@@ -958,8 +958,8 @@ async function sendProformaEmail(p: any): Promise<void> {
     try {
       await sendMail({
         to: notifyTo,
-        subject: `Nouvelle demande de proforma — ${p.name || p.email}${totalStr ? ` (${totalStr})` : ""}`,
-        text: `Client : ${p.name || "—"}\nE-mail : ${p.email}\nWhatsApp : ${p.phone || "—"}\nProforma : ${no || "—"}\nTotal : ${totalStr || "—"}\nLangue : ${p.lang || "—"}\nRégion : ${p.region || "—"}`,
+        subject: `Nouvelle demande de proforma, ${p.name || p.email}${totalStr ? ` (${totalStr})` : ""}`,
+        text: `Client : ${p.name || "-"}\nE-mail : ${p.email}\nWhatsApp : ${p.phone || "-"}\nProforma : ${no || "-"}\nTotal : ${totalStr || "-"}\nLangue : ${p.lang || "-"}\nRégion : ${p.region || "-"}`,
         html: buildProformaHtml(p),
         attachments: pngAttachments,
       });
@@ -987,7 +987,7 @@ async function sendDeliveryEmail(p: any): Promise<void> {
     "Merci de votre confiance,",
     `L'équipe ${displayName}`,
   ];
-  const subject = String(p.subject ?? "").trim() || `Votre bon de livraison${no ? ` n° ${no}` : ""} — ${displayName}`;
+  const subject = String(p.subject ?? "").trim() || `Votre bon de livraison${no ? ` n° ${no}` : ""}, ${displayName}`;
   await sendMail({
     to: p.email,
     subject,
@@ -999,7 +999,7 @@ async function sendDeliveryEmail(p: any): Promise<void> {
     try {
       await sendMail({
         to: notifyTo,
-        subject: `Bon de livraison envoyé — ${p.name || p.email}`,
+        subject: `Bon de livraison envoyé, ${p.name || p.email}`,
         text: `Bon de livraison${no ? ` n° ${no}` : ""} envoyé à ${p.email}.`,
         html: p.html,
       });
@@ -1058,7 +1058,7 @@ app.post(`${P}/leads`, async (c) => {
   await kv.set(`lead:${id}`, lead);
 
   // Server-side conversion event (Meta CAPI). event_id is shared with the browser
-  // Pixel — pass lead.meta.eventId from the client's fbq('track','Lead',…) call so
+  // Pixel, pass lead.meta.eventId from the client's fbq('track','Lead',…) call so
   // Meta deduplicates the two into one conversion. IP/UA improve match quality.
   const clientIp = (c.req.header("x-forwarded-for") ?? "").split(",")[0].trim();
   await sendMetaConversion({
@@ -1084,16 +1084,16 @@ app.post(`${P}/leads`, async (c) => {
   if (notifyTo) {
     const waLink = lead.phone ? `https://wa.me/${normalizeWa(lead.phone)}` : "";
     const lines = [
-      `Nom : ${lead.name || "—"}`,
-      `E-mail : ${lead.email || "—"}`,
-      `Téléphone : ${lead.phone || "—"}`,
+      `Nom : ${lead.name || "-"}`,
+      `E-mail : ${lead.email || "-"}`,
+      `Téléphone : ${lead.phone || "-"}`,
       `Source : ${lead.source}`,
       lead.total != null ? `Total : ${lead.total} ${lead.currency || ""}`.trim() : "",
       lead.message ? `\nMessage :\n${lead.message}` : "",
     ].filter(Boolean);
     sendMail({
       to: notifyTo,
-      subject: `🎯 Nouveau lead — ${lead.name || lead.email || "sans nom"} (${lead.source})`,
+      subject: `🎯 Nouveau lead, ${lead.name || lead.email || "sans nom"} (${lead.source})`,
       text: `${lines.join("\n")}${waLink ? `\n\nRépondre sur WhatsApp : ${waLink}` : ""}`,
       html:
         `<p><strong>Nouveau lead reçu</strong></p>` +
@@ -1107,7 +1107,7 @@ app.post(`${P}/leads`, async (c) => {
 });
 
 // ── Testimonials (client reviews with admin moderation) ───────────────────────────
-// Public: submit a review. Stored as "pending" — invisible on the site until an
+// Public: submit a review. Stored as "pending", invisible on the site until an
 // admin approves it, so nothing a visitor writes appears without moderation.
 app.post(`${P}/testimonials`, async (c) => {
   if (!(await rateLimit(c, "testimonials", 5))) return c.json({ error: "rate_limited" }, 429);
@@ -1269,7 +1269,7 @@ app.post(`${P}/proforma`, async (c) => {
   const b = await c.req.json().catch(() => ({} as any));
   const email = String(b.email ?? "").trim().toLowerCase();
   if (!isEmail(email)) return c.json({ error: "invalid email" }, 400);
-  // The proforma must carry at least a total or a line of services — the HTML is
+  // The proforma must carry at least a total or a line of services, the HTML is
   // rendered server-side (client-supplied `html` is ignored for security).
   const hasContent = typeof b.total === "number" ||
     (Array.isArray(b.items) && b.items.length > 0) ||
@@ -1300,7 +1300,7 @@ app.post(`${P}/proforma`, async (c) => {
   };
   await kv.set(`lead:${id}`, lead);
   try {
-    // Pass the sanitized lead (structured fields) — HTML is built server-side.
+    // Pass the sanitized lead (structured fields), HTML is built server-side.
     await sendProformaEmail({ ...lead, png: cleanPng(b.png), subject: typeof b.subject === "string" ? b.subject.slice(0, 200) : "" });
   } catch (e) {
     console.error("[proforma] email failed:", e);
@@ -1585,7 +1585,7 @@ app.post(`${P}/newsletter/dispatch`, async (c) => {
 // ── Auto follow-up (relance automatique) for quotes with no reply ──────────────
 // Nudges leads that asked for a quote/proforma, received it, but never reached a
 // concrete outcome (still "new"). A friendly reminder is emailed after a delay,
-// spaced out, up to a small cap — so a client is reminded, never spammed.
+// spaced out, up to a small cap, so a client is reminded, never spammed.
 //
 // Tunable via env (all optional, sensible defaults):
 //   FOLLOWUP_DELAY_DAYS     min age before the FIRST reminder   (default 3)
@@ -1677,12 +1677,12 @@ function buildFollowUpHtml(l: any, attempt: number): string {
   const title = ht ? "Pwojè ou toujou ap tann ou" : "Votre projet est toujours prêt";
   const eyebrow = attempt <= 1 ? (ht ? "DEVIS INOV" : "DEVIS INOV") : (ht ? "DÈNYE RAPÈL" : "DERNIÈRE RELANCE");
   const amount = totalStr ? (ht ? `Pou rapèl, devis ou a se <strong>${totalStr}</strong>.` : `Pour rappel, votre devis s'élève à <strong>${totalStr}</strong>.`) : "";
-  const closing = ht ? "Pou avanse oswa poze yon kesyon, reponn e-mail sa a oswa ekri nou dirèkteman sou WhatsApp." : "Pour avancer ou poser une question, répondez simplement à cet e-mail — ou écrivez-nous directement sur WhatsApp.";
+  const closing = ht ? "Pou avanse oswa poze yon kesyon, reponn e-mail sa a oswa ekri nou dirèkteman sou WhatsApp." : "Pour avancer ou poser une question, répondez simplement à cet e-mail, ou écrivez-nous directement sur WhatsApp.";
   const cta = ht ? "Reponn sou WhatsApp" : "Répondre sur WhatsApp";
   const signoff = ht ? "Na wè talè," : "À très vite,";
   const team = ht ? `Ekip ${displayName} la` : `L'équipe ${displayName}`;
   const foot = ht ? `Ou resevwa e-mail sa a paske ou te mande yon devis nan men ${displayName}. Si ou pa vle lòt rapèl, reponn senpleman « STOP ».` : `Vous recevez cet e-mail car vous avez demandé un devis à ${displayName}. Si vous ne souhaitez plus être relancé, répondez simplement « STOP ».`;
-  return `<!doctype html><html lang="${ht ? "ht" : "fr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escH(displayName)} — ${escH(title)}</title></head>
+  return `<!doctype html><html lang="${ht ? "ht" : "fr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escH(displayName)}, ${escH(title)}</title></head>
 <body style="margin:0;padding:0;background:#f2f0ed;font-family:Arial,sans-serif;color:#171717;"><div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escH(title)}</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f2f0ed;padding:28px 12px;"><tr><td align="center"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;background:#fff;"><tr><td style="background:#171717;padding:25px 32px 23px;border-bottom:4px solid #f7601b;"><img src="${EMAIL_LOGO}" alt="${displayName}" height="36" style="height:36px;width:auto;max-width:200px;border:0;display:block;"></td></tr><tr><td style="padding:30px 32px 10px;"><div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:#c24400;text-transform:uppercase;margin-bottom:18px;">${eyebrow}</div><div style="font-size:30px;line-height:1.18;font-weight:800;letter-spacing:-.5px;color:#171717;margin-bottom:20px;">${title}</div><p style="font-size:16px;line-height:1.7;color:#4a4a58;margin:0 0 13px;">${hello}</p><p style="font-size:15px;line-height:1.7;color:#4a4a58;margin:0 0 16px;">${intro}</p>${amount ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff4ed;border-left:3px solid #f7601b;margin:0 0 17px;"><tr><td style="padding:13px 16px;font-size:14px;line-height:1.55;color:#553426;">${amount}</td></tr></table>` : ""}<p style="font-size:15px;line-height:1.7;color:#4a4a58;margin:0 0 22px;">${closing}</p><table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 24px;"><tr><td style="background:#b83a0c;border-radius:8px;"><a href="https://wa.me/${waDigits}?text=${waMsg}" style="display:inline-block;padding:14px 20px;color:#fff;font-weight:700;font-size:14px;text-decoration:none;">${cta} &rarr;</a></td></tr></table><p style="font-size:13px;color:#555;line-height:1.6;margin:0 0 4px;">${signoff}</p><p style="font-size:13px;color:#171717;font-weight:700;margin:0 0 18px;">${team}</p></td></tr><tr><td style="background:#fafafa;border-top:1px solid #e6e3e0;padding:18px 32px 24px;text-align:center;font-size:11px;line-height:1.6;color:#888;">${foot}</td></tr></table></td></tr></table></body></html>`;
 }
 
@@ -1691,8 +1691,8 @@ async function sendFollowUpEmail(l: any, attempt: number): Promise<void> {
   const first = String(l.name ?? "").trim().split(/\s+/)[0] || "";
   const subject =
     attempt <= 1
-      ? `${first ? first + ", v" : "V"}otre devis vous attend — ${displayName}`
-      : `Dernière relance concernant votre devis — ${displayName}`;
+      ? `${first ? first + ", v" : "V"}otre devis vous attend, ${displayName}`
+      : `Dernière relance concernant votre devis, ${displayName}`;
   await sendMail({
     to: l.email,
     subject,
@@ -1740,7 +1740,7 @@ async function sendFollowUpWhatsApp(l: any): Promise<{ sent: boolean; skipped?: 
   }
 }
 
-// Free-text WhatsApp reply — only valid INSIDE the 24h customer-service window
+// Free-text WhatsApp reply, only valid INSIDE the 24h customer-service window
 // (i.e. in response to a user-initiated message, as in the webhook), where Meta
 // allows non-template text. Uses the same WHATSAPP_TOKEN/WHATSAPP_PHONE_ID as the
 // template sender. Best-effort: returns a status, never throws.
@@ -1934,7 +1934,7 @@ async function recentLeadsSnapshot(limit = 15): Promise<string> {
   if (!leads.length) return "Aucune demande enregistrée.";
   return leads
     .map((l) => {
-      const total = typeof l.total === "number" ? `${l.total} ${l.currency ?? ""}`.trim() : "—";
+      const total = typeof l.total === "number" ? `${l.total} ${l.currency ?? ""}`.trim() : "-";
       const msg = typeof l.message === "string" ? l.message.slice(0, 160) : "";
       return `- [${l.status}] ${l.name || "?"} (${l.source}) · ${new Date(l.createdAt).toLocaleDateString("fr-FR")} · total ${total}${msg ? ` · « ${msg} »` : ""}`;
     })
@@ -1961,7 +1961,7 @@ app.post(`${P}/assistant`, async (c) => {
   // Optional grounding in recent leads (only when the admin opts in).
   let sys = ASSISTANT_SYSTEM;
   if (b?.withLeads) {
-    sys += `\n\nContexte — dernières demandes reçues :\n${await recentLeadsSnapshot()}`;
+    sys += `\n\nContexte, dernières demandes reçues :\n${await recentLeadsSnapshot()}`;
   }
 
   const url =
@@ -1993,8 +1993,8 @@ app.post(`${P}/assistant`, async (c) => {
 });
 
 // ── WhatsApp Cloud API webhook ────────────────────────────────────────────────
-// GET  — Meta verification challenge (hub.verify_token must match CRON_SECRET)
-// POST — Incoming messages from users (stored + admin notification email)
+// GET  - Meta verification challenge (hub.verify_token must match CRON_SECRET)
+// POST, Incoming messages from users (stored + admin notification email)
 app.get(`${P}/webhook/whatsapp`, (c) => {
   const mode      = c.req.query("hub.mode");
   const token     = c.req.query("hub.verify_token");
@@ -2062,7 +2062,7 @@ app.post(`${P}/webhook/whatsapp`, async (c) => {
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
-// INSTAGRAM + FACEBOOK (Messenger) — comment auto-reply, DM waiting message & FAQ
+// INSTAGRAM + FACEBOOK (Messenger), comment auto-reply, DM waiting message & FAQ
 // ══════════════════════════════════════════════════════════════════════════════
 // One webhook handles both networks. Messenger DMs arrive as `entry[].messaging`;
 // Instagram DMs also arrive as `messaging` when object === "instagram". Comments
@@ -2092,7 +2092,7 @@ const DEFAULT_FAQ: FaqRule[] = [
   { keywords: ["commande", "commander", "commencer", "demarrer", "démarrer", "process", "etapes", "étapes"],
     answer: "🚀 C'est simple : 1) vous décrivez votre besoin, 2) on vous envoie un devis gratuit, 3) acompte, 4) on crée et on révise ensemble, 5) livraison. On commence quand vous voulez !" },
   { keywords: ["exemple", "exemples", "portfolio", "realisation", "réalisation", "travaux", "reference", "référence"],
-    answer: "✨ Avec plaisir ! Découvrez nos réalisations sur inovdigitalservices.com — 20+ marques accompagnées et 80+ visuels livrés." },
+    answer: "✨ Avec plaisir ! Découvrez nos réalisations sur inovdigitalservices.com, 20+ marques accompagnées et 80+ visuels livrés." },
   { keywords: ["dispo", "disponible", "ouvert", "libre", "accepte"],
     answer: "✅ Oui, on est disponibles ! Envoyez-nous votre projet en message et on revient vers vous très vite avec une proposition." },
 ];
@@ -2165,14 +2165,14 @@ pour un devis gratuit. Termine en proposant de continuer la discussion. N'invent
   }
 }
 
-// The "waiting message" — sent when nothing else matched, so the person always
+// The "waiting message", sent when nothing else matched, so the person always
 // gets an instant acknowledgement and you can reply yourself afterwards.
 const META_WAIT_MSG = Deno.env.get("META_WAIT_MSG") ??
-  "Bonjour et merci d'avoir contacté INOV Digital Services ! 👋 Votre message est bien arrivé. On revient vers vous très vite avec une réponse personnalisée. 🎨\n— L'équipe INOV Digital Services";
+  "Bonjour et merci d'avoir contacté INOV Digital Services ! 👋 Votre message est bien arrivé. On revient vers vous très vite avec une réponse personnalisée. 🎨\n- L'équipe INOV Digital Services";
 const META_COMMENT_REPLY = Deno.env.get("META_COMMENT_REPLY") ??
-  "Merci beaucoup pour votre message ! 🙏 On vous répond en privé tout de suite. 💬\n— INOV Digital Services";
+  "Merci beaucoup pour votre message ! 🙏 On vous répond en privé tout de suite. 💬\n- INOV Digital Services";
 
-// Send a DM (Messenger or Instagram — both go through the Page messages endpoint
+// Send a DM (Messenger or Instagram, both go through the Page messages endpoint
 // with the Page token). Best-effort.
 async function metaSendDM(recipientId: string, text: string): Promise<{ sent: boolean; skipped?: string; error?: string }> {
   if (!META_PAGE_ID || !META_PAGE_TOKEN) return { sent: false, skipped: "not_configured" };
@@ -2245,7 +2245,7 @@ async function notifyAdminSocial(subject: string, body: string): Promise<void> {
   } catch (_) { /* best-effort */ }
 }
 
-// GET — Meta verification challenge (hub.verify_token must match CRON_SECRET).
+// GET, Meta verification challenge (hub.verify_token must match CRON_SECRET).
 app.get(`${P}/webhook/meta`, (c) => {
   const mode = c.req.query("hub.mode");
   const token = c.req.query("hub.verify_token");
@@ -2256,7 +2256,7 @@ app.get(`${P}/webhook/meta`, (c) => {
   return c.json({ error: "forbidden" }, 403);
 });
 
-// POST — Instagram + Facebook events (DMs and comments).
+// POST, Instagram + Facebook events (DMs and comments).
 app.post(`${P}/webhook/meta`, async (c) => {
   try {
     const raw = await c.req.text();
@@ -2278,7 +2278,7 @@ app.post(`${P}/webhook/meta`, async (c) => {
         await metaSendDM(senderId, answer);
         const kind = faqHit ? "FAQ" : (cfg.useGemini ? "Gemini" : "message d'attente");
         await notifyAdminSocial(
-          `📩 ${isInstagram ? "Instagram" : "Messenger"} — message de ${senderId}`,
+          `📩 ${isInstagram ? "Instagram" : "Messenger"}, message de ${senderId}`,
           `Message reçu :\n\n${incoming}\n\nRéponse auto envoyée (${kind}) :\n${answer}\n\nRépondez vous-même dans la boîte de réception ${isInstagram ? "Instagram" : "Messenger"}.`,
         );
       }
@@ -2300,7 +2300,7 @@ app.post(`${P}/webhook/meta`, async (c) => {
         const dm = matchFaq(commentText, cfg.rules) ?? cfg.waitMessage;
         await metaPrivateReplyToComment(commentId, dm);
         await notifyAdminSocial(
-          `💬 ${isInstagram ? "Instagram" : "Facebook"} — nouveau commentaire`,
+          `💬 ${isInstagram ? "Instagram" : "Facebook"}, nouveau commentaire`,
           `Commentaire :\n\n${commentText}\n\nRéponse publique + DM auto envoyés. Répondez vous-même si besoin.`,
         );
       }
@@ -2313,9 +2313,9 @@ app.post(`${P}/webhook/meta`, async (c) => {
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
-// FORMATIONS (espace Formation — catalogue public + gestion admin + inscriptions)
+// FORMATIONS (espace Formation, catalogue public + gestion admin + inscriptions)
 // ══════════════════════════════════════════════════════════════════════════════
-// KV: formation:<id> — a training course (published flag gates public visibility).
+// KV: formation:<id>, a training course (published flag gates public visibility).
 // Enrollments are stored as regular leads (source "formation") so they flow into
 // the existing dashboard with full payment tracking (status → won auto-sends the
 // receipt). The admin Formation tab manages the catalogue; enrollments are read
@@ -2442,9 +2442,9 @@ app.post(`${P}/formations/enroll`, async (c) => {
     try {
       await sendMail({
         to: notifyTo,
-        subject: `Nouvelle inscription formation — ${f.title}`,
-        text: `Formation : ${f.title} (${f.free ? "gratuite" : "payante"})\nNom : ${name}\nE-mail : ${email}\nWhatsApp : ${b.phone || "—"}\nMessage : ${b.message || "—"}`,
-        html: `<p><strong>Nouvelle inscription — ${escH(f.title)}</strong></p><p>Nom : ${escH(name)}<br>E-mail : ${escH(email)}<br>WhatsApp : ${escH(b.phone || "—")}</p>`,
+        subject: `Nouvelle inscription formation, ${f.title}`,
+        text: `Formation : ${f.title} (${f.free ? "gratuite" : "payante"})\nNom : ${name}\nE-mail : ${email}\nWhatsApp : ${b.phone || "-"}\nMessage : ${b.message || "-"}`,
+        html: `<p><strong>Nouvelle inscription, ${escH(f.title)}</strong></p><p>Nom : ${escH(name)}<br>E-mail : ${escH(email)}<br>WhatsApp : ${escH(b.phone || "-")}</p>`,
       });
     } catch (_) { /* best-effort */ }
   }
@@ -2497,15 +2497,15 @@ app.get(`${P}/formations/enrollments`, async (c) => {
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
-// COLLABORATEURS (espace Collaborateur — candidature publique + validation admin)
+// COLLABORATEURS (espace Collaborateur, candidature publique + validation admin)
 // ══════════════════════════════════════════════════════════════════════════════
-// KV: collaborateur:<id> — a professional's promotional listing. Submitted as
+// KV: collaborateur:<id>, a professional's promotional listing. Submitted as
 // "pending"; only admin-approved listings appear in the public gallery. The promo
 // card is rendered on the client from these fields, in INOV's brand colours.
 // Photos go to a PUBLIC bucket so approved cards can display them on the site.
 
 const COLLAB_BUCKET = "collab-photos";
-const COLLAB_MAX_BYTES = 8 * 1024 * 1024; // 8 MB — a profile photo / logo.
+const COLLAB_MAX_BYTES = 8 * 1024 * 1024; // 8 MB, a profile photo / logo.
 let collabBucketReady = false;
 async function ensureCollabBucket(): Promise<void> {
   if (collabBucketReady) return;
@@ -2515,7 +2515,7 @@ async function ensureCollabBucket(): Promise<void> {
       public: true,
       fileSizeLimit: COLLAB_MAX_BYTES,
       allowedMimeTypes: ["image/png", "image/jpeg", "image/webp", "image/svg+xml"],
-    }).catch(() => { /* concurrent create — ignore */ });
+    }).catch(() => { /* concurrent create, ignore */ });
   }
   collabBucketReady = true;
 }
@@ -2547,7 +2547,7 @@ function cleanCollab(b: any) {
   };
 }
 
-// Public shape — contact channels for reaching the pro, but never the raw email.
+// Public shape, contact channels for reaching the pro, but never the raw email.
 const publicCollab = (x: any) => ({
   id: x.id, name: x.name, profession: x.profession, service: x.service,
   description: x.description, price: x.price, city: x.city, photoUrl: x.photoUrl,
@@ -2590,9 +2590,9 @@ app.post(`${P}/collaborateurs`, async (c) => {
     try {
       await sendMail({
         to: notifyTo,
-        subject: `Nouvelle candidature collaborateur — ${clean.name} (${clean.profession})`,
-        text: `Nom : ${clean.name}\nMétier : ${clean.profession}\nService : ${clean.service}\nTarif : ${clean.price || "—"}\nVille : ${clean.city || "—"}\nWhatsApp : ${clean.whatsapp || clean.phone || "—"}\nE-mail : ${clean.email || "—"}\n\nÀ valider dans l'espace admin → Collaborateurs.`,
-        html: `<p><strong>Nouvelle candidature collaborateur</strong></p><p>${escH(clean.name)} — ${escH(clean.profession)}<br>Service : ${escH(clean.service)}<br>Tarif : ${escH(clean.price || "—")}</p><p>À valider dans l'espace admin → Collaborateurs.</p>`,
+        subject: `Nouvelle candidature collaborateur, ${clean.name} (${clean.profession})`,
+        text: `Nom : ${clean.name}\nMétier : ${clean.profession}\nService : ${clean.service}\nTarif : ${clean.price || "-"}\nVille : ${clean.city || "-"}\nWhatsApp : ${clean.whatsapp || clean.phone || "-"}\nE-mail : ${clean.email || "-"}\n\nÀ valider dans l'espace admin → Collaborateurs.`,
+        html: `<p><strong>Nouvelle candidature collaborateur</strong></p><p>${escH(clean.name)}, ${escH(clean.profession)}<br>Service : ${escH(clean.service)}<br>Tarif : ${escH(clean.price || "-")}</p><p>À valider dans l'espace admin → Collaborateurs.</p>`,
       });
     } catch (_) { /* best-effort */ }
   }
@@ -2639,9 +2639,9 @@ app.delete(`${P}/collaborateurs/:id`, async (c) => {
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
-// ÉVENTUALITÉS (journal d'incidents admin — interne, aucune route publique)
+// ÉVENTUALITÉS (journal d'incidents admin, interne, aucune route publique)
 // ══════════════════════════════════════════════════════════════════════════════
-// KV: eventualite:<id> — an incident/alert/note entry in the admin journal.
+// KV: eventualite:<id>, an incident/alert/note entry in the admin journal.
 // All routes require admin auth. Public site never touches these.
 
 const EVT_TYPES = ["incident", "alerte", "note", "suivi_client", "paiement"] as const;
@@ -2987,7 +2987,7 @@ app.delete(`${P}/social/posts/:id`, async (c) => {
 });
 
 // Cron: publish due posts (secret-guarded, no admin session). Same contract as
-// the newsletter dispatch — safe to call every few minutes.
+// the newsletter dispatch, safe to call every few minutes.
 app.post(`${P}/social/dispatch`, async (c) => {
   if (!CRON_SECRET) return c.json({ error: "dispatch disabled" }, 503);
   if (c.req.header("x-cron-secret") !== CRON_SECRET) return c.json({ error: "forbidden" }, 403);
@@ -3056,16 +3056,16 @@ app.get(`${P}/tiktok/callback`, async (c) => {
       `<h1 style="font-size:20px">${title}</h1><p style="color:#555;line-height:1.6">${msg}</p>` +
       `<p><a href="${backTo}" style="color:#2563eb">Retour à l'administration</a></p></div>`,
     );
-  if (!code) return page("TikTok — connexion annulée", "Aucun code d'autorisation reçu. Vous pouvez réessayer depuis l'administration.");
+  if (!code) return page("TikTok, connexion annulée", "Aucun code d'autorisation reçu. Vous pouvez réessayer depuis l'administration.");
   const saved = await kv.get(`tiktok:oauth:${state}`);
-  if (!saved) return page("TikTok — lien expiré", "Ce lien de connexion a expiré ou est invalide. Relancez la connexion depuis l'administration.");
+  if (!saved) return page("TikTok, lien expiré", "Ce lien de connexion a expiré ou est invalide. Relancez la connexion depuis l'administration.");
   await kv.del(`tiktok:oauth:${state}`);
   const tokens = await tiktokTokenRequest({
     grant_type: "authorization_code",
     code,
     redirect_uri: tiktokRedirectUri(),
   });
-  if (!tokens) return page("TikTok — échec", "Impossible de finaliser la connexion. Vérifiez les identifiants de l'app TikTok, puis réessayez.");
+  if (!tokens) return page("TikTok, échec", "Impossible de finaliser la connexion. Vérifiez les identifiants de l'app TikTok, puis réessayez.");
   await kv.set("tiktok:tokens", tokens);
   return page("TikTok connecté ✅", "Votre compte TikTok est relié. Vous pouvez maintenant publier vos vidéos depuis l'administration.");
 });

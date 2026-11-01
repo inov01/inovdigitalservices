@@ -24,14 +24,14 @@ type CfgKey =
   | "choosePlan" | "planIncluded" | "delivery" | "revisions" | "revisionWindow"
   | "deposit" | "balance" | "whyItWorks" | "recommended" | "days"
 const L: Record<Lang, Record<CfgKey, string>> = {
-  fr: { customize: "Personnaliser", options: "Votre offre partagée", estimated: "Estimation", priceNote: "Estimation indicative — le devis final est confirmé après le brief.", designOnly: "Prix du design uniquement", order: "Commander sur WhatsApp", share: "Partager", shared: "Partagé", copied: "Lien copié", close: "Fermer", from: "à partir de", included: "inclus", choosePlan: "Choisissez votre formule", planIncluded: "Ce qui est inclus", delivery: "Livraison", revisions: "révisions", revisionWindow: "fenêtre de", deposit: "Acompte aujourd'hui", balance: "Solde à la livraison", whyItWorks: "Pourquoi ce service", recommended: "Recommandé", days: "jours" },
-  en: { customize: "Customize", options: "Your shared offer", estimated: "Estimate", priceNote: "Indicative estimate — the final quote is confirmed after the brief.", designOnly: "Design price only", order: "Order on WhatsApp", share: "Share", shared: "Shared", copied: "Link copied", close: "Close", from: "from", included: "included", choosePlan: "Choose your plan", planIncluded: "What's included", delivery: "Delivery", revisions: "revisions", revisionWindow: "window of", deposit: "Deposit today", balance: "Balance on delivery", whyItWorks: "Why this service", recommended: "Recommended", days: "days" },
-  es: { customize: "Personalizar", options: "Tu oferta compartida", estimated: "Estimación", priceNote: "Estimación indicativa — el presupuesto final se confirma tras el brief.", designOnly: "Solo precio del diseño", order: "Pedir por WhatsApp", share: "Compartir", shared: "Compartido", copied: "Enlace copiado", close: "Cerrar", from: "desde", included: "incluido", choosePlan: "Elige tu plan", planIncluded: "Qué incluye", delivery: "Entrega", revisions: "revisiones", revisionWindow: "ventana de", deposit: "Anticipo hoy", balance: "Saldo a la entrega", whyItWorks: "Por qué este servicio", recommended: "Recomendado", days: "días" },
-  ht: { customize: "Pèsonalize", options: "Òf yo pataje avè w la", estimated: "Estimasyon", priceNote: "Estimasyon endikatif — devi final la konfime apre brief la.", designOnly: "Pri design lan sèlman", order: "Kòmande sou WhatsApp", share: "Pataje", shared: "Pataje", copied: "Lyen kopye", close: "Fèmen", from: "apati", included: "enkli", choosePlan: "Chwazi fòmil ou", planIncluded: "Sa ki ladan", delivery: "Livrezon", revisions: "revizyon", revisionWindow: "fenèt", deposit: "Akont jodi a", balance: "Rès la lè n livre", whyItWorks: "Poukisa sèvis sa a", recommended: "Rekòmande", days: "jou" },
-  pt: { customize: "Personalizar", options: "A sua oferta partilhada", estimated: "Estimativa", priceNote: "Estimativa indicativa — o orçamento final é confirmado após o briefing.", designOnly: "Apenas preço do design", order: "Pedir no WhatsApp", share: "Partilhar", shared: "Partilhado", copied: "Link copiado", close: "Fechar", from: "a partir de", included: "incluído", choosePlan: "Escolha o seu plano", planIncluded: "O que está incluído", delivery: "Entrega", revisions: "revisões", revisionWindow: "janela de", deposit: "Sinal hoje", balance: "Saldo na entrega", whyItWorks: "Por que este serviço", recommended: "Recomendado", days: "dias" },
-  it: { customize: "Personalizza", options: "La tua offerta condivisa", estimated: "Stima", priceNote: "Stima indicativa — il preventivo finale è confermato dopo il brief.", designOnly: "Solo prezzo del design", order: "Ordina su WhatsApp", share: "Condividi", shared: "Condiviso", copied: "Link copiato", close: "Chiudi", from: "da", included: "incluso", choosePlan: "Scegli la formula", planIncluded: "Cosa è incluso", delivery: "Consegna", revisions: "revisioni", revisionWindow: "finestra di", deposit: "Acconto oggi", balance: "Saldo alla consegna", whyItWorks: "Perché questo servizio", recommended: "Consigliato", days: "giorni" },
-  de: { customize: "Anpassen", options: "Ihr geteiltes Angebot", estimated: "Schätzung", priceNote: "Richtwert — das endgültige Angebot wird nach dem Briefing bestätigt.", designOnly: "Nur Designpreis", order: "Auf WhatsApp bestellen", share: "Teilen", shared: "Geteilt", copied: "Link kopiert", close: "Schließen", from: "ab", included: "inklusive", choosePlan: "Paket auswählen", planIncluded: "Das ist enthalten", delivery: "Lieferung", revisions: "Korrekturen", revisionWindow: "Zeitraum", deposit: "Anzahlung heute", balance: "Rest bei Lieferung", whyItWorks: "Warum dieser Service", recommended: "Empfohlen", days: "Tage" },
-  ar: { customize: "تخصيص", options: "عرضك المشترك", estimated: "تقدير", priceNote: "تقدير إرشادي — يتم تأكيد العرض النهائي بعد الموجز.", designOnly: "سعر التصميم فقط", order: "اطلب عبر واتساب", share: "مشاركة", shared: "تمت المشاركة", copied: "تم نسخ الرابط", close: "إغلاق", from: "ابتداءً من", included: "متضمّن", choosePlan: "اختر الباقة", planIncluded: "ما تتضمنه", delivery: "التسليم", revisions: "تعديلات", revisionWindow: "نافذة", deposit: "العربون اليوم", balance: "الرصيد عند التسليم", whyItWorks: "لماذا هذه الخدمة", recommended: "موصى به", days: "أيام" },
+  fr: { customize: "Personnaliser", options: "Votre offre partagée", estimated: "Estimation", priceNote: "Estimation indicative, le devis final est confirmé après le brief.", designOnly: "Prix du design uniquement", order: "Commander sur WhatsApp", share: "Partager", shared: "Partagé", copied: "Lien copié", close: "Fermer", from: "à partir de", included: "inclus", choosePlan: "Choisissez votre formule", planIncluded: "Ce qui est inclus", delivery: "Livraison", revisions: "révisions", revisionWindow: "fenêtre de", deposit: "Acompte aujourd'hui", balance: "Solde à la livraison", whyItWorks: "Pourquoi ce service", recommended: "Recommandé", days: "jours" },
+  en: { customize: "Customize", options: "Your shared offer", estimated: "Estimate", priceNote: "Indicative estimate, the final quote is confirmed after the brief.", designOnly: "Design price only", order: "Order on WhatsApp", share: "Share", shared: "Shared", copied: "Link copied", close: "Close", from: "from", included: "included", choosePlan: "Choose your plan", planIncluded: "What's included", delivery: "Delivery", revisions: "revisions", revisionWindow: "window of", deposit: "Deposit today", balance: "Balance on delivery", whyItWorks: "Why this service", recommended: "Recommended", days: "days" },
+  es: { customize: "Personalizar", options: "Tu oferta compartida", estimated: "Estimación", priceNote: "Estimación indicativa, el presupuesto final se confirma tras el brief.", designOnly: "Solo precio del diseño", order: "Pedir por WhatsApp", share: "Compartir", shared: "Compartido", copied: "Enlace copiado", close: "Cerrar", from: "desde", included: "incluido", choosePlan: "Elige tu plan", planIncluded: "Qué incluye", delivery: "Entrega", revisions: "revisiones", revisionWindow: "ventana de", deposit: "Anticipo hoy", balance: "Saldo a la entrega", whyItWorks: "Por qué este servicio", recommended: "Recomendado", days: "días" },
+  ht: { customize: "Pèsonalize", options: "Òf yo pataje avè w la", estimated: "Estimasyon", priceNote: "Estimasyon endikatif, devi final la konfime apre brief la.", designOnly: "Pri design lan sèlman", order: "Kòmande sou WhatsApp", share: "Pataje", shared: "Pataje", copied: "Lyen kopye", close: "Fèmen", from: "apati", included: "enkli", choosePlan: "Chwazi fòmil ou", planIncluded: "Sa ki ladan", delivery: "Livrezon", revisions: "revizyon", revisionWindow: "fenèt", deposit: "Akont jodi a", balance: "Rès la lè n livre", whyItWorks: "Poukisa sèvis sa a", recommended: "Rekòmande", days: "jou" },
+  pt: { customize: "Personalizar", options: "A sua oferta partilhada", estimated: "Estimativa", priceNote: "Estimativa indicativa, o orçamento final é confirmado após o briefing.", designOnly: "Apenas preço do design", order: "Pedir no WhatsApp", share: "Partilhar", shared: "Partilhado", copied: "Link copiado", close: "Fechar", from: "a partir de", included: "incluído", choosePlan: "Escolha o seu plano", planIncluded: "O que está incluído", delivery: "Entrega", revisions: "revisões", revisionWindow: "janela de", deposit: "Sinal hoje", balance: "Saldo na entrega", whyItWorks: "Por que este serviço", recommended: "Recomendado", days: "dias" },
+  it: { customize: "Personalizza", options: "La tua offerta condivisa", estimated: "Stima", priceNote: "Stima indicativa, il preventivo finale è confermato dopo il brief.", designOnly: "Solo prezzo del design", order: "Ordina su WhatsApp", share: "Condividi", shared: "Condiviso", copied: "Link copiato", close: "Chiudi", from: "da", included: "incluso", choosePlan: "Scegli la formula", planIncluded: "Cosa è incluso", delivery: "Consegna", revisions: "revisioni", revisionWindow: "finestra di", deposit: "Acconto oggi", balance: "Saldo alla consegna", whyItWorks: "Perché questo servizio", recommended: "Consigliato", days: "giorni" },
+  de: { customize: "Anpassen", options: "Ihr geteiltes Angebot", estimated: "Schätzung", priceNote: "Richtwert, das endgültige Angebot wird nach dem Briefing bestätigt.", designOnly: "Nur Designpreis", order: "Auf WhatsApp bestellen", share: "Teilen", shared: "Geteilt", copied: "Link kopiert", close: "Schließen", from: "ab", included: "inklusive", choosePlan: "Paket auswählen", planIncluded: "Das ist enthalten", delivery: "Lieferung", revisions: "Korrekturen", revisionWindow: "Zeitraum", deposit: "Anzahlung heute", balance: "Rest bei Lieferung", whyItWorks: "Warum dieser Service", recommended: "Empfohlen", days: "Tage" },
+  ar: { customize: "تخصيص", options: "عرضك المشترك", estimated: "تقدير", priceNote: "تقدير إرشادي, يتم تأكيد العرض النهائي بعد الموجز.", designOnly: "سعر التصميم فقط", order: "اطلب عبر واتساب", share: "مشاركة", shared: "تمت المشاركة", copied: "تم نسخ الرابط", close: "إغلاق", from: "ابتداءً من", included: "متضمّن", choosePlan: "اختر الباقة", planIncluded: "ما تتضمنه", delivery: "التسليم", revisions: "تعديلات", revisionWindow: "نافذة", deposit: "العربون اليوم", balance: "الرصيد عند التسليم", whyItWorks: "لماذا هذه الخدمة", recommended: "موصى به", days: "أيام" },
 }
 
 export default function ServiceConfigurator({
@@ -93,7 +93,7 @@ export default function ServiceConfigurator({
       total: p,
       deposit: Math.round(p * 0.7),
       items: [{ name: `${name} (${tierLabel})`, tier: tierLabel, qty: 1, price: p }],
-      message: `${name} (${tierLabel}) — ${l.estimated}: ${totalDisplay}\n${summaryLines().join("\n")}`,
+      message: `${name} (${tierLabel}), ${l.estimated}: ${totalDisplay}\n${summaryLines().join("\n")}`,
       meta: { configurator: true, serviceId: service.id },
     })
   }
@@ -109,7 +109,7 @@ export default function ServiceConfigurator({
 
   async function share() {
     const url = shareUrl()
-    const text = `${name} — ${l.from} ${totalDisplay} · INOV Digital Services`
+    const text = `${name}, ${l.from} ${totalDisplay} · INOV Digital Services`
     try {
       if (navigator.share) {
         await navigator.share({ title: name, text, url })
@@ -120,7 +120,7 @@ export default function ServiceConfigurator({
       }
       track("configurator_share", { service: service.id })
     } catch {
-      /* user cancelled — no-op */
+      /* user cancelled, no-op */
     }
   }
 
@@ -134,7 +134,7 @@ export default function ServiceConfigurator({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={`${l.customize} — ${name}`}
+      aria-label={`${l.customize}, ${name}`}
       style={{
         position: "fixed", inset: 0, zIndex: 1000, display: "flex", alignItems: "flex-end", justifyContent: "center",
         background: "rgba(15,15,20,0.55)", backdropFilter: "blur(3px)", padding: "0",
@@ -170,7 +170,7 @@ export default function ServiceConfigurator({
           </button>
         </div>
 
-        {/* Options — scrollable */}
+        {/* Options, scrollable */}
         <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
           <div>
             <p style={{ margin: 0, fontFamily: "'Outfit', sans-serif", fontSize: 14, color: "var(--ds-text-sec)", lineHeight: 1.55 }}>{description}</p>
@@ -300,7 +300,7 @@ export default function ServiceConfigurator({
           </div>
         </div>
 
-        {/* Sticky footer — live price + actions */}
+        {/* Sticky footer, live price + actions */}
         <div style={{ borderTop: "1px solid var(--ds-border)", padding: "14px 20px", background: "var(--ds-bg)", display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10 }}>
             <div>

@@ -250,7 +250,7 @@ function downloadCsv(filename: string, rows: (string | number)[][]) {
   URL.revokeObjectURL(url)
 }
 // Legacy quote leads stored `total`, `deposit` and `items[].price` in region-
-// adjusted USD while labelling them with the client's currency — so the rate was
+// adjusted USD while labelling them with the client's currency, so the rate was
 // never applied. New leads carry `meta.rate` and are already in local currency.
 // For an old quote lead (no `meta.rate`), convert its amounts with the current
 // rate so the admin shows figures consistent with the currency label.
@@ -275,7 +275,7 @@ function esc(s: unknown): string {
   return String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string))
 }
 function fmtMoney(n: number | null | undefined, cur?: string): string {
-  return typeof n === "number" ? `${n.toLocaleString("fr-FR")}${cur ? ` ${cur}` : ""}` : "—"
+  return typeof n === "number" ? `${n.toLocaleString("fr-FR")}${cur ? ` ${cur}` : ""}` : "-"
 }
 function receiptNo(l: Lead): string {
   const y = new Date(l.createdAt).getFullYear()
@@ -284,7 +284,7 @@ function receiptNo(l: Lead): string {
 // A cart service line, always shown in the lead's own currency (matching the total).
 type SvcLine = { name: string; qty: number; usd: number | null; local?: number | null }
 // Multiplier that converts a base-USD line amount into the lead's currency.
-// We DERIVE it from the lead itself — `total ÷ sum of base USD` — so every line
+// We DERIVE it from the lead itself, `total ÷ sum of base USD`, so every line
 // is computed with the SAME effective rate that produced the total the client
 // actually paid. This keeps the lines and the total perfectly reconciled and
 // always reflecting the applied rate, regardless of when the lead was created or
@@ -322,15 +322,15 @@ function mailtoReply(l: Lead): string {
     replyGreeting(l),
     "",
     amt
-      ? `Merci beaucoup pour votre paiement de ${amt} — nous confirmons sa bonne réception. 🙏`
-      : "Merci beaucoup pour votre paiement — nous confirmons sa bonne réception. 🙏",
+      ? `Merci beaucoup pour votre paiement de ${amt}, nous confirmons sa bonne réception. 🙏`
+      : "Merci beaucoup pour votre paiement, nous confirmons sa bonne réception. 🙏",
     "",
     "Votre reçu officiel vous a été envoyé. Nous restons à votre entière disposition pour la suite.",
     "",
     "Bien cordialement,",
     "L'équipe INOV Digital Services",
   ].join("\n")
-  return `mailto:${l.email}?subject=${encodeURIComponent(`Confirmation de votre paiement — ${receiptNo(l)}`)}&body=${encodeURIComponent(body)}`
+  return `mailto:${l.email}?subject=${encodeURIComponent(`Confirmation de votre paiement, ${receiptNo(l)}`)}&body=${encodeURIComponent(body)}`
 }
 function waReply(l: Lead): string {
   const f = firstName(l)
@@ -340,7 +340,7 @@ function waReply(l: Lead): string {
     amt
       ? `Merci pour votre paiement de ${amt}, nous confirmons sa bonne réception. 🙏`
       : "Merci pour votre paiement, nous confirmons sa bonne réception. 🙏",
-    "Votre reçu est en route. À très vite ! — L'équipe INOV Digital Services",
+    "Votre reçu est en route. À très vite ! L'équipe INOV Digital Services",
   ].join("\n")
   return `https://wa.me/${l.phone.replace(/[^\d]/g, "")}?text=${encodeURIComponent(text)}`
 }
@@ -354,14 +354,14 @@ const WA_SERVICE: Record<
   string,
   { hi: (f: string) => string; one: (s: string) => string; many: (s: string) => string; close: string; sig: string }
 > = {
-  fr: { hi: (f) => (f ? `Bonjour ${f} ! 👋` : "Bonjour ! 👋"), one: (s) => `Merci pour votre demande concernant *${s}*. Nous serions ravis de la réaliser pour vous. 🎨`, many: (s) => `Merci pour votre demande (${s}). Nous serions ravis de la réaliser pour vous. 🎨`, close: "Pour démarrer, dites-nous simplement quelques détails sur votre projet et nous vous envoyons le devis. On s'occupe de tout !", sig: "— L'équipe INOV Digital Services" },
-  en: { hi: (f) => (f ? `Hi ${f}! 👋` : "Hello! 👋"), one: (s) => `Thanks for your request about *${s}*. We'd love to create it for you. 🎨`, many: (s) => `Thanks for your request (${s}). We'd love to create it for you. 🎨`, close: "To get started, just share a few details about your project and we'll send the quote. We'll handle the rest!", sig: "— The INOV Digital Services team" },
-  es: { hi: (f) => (f ? `¡Hola ${f}! 👋` : "¡Hola! 👋"), one: (s) => `Gracias por tu solicitud sobre *${s}*. Nos encantaría crearlo para ti. 🎨`, many: (s) => `Gracias por tu solicitud (${s}). Nos encantaría crearlo para ti. 🎨`, close: "Para empezar, cuéntanos algunos detalles de tu proyecto y te enviamos el presupuesto. ¡Nosotros nos encargamos!", sig: "— El equipo de INOV Digital Services" },
-  ht: { hi: (f) => (f ? `Bonjou ${f} ! 👋` : "Bonjou ! 👋"), one: (s) => `Mèsi pou demann ou sou *${s}*. Nou ta renmen reyalize l pou ou. 🎨`, many: (s) => `Mèsi pou demann ou (${s}). Nou ta renmen reyalize l pou ou. 🎨`, close: "Pou kòmanse, jis di nou kèk detay sou pwojè w la epi n ap voye devi a ba ou. N ap okipe tout bagay!", sig: "— Ekip INOV Digital Services" },
-  pt: { hi: (f) => (f ? `Olá ${f}! 👋` : "Olá! 👋"), one: (s) => `Obrigado pelo seu pedido sobre *${s}*. Teríamos todo o gosto em criá-lo para si. 🎨`, many: (s) => `Obrigado pelo seu pedido (${s}). Teríamos todo o gosto em criá-lo para si. 🎨`, close: "Para começar, conte-nos alguns detalhes do seu projeto e enviamos o orçamento. Tratamos de tudo!", sig: "— A equipa INOV Digital Services" },
-  it: { hi: (f) => (f ? `Ciao ${f}! 👋` : "Ciao! 👋"), one: (s) => `Grazie per la tua richiesta su *${s}*. Saremmo felici di realizzarla per te. 🎨`, many: (s) => `Grazie per la tua richiesta (${s}). Saremmo felici di realizzarla per te. 🎨`, close: "Per iniziare, raccontaci qualche dettaglio sul tuo progetto e ti inviamo il preventivo. Pensiamo a tutto noi!", sig: "— Il team INOV Digital Services" },
-  de: { hi: (f) => (f ? `Hallo ${f}! 👋` : "Hallo! 👋"), one: (s) => `Vielen Dank für Ihre Anfrage zu *${s}*. Wir würden es gerne für Sie umsetzen. 🎨`, many: (s) => `Vielen Dank für Ihre Anfrage (${s}). Wir würden es gerne für Sie umsetzen. 🎨`, close: "Für den Start nennen Sie uns einfach ein paar Details zu Ihrem Projekt und wir senden Ihnen das Angebot. Wir kümmern uns um den Rest!", sig: "— Ihr INOV Digital Services Team" },
-  ar: { hi: (f) => (f ? `مرحبًا ${f}! 👋` : "مرحبًا! 👋"), one: (s) => `شكرًا لطلبك بخصوص *${s}*. يسعدنا تنفيذه لك. 🎨`, many: (s) => `شكرًا لطلبك (${s}). يسعدنا تنفيذه لك. 🎨`, close: "للبدء، أخبرنا ببعض التفاصيل عن مشروعك وسنرسل لك عرض السعر. سنتكفّل بكل شيء!", sig: "— فريق INOV Digital Services" },
+  fr: { hi: (f) => (f ? `Bonjour ${f} ! 👋` : "Bonjour ! 👋"), one: (s) => `Merci pour votre demande concernant *${s}*. Nous serions ravis de la réaliser pour vous. 🎨`, many: (s) => `Merci pour votre demande (${s}). Nous serions ravis de la réaliser pour vous. 🎨`, close: "Pour démarrer, dites-nous simplement quelques détails sur votre projet et nous vous envoyons le devis. On s'occupe de tout !", sig: "L'équipe INOV Digital Services" },
+  en: { hi: (f) => (f ? `Hi ${f}! 👋` : "Hello! 👋"), one: (s) => `Thanks for your request about *${s}*. We'd love to create it for you. 🎨`, many: (s) => `Thanks for your request (${s}). We'd love to create it for you. 🎨`, close: "To get started, just share a few details about your project and we'll send the quote. We'll handle the rest!", sig: "The INOV Digital Services team" },
+  es: { hi: (f) => (f ? `¡Hola ${f}! 👋` : "¡Hola! 👋"), one: (s) => `Gracias por tu solicitud sobre *${s}*. Nos encantaría crearlo para ti. 🎨`, many: (s) => `Gracias por tu solicitud (${s}). Nos encantaría crearlo para ti. 🎨`, close: "Para empezar, cuéntanos algunos detalles de tu proyecto y te enviamos el presupuesto. ¡Nosotros nos encargamos!", sig: "El equipo de INOV Digital Services" },
+  ht: { hi: (f) => (f ? `Bonjou ${f} ! 👋` : "Bonjou ! 👋"), one: (s) => `Mèsi pou demann ou sou *${s}*. Nou ta renmen reyalize l pou ou. 🎨`, many: (s) => `Mèsi pou demann ou (${s}). Nou ta renmen reyalize l pou ou. 🎨`, close: "Pou kòmanse, jis di nou kèk detay sou pwojè w la epi n ap voye devi a ba ou. N ap okipe tout bagay!", sig: "Ekip INOV Digital Services" },
+  pt: { hi: (f) => (f ? `Olá ${f}! 👋` : "Olá! 👋"), one: (s) => `Obrigado pelo seu pedido sobre *${s}*. Teríamos todo o gosto em criá-lo para si. 🎨`, many: (s) => `Obrigado pelo seu pedido (${s}). Teríamos todo o gosto em criá-lo para si. 🎨`, close: "Para começar, conte-nos alguns detalhes do seu projeto e enviamos o orçamento. Tratamos de tudo!", sig: "A equipa INOV Digital Services" },
+  it: { hi: (f) => (f ? `Ciao ${f}! 👋` : "Ciao! 👋"), one: (s) => `Grazie per la tua richiesta su *${s}*. Saremmo felici di realizzarla per te. 🎨`, many: (s) => `Grazie per la tua richiesta (${s}). Saremmo felici di realizzarla per te. 🎨`, close: "Per iniziare, raccontaci qualche dettaglio sul tuo progetto e ti inviamo il preventivo. Pensiamo a tutto noi!", sig: "Il team INOV Digital Services" },
+  de: { hi: (f) => (f ? `Hallo ${f}! 👋` : "Hallo! 👋"), one: (s) => `Vielen Dank für Ihre Anfrage zu *${s}*. Wir würden es gerne für Sie umsetzen. 🎨`, many: (s) => `Vielen Dank für Ihre Anfrage (${s}). Wir würden es gerne für Sie umsetzen. 🎨`, close: "Für den Start nennen Sie uns einfach ein paar Details zu Ihrem Projekt und wir senden Ihnen das Angebot. Wir kümmern uns um den Rest!", sig: "Ihr INOV Digital Services Team" },
+  ar: { hi: (f) => (f ? `مرحبًا ${f}! 👋` : "مرحبًا! 👋"), one: (s) => `شكرًا لطلبك بخصوص *${s}*. يسعدنا تنفيذه لك. 🎨`, many: (s) => `شكرًا لطلبك (${s}). يسعدنا تنفيذه لك. 🎨`, close: "للبدء، أخبرنا ببعض التفاصيل عن مشروعك وسنرسل لك عرض السعر. سنتكفّل بكل شيء!", sig: "فريق INOV Digital Services" },
 }
 function waServiceReply(l: Lead): string {
   const t = WA_SERVICE[l.lang] ?? WA_SERVICE.fr
@@ -375,7 +375,7 @@ function waServiceReply(l: Lead): string {
 
 function buildReceiptHtml(l: Lead): string {
   const meta = (l.meta ?? {}) as Record<string, unknown>
-  const method = (meta.paymentMethodLabel as string) || (meta.paymentMethod as string) || "—"
+  const method = (meta.paymentMethodLabel as string) || (meta.paymentMethod as string) || "-"
   const reference = (meta.reference as string) || ""
   const paid = l.status === "won"
 
@@ -631,7 +631,7 @@ function buildProformaHtml(l: Lead): string {
         </div>
         <div style="margin-top:8px;padding:12px 16px;border:1.5px dashed #111;background:#fafafa;font-size:11.5px;line-height:1.6;color:#333;">
           <strong style="display:block;font-size:12px;color:#111;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.03em;">Important</strong>
-          Ce document est une facture proforma : il ne constitue pas un reçu ni une preuve de paiement. Pour obtenir votre reçu officiel, veuillez effectuer le paiement puis nous transmettre une confirmation valable — soit le code / identifiant (ID) de la transaction, soit une capture d'écran lisible du paiement.
+          Ce document est une facture proforma : il ne constitue pas un reçu ni une preuve de paiement. Pour obtenir votre reçu officiel, veuillez effectuer le paiement puis nous transmettre une confirmation valable, soit le code / identifiant (ID) de la transaction, soit une capture d'écran lisible du paiement.
         </div>
         <div style="margin-top:24px;text-align:center;font-size:12px;color:#666;font-weight:600;">INOV Digital Services · @inov_digital_services · (+509) 3625-5920</div>
       </div>
@@ -770,7 +770,7 @@ function BriefAttachments({ meta, leadId, onChange }: { meta: Record<string, unk
     try {
       const { url } = await adminApi.briefFileUrl(path)
       window.open(url, "_blank", "noopener")
-    } catch { /* signed-url fetch failed — ignore, admin can retry */ }
+    } catch { /* signed-url fetch failed, ignore, admin can retry */ }
     finally { setBusy(null) }
   }
   async function remove(path: string, name: string) {
@@ -779,7 +779,7 @@ function BriefAttachments({ meta, leadId, onChange }: { meta: Record<string, unk
     try {
       await adminApi.briefFileDelete(path, leadId)
       onChange()
-    } catch { /* delete failed — ignore, admin can retry */ }
+    } catch { /* delete failed, ignore, admin can retry */ }
     finally { setDel(null) }
   }
   const kb = (n: number) => (n < 1024 * 1024 ? `${Math.round(n / 1024)} KB` : `${(n / 1048576).toFixed(1)} MB`)

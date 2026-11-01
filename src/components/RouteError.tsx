@@ -8,13 +8,13 @@ import { useSettings } from "../context/AppSettings"
 // route render/loader errors internally, so it needs its own error element to
 // avoid react-router's default (unstyled, English) fallback screen.
 const COPY: Record<string, { label: string; title: string; sub: string; retry: string; home: string }> = {
-  fr: { label: "Erreur", title: "Une erreur est survenue", sub: "Quelque chose d'inattendu s'est produit sur cette page. Réessayez, ou revenez à l'accueil — tout y est.", retry: "Réessayer", home: "Retour à l'accueil" },
-  en: { label: "Error", title: "Something went wrong", sub: "An unexpected error occurred on this page. Try again, or head back home — everything is there.", retry: "Try again", home: "Back to home" },
+  fr: { label: "Erreur", title: "Une erreur est survenue", sub: "Quelque chose d'inattendu s'est produit sur cette page. Réessayez, ou revenez à l'accueil, tout y est.", retry: "Réessayer", home: "Retour à l'accueil" },
+  en: { label: "Error", title: "Something went wrong", sub: "An unexpected error occurred on this page. Try again, or head back home, everything is there.", retry: "Try again", home: "Back to home" },
   es: { label: "Error", title: "Algo salió mal", sub: "Ocurrió un error inesperado en esta página. Inténtalo de nuevo o vuelve al inicio, todo está ahí.", retry: "Reintentar", home: "Volver al inicio" },
-  ht: { label: "Erè", title: "Gen yon erè ki rive", sub: "Yon bagay inatandi rive sou paj sa a. Eseye ankò, oswa retounen nan akèy la — tout bagay la.", retry: "Eseye ankò", home: "Retounen lakay" },
+  ht: { label: "Erè", title: "Gen yon erè ki rive", sub: "Yon bagay inatandi rive sou paj sa a. Eseye ankò, oswa retounen nan akèy la, tout bagay la.", retry: "Eseye ankò", home: "Retounen lakay" },
   pt: { label: "Erro", title: "Algo deu errado", sub: "Ocorreu um erro inesperado nesta página. Tente novamente ou volte ao início, tudo está lá.", retry: "Tentar novamente", home: "Voltar ao início" },
   it: { label: "Errore", title: "Si è verificato un errore", sub: "Si è verificato un errore imprevisto su questa pagina. Riprova o torna alla home, c'è tutto.", retry: "Riprova", home: "Torna alla home" },
-  de: { label: "Fehler", title: "Ein Fehler ist aufgetreten", sub: "Auf dieser Seite ist ein unerwarteter Fehler aufgetreten. Versuchen Sie es erneut oder gehen Sie zur Startseite — dort finden Sie alles.", retry: "Erneut versuchen", home: "Zur Startseite" },
+  de: { label: "Fehler", title: "Ein Fehler ist aufgetreten", sub: "Auf dieser Seite ist ein unerwarteter Fehler aufgetreten. Versuchen Sie es erneut oder gehen Sie zur Startseite, dort finden Sie alles.", retry: "Erneut versuchen", home: "Zur Startseite" },
   ar: { label: "خطأ", title: "حدث خطأ ما", sub: "حدث خطأ غير متوقع في هذه الصفحة. حاول مرة أخرى أو عد إلى الصفحة الرئيسية، ستجد كل شيء هناك.", retry: "حاول مرة أخرى", home: "العودة إلى الرئيسية" },
 }
 
@@ -29,7 +29,7 @@ export default function RouteError() {
   const status = isRouteErrorResponse(error) ? error.status : null
 
   useEffect(() => {
-    document.title = `${c.title} — INOV Digital Services`
+    document.title = `${c.title}, INOV Digital Services`
     // In production, wire this to your logging/monitoring service (e.g. Sentry).
     if (import.meta.env?.DEV) console.error("Route error:", error)
   }, [c.title, error])

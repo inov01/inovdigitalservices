@@ -21,7 +21,7 @@ const COPY: Record<string, {
   en: {
     label: "Page not found",
     title: "This page doesn't exist",
-    sub: "The link may be wrong, or the page may have been moved or removed. Head back home — everything is there.",
+    sub: "The link may be wrong, or the page may have been moved or removed. Head back home, everything is there.",
     home: "Back to home",
     contact: "Contact us",
   },
@@ -56,7 +56,7 @@ const COPY: Record<string, {
   de: {
     label: "Seite nicht gefunden",
     title: "Diese Seite existiert nicht",
-    sub: "Der Link könnte falsch sein oder die Seite wurde verschoben. Zur Startseite — dort finden Sie alles.",
+    sub: "Der Link könnte falsch sein oder die Seite wurde verschoben. Zur Startseite, dort finden Sie alles.",
     home: "Zur Startseite",
     contact: "Kontakt aufnehmen",
   },
@@ -75,7 +75,7 @@ export default function NotFound() {
   const isRtl = lang === "ar"
 
   useEffect(() => {
-    document.title = `${c.label} — INOV Digital Services`
+    document.title = `${c.label}, INOV Digital Services`
   }, [c.label])
 
   return (

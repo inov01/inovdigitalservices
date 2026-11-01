@@ -9,7 +9,7 @@ import RevealSection from "../components/RevealSection"
 import PageNav from "../components/PageNav"
 import { useSettings } from "../context/AppSettings"
 
-// Code-split heavy sections — load only when they scroll into view.
+// Code-split heavy sections, load only when they scroll into view.
 // Blog, Newsletter, Referral and About were removed from the homepage to keep
 // the funnel focused: Blog lives at /blog, and the referral (ambassador) program
 // lives in the client account (/compte).
@@ -41,7 +41,7 @@ export default function Home() {
 
   return (
     <>
-      {/* Above-the-fold — eager, no reveal. Dark format scoped to the hero only. */}
+      {/* Above-the-fold, eager, no reveal. Dark format scoped to the hero only. */}
       <div className="dark">
         <Hero />
       </div>
@@ -88,7 +88,7 @@ export default function Home() {
 
       {region === "HT" && (
         <RevealSection delay={0}>
-          {/* Offre Haïti ("augmentez votre visibilité") — dark format */}
+          {/* Offre Haïti ("augmentez votre visibilité"), dark format */}
           <div className="dark">
             <Suspense fallback={<SectionFallback />}>
               <OnlinePromo />

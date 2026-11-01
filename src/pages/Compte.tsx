@@ -229,56 +229,56 @@ const STATUS_LABEL: Record<string, Record<string, string>> = {
 // always available. Kept separate so we don't have to touch the 8 big blocks above.
 const EXTRA: Record<Lang, { free: string; reward: (p: string) => string; anytime: string; ambUnavailable: string; retry: string }> = {
   fr: {
-    free: "Créer un compte est gratuit et sans engagement — vous n'êtes pas obligé de devenir ambassadeur. Il vous sert aussi à suivre vos devis et commandes.",
+    free: "Créer un compte est gratuit et sans engagement, vous n'êtes pas obligé de devenir ambassadeur. Il vous sert aussi à suivre vos devis et commandes.",
     reward: (p) => `Gagnez ${p}% de crédit sur chaque commande confirmée d'un filleul.`,
     anytime: "Votre lien reste toujours disponible ici : copiez-le et partagez-le à tout moment.",
     ambUnavailable: "Votre lien ambassadeur n'a pas pu être chargé pour le moment. Réessayez dans un instant.",
     retry: "Réessayer",
   },
   en: {
-    free: "Creating an account is free with no commitment — you don't have to become an ambassador. It also lets you track your quotes and orders.",
+    free: "Creating an account is free with no commitment, you don't have to become an ambassador. It also lets you track your quotes and orders.",
     reward: (p) => `Earn ${p}% credit on every confirmed order from a referral.`,
     anytime: "Your link always stays here: copy and share it anytime.",
     ambUnavailable: "Your ambassador link could not be loaded right now. Please try again in a moment.",
     retry: "Try again",
   },
   es: {
-    free: "Crear una cuenta es gratis y sin compromiso — no tienes que ser embajador. También te sirve para seguir tus presupuestos y pedidos.",
+    free: "Crear una cuenta es gratis y sin compromiso, no tienes que ser embajador. También te sirve para seguir tus presupuestos y pedidos.",
     reward: (p) => `Gana un ${p}% de crédito por cada pedido confirmado de un referido.`,
     anytime: "Tu enlace siempre está aquí: cópialo y compártelo cuando quieras.",
     ambUnavailable: "No se pudo cargar tu enlace de embajador ahora mismo. Inténtalo de nuevo en un momento.",
     retry: "Reintentar",
   },
   ht: {
-    free: "Kreye yon kont gratis e san angajman — ou pa oblije vin yon anbasadè. Li ede ou swiv devi ak kòmand ou yo tou.",
+    free: "Kreye yon kont gratis e san angajman, ou pa oblije vin yon anbasadè. Li ede ou swiv devi ak kòmand ou yo tou.",
     reward: (p) => `Genyen ${p}% kredi sou chak kòmand konfime yon filyèl.`,
     anytime: "Lyen ou toujou la: kopye epi pataje l nenpòt lè.",
     ambUnavailable: "Nou pa t ka chaje lyen anbasadè ou kounye a. Tanpri eseye ankò nan yon ti moman.",
     retry: "Eseye ankò",
   },
   pt: {
-    free: "Criar uma conta é grátis e sem compromisso — não precisa de ser embaixador. Também serve para acompanhar os seus orçamentos e pedidos.",
+    free: "Criar uma conta é grátis e sem compromisso, não precisa de ser embaixador. Também serve para acompanhar os seus orçamentos e pedidos.",
     reward: (p) => `Ganhe ${p}% de crédito em cada pedido confirmado de um indicado.`,
     anytime: "O seu link fica sempre aqui: copie e partilhe quando quiser.",
     ambUnavailable: "Não foi possível carregar o seu link de embaixador agora. Tente novamente num instante.",
     retry: "Tentar novamente",
   },
   it: {
-    free: "Creare un account è gratuito e senza impegno — non devi diventare ambasciatore. Ti serve anche a seguire preventivi e ordini.",
+    free: "Creare un account è gratuito e senza impegno, non devi diventare ambasciatore. Ti serve anche a seguire preventivi e ordini.",
     reward: (p) => `Guadagni il ${p}% di credito su ogni ordine confermato di un segnalato.`,
     anytime: "Il tuo link resta sempre qui: copialo e condividilo quando vuoi.",
     ambUnavailable: "Non è stato possibile caricare il tuo link ambasciatore in questo momento. Riprova tra un istante.",
     retry: "Riprova",
   },
   de: {
-    free: "Ein Konto zu erstellen ist kostenlos und unverbindlich — Sie müssen kein Botschafter werden. Es dient auch der Verfolgung Ihrer Angebote und Bestellungen.",
+    free: "Ein Konto zu erstellen ist kostenlos und unverbindlich, Sie müssen kein Botschafter werden. Es dient auch der Verfolgung Ihrer Angebote und Bestellungen.",
     reward: (p) => `Erhalten Sie ${p}% Guthaben für jede bestätigte Bestellung eines Empfohlenen.`,
     anytime: "Ihr Link bleibt immer hier: kopieren und teilen Sie ihn jederzeit.",
     ambUnavailable: "Ihr Botschafter-Link konnte gerade nicht geladen werden. Bitte versuchen Sie es gleich erneut.",
     retry: "Erneut versuchen",
   },
   ar: {
-    free: "إنشاء حساب مجاني وبدون التزام — لست مضطراً لأن تصبح سفيراً. يساعدك أيضاً على متابعة عروض الأسعار والطلبات.",
+    free: "إنشاء حساب مجاني وبدون التزام, لست مضطراً لأن تصبح سفيراً. يساعدك أيضاً على متابعة عروض الأسعار والطلبات.",
     reward: (p) => `اربح ${p}% رصيداً على كل طلب مؤكد من مُحال.`,
     anytime: "يبقى رابطك هنا دائماً: انسخه وشاركه في أي وقت.",
     ambUnavailable: "تعذّر تحميل رابط السفير الخاص بك الآن. يُرجى المحاولة مرة أخرى بعد لحظات.",
@@ -288,7 +288,7 @@ const EXTRA: Record<Lang, { free: string; reward: (p: string) => string; anytime
 
 // Copy for the "share our designs" gallery. Kept separate from the 8 big COPY
 // blocks so we don't have to touch them. The client can share any creation INOV
-// produced — their own or another client's — and the shared link carries their
+// produced, their own or another client's, and the shared link carries their
 // referral code, so spreading our work also earns them credit.
 const SHARE: Record<Lang, {
   title: string; desc: string; search: string; empty: string
@@ -296,7 +296,7 @@ const SHARE: Record<Lang, {
   madeFor: string; withRef: string; noRef: string; shareText: string
 }> = {
   fr: {
-    title: "Partagez nos créations", desc: "Faites rayonner votre marque : partagez les visuels que nous avons conçus pour vous — ou d'autres réalisations qui vous inspirent.",
+    title: "Partagez nos créations", desc: "Faites rayonner votre marque : partagez les visuels que nous avons conçus pour vous, ou d'autres réalisations qui vous inspirent.",
     search: "Rechercher une marque, un projet…", empty: "Aucune création ne correspond à votre recherche.",
     more: "Voir plus de créations", shareBtn: "Partager", copyBtn: "Copier le lien", copied: "Lien copié !",
     madeFor: "Réalisé pour", withRef: "Chaque partage inclut votre lien de parrainage : une commande née d'un partage vous rapporte un crédit.",
@@ -304,7 +304,7 @@ const SHARE: Record<Lang, {
     shareText: "Découvrez cette création signée INOV Digital Services 🎨",
   },
   en: {
-    title: "Share our designs", desc: "Grow your brand: share the visuals we crafted for you — or other work that inspires you.",
+    title: "Share our designs", desc: "Grow your brand: share the visuals we crafted for you, or other work that inspires you.",
     search: "Search a brand, a project…", empty: "No design matches your search.",
     more: "See more designs", shareBtn: "Share", copyBtn: "Copy link", copied: "Link copied!",
     madeFor: "Made for", withRef: "Every share carries your referral link: an order born from a share earns you a credit.",
@@ -312,7 +312,7 @@ const SHARE: Record<Lang, {
     shareText: "Check out this design by INOV Digital Services 🎨",
   },
   es: {
-    title: "Comparte nuestros diseños", desc: "Haz brillar tu marca: comparte los visuales que creamos para ti — u otros trabajos que te inspiren.",
+    title: "Comparte nuestros diseños", desc: "Haz brillar tu marca: comparte los visuales que creamos para ti, u otros trabajos que te inspiren.",
     search: "Buscar una marca, un proyecto…", empty: "Ningún diseño coincide con tu búsqueda.",
     more: "Ver más diseños", shareBtn: "Compartir", copyBtn: "Copiar enlace", copied: "¡Enlace copiado!",
     madeFor: "Hecho para", withRef: "Cada vez que compartes se incluye tu enlace de referido: un pedido nacido de un compartido te da un crédito.",
@@ -320,7 +320,7 @@ const SHARE: Record<Lang, {
     shareText: "Descubre este diseño de INOV Digital Services 🎨",
   },
   ht: {
-    title: "Pataje kreyasyon nou yo", desc: "Fè mak ou briye : pataje vizyèl nou fè pou ou — oswa lòt reyalizasyon ki enspire ou.",
+    title: "Pataje kreyasyon nou yo", desc: "Fè mak ou briye : pataje vizyèl nou fè pou ou, oswa lòt reyalizasyon ki enspire ou.",
     search: "Chèche yon mak, yon pwojè…", empty: "Pa gen okenn kreyasyon ki koresponn ak rechèch ou.",
     more: "Wè plis kreyasyon", shareBtn: "Pataje", copyBtn: "Kopye lyen", copied: "Lyen kopye !",
     madeFor: "Fèt pou", withRef: "Chak pataj gen lyen parennaj ou : yon kòmand ki soti nan yon pataj fè ou genyen yon kredi.",
@@ -328,7 +328,7 @@ const SHARE: Record<Lang, {
     shareText: "Dekouvri kreyasyon sa a INOV Digital Services fè 🎨",
   },
   pt: {
-    title: "Compartilhe nossas criações", desc: "Faça sua marca brilhar: compartilhe os visuais que criamos para você — ou outros trabalhos que inspiram você.",
+    title: "Compartilhe nossas criações", desc: "Faça sua marca brilhar: compartilhe os visuais que criamos para você, ou outros trabalhos que inspiram você.",
     search: "Buscar uma marca, um projeto…", empty: "Nenhuma criação corresponde à sua busca.",
     more: "Ver mais criações", shareBtn: "Compartilhar", copyBtn: "Copiar link", copied: "Link copiado!",
     madeFor: "Feito para", withRef: "Cada compartilhamento inclui seu link de indicação: um pedido nascido de um compartilhamento gera um crédito.",
@@ -336,7 +336,7 @@ const SHARE: Record<Lang, {
     shareText: "Conheça esta criação da INOV Digital Services 🎨",
   },
   it: {
-    title: "Condividi le nostre creazioni", desc: "Fai brillare il tuo brand: condividi i visual che abbiamo creato per te — o altri lavori che ti ispirano.",
+    title: "Condividi le nostre creazioni", desc: "Fai brillare il tuo brand: condividi i visual che abbiamo creato per te, o altri lavori che ti ispirano.",
     search: "Cerca un brand, un progetto…", empty: "Nessuna creazione corrisponde alla tua ricerca.",
     more: "Vedi altre creazioni", shareBtn: "Condividi", copyBtn: "Copia link", copied: "Link copiato!",
     madeFor: "Realizzato per", withRef: "Ogni condivisione include il tuo link di segnalazione: un ordine nato da una condivisione ti dà un credito.",
@@ -344,7 +344,7 @@ const SHARE: Record<Lang, {
     shareText: "Scopri questa creazione firmata INOV Digital Services 🎨",
   },
   de: {
-    title: "Teilen Sie unsere Designs", desc: "Lassen Sie Ihre Marke strahlen: Teilen Sie die Visuals, die wir für Sie gestaltet haben — oder andere Arbeiten, die Sie inspirieren.",
+    title: "Teilen Sie unsere Designs", desc: "Lassen Sie Ihre Marke strahlen: Teilen Sie die Visuals, die wir für Sie gestaltet haben, oder andere Arbeiten, die Sie inspirieren.",
     search: "Marke oder Projekt suchen…", empty: "Kein Design entspricht Ihrer Suche.",
     more: "Weitere Designs ansehen", shareBtn: "Teilen", copyBtn: "Link kopieren", copied: "Link kopiert!",
     madeFor: "Erstellt für", withRef: "Jede Freigabe enthält Ihren Empfehlungslink: Eine aus einer Freigabe entstandene Bestellung bringt Ihnen ein Guthaben.",
@@ -352,7 +352,7 @@ const SHARE: Record<Lang, {
     shareText: "Entdecken Sie dieses Design von INOV Digital Services 🎨",
   },
   ar: {
-    title: "شارك تصاميمنا", desc: "اجعل علامتك تتألق: شارك التصاميم التي أنشأناها لك — أو أعمالاً أخرى تلهمك.",
+    title: "شارك تصاميمنا", desc: "اجعل علامتك تتألق: شارك التصاميم التي أنشأناها لك, أو أعمالاً أخرى تلهمك.",
     search: "ابحث عن علامة أو مشروع…", empty: "لا يوجد تصميم يطابق بحثك.",
     more: "عرض المزيد من التصاميم", shareBtn: "مشاركة", copyBtn: "نسخ الرابط", copied: "تم نسخ الرابط!",
     madeFor: "صُمّم لـ", withRef: "كل مشاركة تتضمّن رابط الإحالة الخاص بك: أي طلب ينتج عن مشاركة يمنحك رصيداً.",
@@ -556,7 +556,7 @@ export default function Compte() {
     : `${window.location.origin}/#portfolio`
 
   async function shareDesign(d: ShareDesign) {
-    const text = `${s.shareText}\n${d.title} — ${d.client}`
+    const text = `${s.shareText}\n${d.title}, ${d.client}`
     if (navigator.share) {
       try { await navigator.share({ title: "INOV Digital Services", text, url: portfolioLink }) } catch { /* cancelled */ }
       return
@@ -570,7 +570,7 @@ export default function Compte() {
 
   async function copyDesign(d: ShareDesign) {
     try {
-      await navigator.clipboard.writeText(`${s.shareText}\n${d.title} — ${d.client}\n${portfolioLink}`)
+      await navigator.clipboard.writeText(`${s.shareText}\n${d.title}, ${d.client}\n${portfolioLink}`)
       setSharedId(d.id)
       setTimeout(() => setSharedId((cur) => (cur === d.id ? null : cur)), 1800)
     } catch { /* ignore */ }
@@ -586,7 +586,7 @@ export default function Compte() {
 
   const creditDisplay = stats
     ? `${stats.credit.toLocaleString(lang)}${stats.currency ? " " + stats.currency : (stats.credit ? " $" : "")}`
-    : "—"
+    : "-"
 
   // ── Shell ────────────────────────────────────────────────────────────────
   const shell = (children: React.ReactNode) => (
@@ -793,7 +793,7 @@ export default function Compte() {
         </button>
       </div>
 
-      {/* Referral zone — always visible so the client can find and copy their
+      {/* Referral zone, always visible so the client can find and copy their
           link at any time, with no "activation" step required. */}
       {profile ? (
         <div className="card" style={{ padding: 28, marginBottom: 28 }}>
@@ -850,7 +850,7 @@ export default function Compte() {
         </div>
       ) : null}
 
-      {/* Share our designs — the client can broadcast any creation we made
+      {/* Share our designs, the client can broadcast any creation we made
           (theirs or another client's); shares carry their referral code. */}
       <section style={{ marginBottom: 28 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
@@ -880,7 +880,7 @@ export default function Compte() {
                   <div style={{ position: "relative", aspectRatio: "4 / 3", background: "var(--ds-bg)" }}>
                     <SmartImage
                       src={d.img}
-                      alt={`${d.title} — ${d.client}`}
+                      alt={`${d.title}, ${d.client}`}
                       loading="lazy"
                       wrapperStyle={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
                       style={{ width: "100%", height: "100%", objectFit: "cover" }}
@@ -965,7 +965,7 @@ export default function Compte() {
                 </div>
                 {statusBadge(o.status, lang)}
                 <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 14, fontWeight: 700, color: "var(--ds-text)", whiteSpace: "nowrap", textAlign: "end" }}>
-                  {o.total != null ? `${o.total.toLocaleString(lang)}${o.currency ? " " + o.currency : ""}` : "—"}
+                  {o.total != null ? `${o.total.toLocaleString(lang)}${o.currency ? " " + o.currency : ""}` : "-"}
                 </div>
               </div>
             ))}
@@ -992,7 +992,7 @@ export default function Compte() {
                   </div>
                   {statusBadge(r.status, lang)}
                   <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 14, fontWeight: 700, color: "var(--ds-text)", whiteSpace: "nowrap", textAlign: "end" }}>
-                    {r.total != null ? `${r.total.toLocaleString(lang)}${r.currency ? " " + r.currency : ""}` : "—"}
+                    {r.total != null ? `${r.total.toLocaleString(lang)}${r.currency ? " " + r.currency : ""}` : "-"}
                   </div>
                 </div>
               ))}

@@ -205,7 +205,7 @@ export default function About() {
                 </p>
               </div>
 
-              {/* Journey — vertical timeline */}
+              {/* Journey, vertical timeline */}
               <h5 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 16, fontWeight: 800, color: "var(--ds-text)", marginBottom: 18 }}>
                 {a.journeyTitle}
               </h5>

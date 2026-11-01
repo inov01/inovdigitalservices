@@ -29,7 +29,7 @@ export function buildProformaSheet(d: ProformaSheetData): string {
   const otherRow = otherText
     ? `<tr>
           <td style="padding:13px 18px;border:1.5px solid #111;font-weight:700;font-size:13px;">${escHtml(otherText.toUpperCase())}</td>
-          <td style="padding:13px 18px;border:1.5px solid #111;text-align:right;font-weight:800;font-size:13px;white-space:nowrap;">—</td>
+          <td style="padding:13px 18px;border:1.5px solid #111;text-align:right;font-weight:800;font-size:13px;white-space:nowrap;">-</td>
         </tr>`
     : ""
   return `

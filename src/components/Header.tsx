@@ -13,7 +13,7 @@ const MENU_LABEL: Record<Lang, string> = {
   pt: "Menu", it: "Menu", de: "Menü", ar: "القائمة",
 }
 
-// "Mon compte" internal link — shown in the header on every page.
+// "Mon compte" internal link, shown in the header on every page.
 const ACCOUNT_LABEL: Record<Lang, string> = {
   fr: "Mon compte", en: "My account", es: "Mi cuenta", ht: "Kont mwen",
   pt: "Minha conta", it: "Il mio account", de: "Mein Konto", ar: "حسابي",
@@ -123,7 +123,7 @@ export default function Header() {
             <img src={logo} alt="INOV Digital Services" className="site-logo" style={{ width: "auto", display: "block", objectFit: "contain" }} />
           </a>
 
-          {/* Desktop nav — centered, evenly spaced, takes the free space */}
+          {/* Desktop nav, centered, evenly spaced, takes the free space */}
           <nav
             style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 2, flex: 1, margin: "0 12px" }}
             className="hidden-mobile"
@@ -286,7 +286,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Mobile menu — fond blanc garanti pour rester lisible sur n'importe quelle section */}
+        {/* Mobile menu, fond blanc garanti pour rester lisible sur n'importe quelle section */}
         <div id="mobile-menu" className={`mobile-menu ${menuOpen ? "open" : ""}`} inert={!menuOpen}>
           <nav style={{ display: "flex", flexDirection: "column", paddingBottom: 16 }}>
             {navLinks.map((l) => (
@@ -331,7 +331,7 @@ export default function Header() {
         /* Breathing room around the "Demander un devis" CTA on tablet + desktop */
         .cta-quote { margin-inline: 8px 6px; }
         @media (max-width: 768px) {
-          /* On mobile the CTA sits next to the burger — no extra side margin */
+          /* On mobile the CTA sits next to the burger, no extra side margin */
           .cta-quote { margin-inline: 0 !important; }
           .site-header {
             background: color-mix(in srgb, var(--ds-bg) 96%, transparent) !important;

@@ -16,7 +16,7 @@ const socials: { label: string; icon: SvgIcon; href: string }[] = [
   { label: "WhatsApp", icon: SiWhatsapp, href: "https://wa.me/50936255920" },
 ]
 
-// "Espace client" column — real internal routes (SEO + navigation).
+// "Espace client" column, real internal routes (SEO + navigation).
 const CLIENT_LABELS: Record<string, { title: string; account: string; quote: string; ambassador: string; pay: string; formation: string }> = {
   fr: { title: "Espace client", account: "Mon compte", quote: "Devis gratuit", ambassador: "Programme ambassadeur", pay: "Payer en ligne", formation: "Formations" },
   en: { title: "Client area", account: "My account", quote: "Free quote", ambassador: "Ambassador program", pay: "Pay online", formation: "Training" },
@@ -103,7 +103,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Client area — internal routes */}
+          {/* Client area, internal routes */}
           <div>
             <h4 style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: 14, color: "rgba(255,255,255,0.7)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 20 }}>
               {client.title}
@@ -161,7 +161,7 @@ export default function Footer() {
             <Link to="/confidentialite" className="footer-link" style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, textDecoration: "none", color: "rgba(255,255,255,0.72)" }}>{legal.privacy}</Link>
             <span
               aria-disabled="true"
-              aria-label={`${legal.collaborateur} — ${legal.soon}`}
+              aria-label={`${legal.collaborateur}, ${legal.soon}`}
               title={legal.soon}
               style={{
                 fontFamily: "'Outfit', sans-serif",

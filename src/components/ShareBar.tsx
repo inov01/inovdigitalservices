@@ -16,7 +16,7 @@ const LABELS: Record<Lang, { share: string; copy: string; copied: string }> = {
   ar: { share: "مشاركة", copy: "نسخ الرابط", copied: "تم نسخ الرابط!" },
 }
 
-// X (Twitter) + LinkedIn glyphs — lucide has no brand marks, so tiny inline ones keep it on-brand.
+// X (Twitter) + LinkedIn glyphs, lucide has no brand marks, so tiny inline ones keep it on-brand.
 function XGlyph({ size = 17 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -58,7 +58,7 @@ export default function ShareBar({ title, text }: { title: string; text?: string
       await navigator.share({ title, text: shareText, url })
       track("article_share", { channel: "native" })
     } catch {
-      /* user cancelled — no-op */
+      /* user cancelled, no-op */
     }
   }
 

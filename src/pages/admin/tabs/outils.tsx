@@ -98,7 +98,7 @@ function AssistantTab() {
         <h2 style={sectionTitle}>Assistant IA (Gemini)</h2>
         <p style={{ margin: "8px 0 0", fontSize: 13.5, color: "var(--ds-text-muted)", lineHeight: 1.55 }}>
           Votre assistant privé : rédaction de réponses clients, devis, relances, résumés de demandes
-          et traductions dans les 8 langues du site. Réservé à l'administrateur — jamais visible par les clients.
+          et traductions dans les 8 langues du site. Réservé à l'administrateur, jamais visible par les clients.
         </p>
         <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14, fontSize: 13, color: "var(--ds-text-sec)", cursor: "pointer" }}>
           <input type="checkbox" checked={withLeads} onChange={(e) => setWithLeads(e.target.checked)} />
@@ -392,7 +392,7 @@ function EventualitesTab() {
       const r = await adminApi.listEventualites()
       setItems(r.eventualites)
     } catch {
-      // silently fail — backend may not have this endpoint yet
+      // silently fail, backend may not have this endpoint yet
       setItems([])
     } finally {
       setLoading(false)
@@ -428,7 +428,7 @@ function EventualitesTab() {
       setForm({ title: "", description: "", type: "note", severity: "normale" })
       setShowForm(false)
     } catch {
-      // noop — backend endpoint may not exist yet
+      // noop, backend endpoint may not exist yet
     } finally {
       setBusy(false)
     }

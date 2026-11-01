@@ -51,7 +51,7 @@ export default function Loader({ visible }: LoaderProps) {
         />
       </div>
 
-      {/* Spinner — brand gradient ring (conic + mask; borders can't carry a gradient) */}
+      {/* Spinner, brand gradient ring (conic + mask; borders can't carry a gradient) */}
       <div
         style={{
           width: 48,

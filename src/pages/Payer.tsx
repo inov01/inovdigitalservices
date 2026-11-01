@@ -129,104 +129,104 @@ type Copy = {
 function build(lang: Lang, c: PaymentConfig): Copy {
   const dicts: Record<Lang, Omit<Copy, "steps">> = {
     fr: {
-      tag: "Paiement", title: "Réglez votre commande", sub: "Choisissez le moyen le plus pratique selon votre localisation. Après paiement, indiquez votre référence — nous confirmons sous peu.",
+      tag: "Paiement", title: "Réglez votre commande", sub: "Choisissez le moyen le plus pratique selon votre localisation. Après paiement, indiquez votre référence, nous confirmons sous peu.",
       scope: "Vous payez depuis", scopeHT: "Haïti", scopeIntl: "Diaspora / International",
       choose: "Choisissez un moyen de paiement", other: "Autres moyens", back: "← Changer de moyen",
       amount: "Montant", name: "Nom complet", email: "E-mail", phone: "Téléphone", phoneOpt: "Téléphone (optionnel)",
       ref: "Référence de la transaction", refHint: "N° de transaction MonCash/NatCash, ou détails du virement.",
       note: "Note", noteOpt: "Note (optionnel)",
-      submit: "J'ai payé — confirmer", sending: "Envoi…",
+      submit: "J'ai payé, confirmer", sending: "Envoi…",
       success: "Paiement enregistré !", successSub: "Nous vérifions votre paiement et revenons vers vous très vite. Merci !", waProof: "Envoyer une preuve sur WhatsApp",
       errContact: "Indiquez au moins votre nom ou votre e-mail.", errNet: "Erreur réseau. Réessayez ou contactez-nous sur WhatsApp.",
       names: { moncash: "MonCash", natcash: "NatCash", buh: "Virement BUH", upwork: "Carte de crédit / débit" },
       copyBtn: "Copier", copied: "Copié !",
     },
     en: {
-      tag: "Payment", title: "Pay for your order", sub: "Pick the most convenient method for your location. After paying, enter your reference — we confirm shortly.",
+      tag: "Payment", title: "Pay for your order", sub: "Pick the most convenient method for your location. After paying, enter your reference, we confirm shortly.",
       scope: "You are paying from", scopeHT: "Haiti", scopeIntl: "Diaspora / International",
       choose: "Choose a payment method", other: "Other methods", back: "← Change method",
       amount: "Amount", name: "Full name", email: "Email", phone: "Phone", phoneOpt: "Phone (optional)",
       ref: "Transaction reference", refHint: "MonCash/NatCash transaction no., or transfer details.",
       note: "Note", noteOpt: "Note (optional)",
-      submit: "I have paid — confirm", sending: "Sending…",
+      submit: "I have paid, confirm", sending: "Sending…",
       success: "Payment recorded!", successSub: "We are verifying your payment and will get back to you very soon. Thank you!", waProof: "Send proof on WhatsApp",
       errContact: "Enter at least your name or email.", errNet: "Network error. Try again or reach us on WhatsApp.",
       names: { moncash: "MonCash", natcash: "NatCash", buh: "BUH transfer", upwork: "Credit / debit card" },
       copyBtn: "Copy", copied: "Copied!",
     },
     es: {
-      tag: "Pago", title: "Paga tu pedido", sub: "Elige el método más cómodo según tu ubicación. Tras pagar, indica tu referencia — confirmamos en breve.",
+      tag: "Pago", title: "Paga tu pedido", sub: "Elige el método más cómodo según tu ubicación. Tras pagar, indica tu referencia, confirmamos en breve.",
       scope: "Pagas desde", scopeHT: "Haití", scopeIntl: "Diáspora / Internacional",
       choose: "Elige un método de pago", other: "Otros métodos", back: "← Cambiar método",
       amount: "Importe", name: "Nombre completo", email: "Correo", phone: "Teléfono", phoneOpt: "Teléfono (opcional)",
       ref: "Referencia de la transacción", refHint: "N.º de transacción MonCash/NatCash, o datos de la transferencia.",
       note: "Nota", noteOpt: "Nota (opcional)",
-      submit: "He pagado — confirmar", sending: "Enviando…",
+      submit: "He pagado, confirmar", sending: "Enviando…",
       success: "¡Pago registrado!", successSub: "Estamos verificando tu pago y te responderemos muy pronto. ¡Gracias!", waProof: "Enviar comprobante por WhatsApp",
       errContact: "Introduce al menos tu nombre o correo.", errNet: "Error de red. Inténtalo de nuevo o escríbenos por WhatsApp.",
       names: { moncash: "MonCash", natcash: "NatCash", buh: "Transferencia BUH", upwork: "Tarjeta de crédito / débito" },
       copyBtn: "Copiar", copied: "¡Copiado!",
     },
     ht: {
-      tag: "Peman", title: "Peye kòmann ou", sub: "Chwazi mwayen ki pi pratik pou kote ou ye a. Apre ou peye, mete referans ou — n ap konfime talè.",
+      tag: "Peman", title: "Peye kòmann ou", sub: "Chwazi mwayen ki pi pratik pou kote ou ye a. Apre ou peye, mete referans ou, n ap konfime talè.",
       scope: "W ap peye depi", scopeHT: "Ayiti", scopeIntl: "Dyaspora / Entènasyonal",
       choose: "Chwazi yon mwayen pou peye", other: "Lòt mwayen", back: "← Chanje mwayen",
       amount: "Montan", name: "Non konplè", email: "Imel", phone: "Telefòn", phoneOpt: "Telefòn (opsyonèl)",
       ref: "Referans tranzaksyon an", refHint: "Nimewo tranzaksyon MonCash/NatCash, oswa detay vireman an.",
       note: "Nòt", noteOpt: "Nòt (opsyonèl)",
-      submit: "Mwen peye — konfime", sending: "Y ap voye…",
+      submit: "Mwen peye, konfime", sending: "Y ap voye…",
       success: "Peman anrejistre!", successSub: "N ap verifye peman ou epi n ap reponn ou byen vit. Mèsi!", waProof: "Voye yon prèv sou WhatsApp",
       errContact: "Mete omwen non ou oswa imel ou.", errNet: "Erè rezo. Eseye ankò oswa kontakte nou sou WhatsApp.",
       names: { moncash: "MonCash", natcash: "NatCash", buh: "Vireman BUH", upwork: "Kat kredi / debi" },
       copyBtn: "Kopye", copied: "Kopye!",
     },
     pt: {
-      tag: "Pagamento", title: "Pague o seu pedido", sub: "Escolha o método mais prático para a sua localização. Após pagar, informe a sua referência — confirmamos em breve.",
+      tag: "Pagamento", title: "Pague o seu pedido", sub: "Escolha o método mais prático para a sua localização. Após pagar, informe a sua referência, confirmamos em breve.",
       scope: "Você paga a partir de", scopeHT: "Haiti", scopeIntl: "Diáspora / Internacional",
       choose: "Escolha um método de pagamento", other: "Outros métodos", back: "← Mudar método",
       amount: "Valor", name: "Nome completo", email: "E-mail", phone: "Telefone", phoneOpt: "Telefone (opcional)",
       ref: "Referência da transação", refHint: "N.º da transação MonCash/NatCash, ou dados da transferência.",
       note: "Nota", noteOpt: "Nota (opcional)",
-      submit: "Já paguei — confirmar", sending: "Enviando…",
+      submit: "Já paguei, confirmar", sending: "Enviando…",
       success: "Pagamento registado!", successSub: "Estamos a verificar o seu pagamento e retornaremos muito em breve. Obrigado!", waProof: "Enviar comprovativo no WhatsApp",
       errContact: "Informe pelo menos o seu nome ou e-mail.", errNet: "Erro de rede. Tente novamente ou fale connosco no WhatsApp.",
       names: { moncash: "MonCash", natcash: "NatCash", buh: "Transferência BUH", upwork: "Cartão de crédito / débito" },
       copyBtn: "Copiar", copied: "Copiado!",
     },
     it: {
-      tag: "Pagamento", title: "Paga il tuo ordine", sub: "Scegli il metodo più comodo in base alla tua posizione. Dopo il pagamento, indica il riferimento — confermiamo a breve.",
+      tag: "Pagamento", title: "Paga il tuo ordine", sub: "Scegli il metodo più comodo in base alla tua posizione. Dopo il pagamento, indica il riferimento, confermiamo a breve.",
       scope: "Stai pagando da", scopeHT: "Haiti", scopeIntl: "Diaspora / Internazionale",
       choose: "Scegli un metodo di pagamento", other: "Altri metodi", back: "← Cambia metodo",
       amount: "Importo", name: "Nome completo", email: "Email", phone: "Telefono", phoneOpt: "Telefono (facoltativo)",
       ref: "Riferimento della transazione", refHint: "N. transazione MonCash/NatCash, o dettagli del bonifico.",
       note: "Nota", noteOpt: "Nota (facoltativa)",
-      submit: "Ho pagato — conferma", sending: "Invio…",
+      submit: "Ho pagato, conferma", sending: "Invio…",
       success: "Pagamento registrato!", successSub: "Stiamo verificando il pagamento e ti ricontatteremo molto presto. Grazie!", waProof: "Invia una prova su WhatsApp",
       errContact: "Inserisci almeno il tuo nome o la tua email.", errNet: "Errore di rete. Riprova o scrivici su WhatsApp.",
       names: { moncash: "MonCash", natcash: "NatCash", buh: "Bonifico BUH", upwork: "Carta di credito / debito" },
       copyBtn: "Copia", copied: "Copiato!",
     },
     de: {
-      tag: "Zahlung", title: "Bezahlen Sie Ihre Bestellung", sub: "Wählen Sie die für Ihren Standort passende Methode. Nach der Zahlung geben Sie Ihre Referenz an — wir bestätigen in Kürze.",
+      tag: "Zahlung", title: "Bezahlen Sie Ihre Bestellung", sub: "Wählen Sie die für Ihren Standort passende Methode. Nach der Zahlung geben Sie Ihre Referenz an, wir bestätigen in Kürze.",
       scope: "Sie zahlen aus", scopeHT: "Haiti", scopeIntl: "Diaspora / International",
       choose: "Wählen Sie eine Zahlungsmethode", other: "Weitere Methoden", back: "← Methode ändern",
       amount: "Betrag", name: "Vollständiger Name", email: "E-Mail", phone: "Telefon", phoneOpt: "Telefon (optional)",
       ref: "Transaktionsreferenz", refHint: "MonCash/NatCash-Transaktionsnr. oder Überweisungsdetails.",
       note: "Notiz", noteOpt: "Notiz (optional)",
-      submit: "Ich habe bezahlt — bestätigen", sending: "Senden…",
+      submit: "Ich habe bezahlt, bestätigen", sending: "Senden…",
       success: "Zahlung erfasst!", successSub: "Wir prüfen Ihre Zahlung und melden uns sehr bald. Vielen Dank!", waProof: "Nachweis per WhatsApp senden",
       errContact: "Geben Sie mindestens Ihren Namen oder Ihre E-Mail an.", errNet: "Netzwerkfehler. Versuchen Sie es erneut oder kontaktieren Sie uns per WhatsApp.",
       names: { moncash: "MonCash", natcash: "NatCash", buh: "BUH-Überweisung", upwork: "Kredit- / Debitkarte" },
       copyBtn: "Kopieren", copied: "Kopiert!",
     },
     ar: {
-      tag: "الدفع", title: "ادفع طلبك", sub: "اختر الوسيلة الأنسب حسب موقعك. بعد الدفع، أدخل مرجعك — سنؤكد قريباً.",
+      tag: "الدفع", title: "ادفع طلبك", sub: "اختر الوسيلة الأنسب حسب موقعك. بعد الدفع، أدخل مرجعك, سنؤكد قريباً.",
       scope: "تدفع من", scopeHT: "هايتي", scopeIntl: "الشتات / دولي",
       choose: "اختر وسيلة دفع", other: "وسائل أخرى", back: "← تغيير الوسيلة",
       amount: "المبلغ", name: "الاسم الكامل", email: "البريد الإلكتروني", phone: "الهاتف", phoneOpt: "الهاتف (اختياري)",
       ref: "مرجع المعاملة", refHint: "رقم معاملة MonCash/NatCash، أو تفاصيل التحويل.",
       note: "ملاحظة", noteOpt: "ملاحظة (اختياري)",
-      submit: "لقد دفعت — تأكيد", sending: "جارٍ الإرسال…",
+      submit: "لقد دفعت, تأكيد", sending: "جارٍ الإرسال…",
       success: "تم تسجيل الدفع!", successSub: "نتحقق من دفعتك وسنعود إليك قريباً جداً. شكراً!", waProof: "إرسال إثبات عبر واتساب",
       errContact: "أدخل على الأقل اسمك أو بريدك الإلكتروني.", errNet: "خطأ في الشبكة. حاول مرة أخرى أو تواصل معنا عبر واتساب.",
       names: { moncash: "MonCash", natcash: "NatCash", buh: "تحويل BUH", upwork: "بطاقة ائتمان / خصم" },
@@ -239,20 +239,20 @@ function build(lang: Lang, c: PaymentConfig): Copy {
     fr: (m) => ({
       moncash: [`Ouvrez MonCash et envoyez le montant au ${c.moncash.number} (${c.moncash.holder}).`, "Notez le numéro de transaction reçu par SMS et prenez une capture d'écran.", "Entrez la référence ci-dessous puis confirmez."],
       natcash: [`Ouvrez NatCash et envoyez le montant au ${c.natcash.number} (${c.natcash.holder}).`, "Notez le numéro de transaction et prenez une capture d'écran.", "Entrez la référence ci-dessous puis confirmez."],
-      buh: [`Virement vers ${c.buh.bank}.`, `Compte : ${c.buh.account} (${c.buh.type}) — ${c.buh.holder}.`, "Indiquez la référence du virement ci-dessous et gardez le reçu."],
-      upwork: ["Choisissez vos services ci-dessus (ou saisissez le montant à régler).", "Soumettez la demande avec votre e-mail — inutile de vous reconnecter.", "Nous vous répondons sous 24 h avec votre lien de contrat direct Upwork sécurisé pour payer par carte."],
+      buh: [`Virement vers ${c.buh.bank}.`, `Compte : ${c.buh.account} (${c.buh.type}), ${c.buh.holder}.`, "Indiquez la référence du virement ci-dessous et gardez le reçu."],
+      upwork: ["Choisissez vos services ci-dessus (ou saisissez le montant à régler).", "Soumettez la demande avec votre e-mail, inutile de vous reconnecter.", "Nous vous répondons sous 24 h avec votre lien de contrat direct Upwork sécurisé pour payer par carte."],
     }[m]),
     en: (m) => ({
       moncash: [`Open MonCash and send the amount to ${c.moncash.number} (${c.moncash.holder}).`, "Note the SMS transaction number and take a screenshot.", "Enter the reference below and confirm."],
       natcash: [`Open NatCash and send the amount to ${c.natcash.number} (${c.natcash.holder}).`, "Note the transaction number and take a screenshot.", "Enter the reference below and confirm."],
-      buh: [`Transfer to ${c.buh.bank}.`, `Account: ${c.buh.account} (${c.buh.type}) — ${c.buh.holder}.`, "Enter the transfer reference below and keep the receipt."],
-      upwork: ["Choose your services above (or enter the amount to pay).", "Submit the request with your email — no need to log back in.", "We reply within 24h with your secure Upwork direct-contract link to pay by card."],
+      buh: [`Transfer to ${c.buh.bank}.`, `Account: ${c.buh.account} (${c.buh.type}), ${c.buh.holder}.`, "Enter the transfer reference below and keep the receipt."],
+      upwork: ["Choose your services above (or enter the amount to pay).", "Submit the request with your email, no need to log back in.", "We reply within 24h with your secure Upwork direct-contract link to pay by card."],
     }[m]),
     ht: (m) => ({
       moncash: [`Ouvri MonCash epi voye montan an nan ${c.moncash.number} (${c.moncash.holder}).`, "Note nimewo tranzaksyon SMS a epi pran yon foto/screenshot.", "Mete referans lan anba a epi konfime."],
       natcash: [`Ouvri NatCash epi voye montan an nan ${c.natcash.number} (${c.natcash.holder}).`, "Note nimewo tranzaksyon an epi pran yon foto/screenshot.", "Mete referans lan anba a epi konfime."],
-      buh: [`Vireman nan ${c.buh.bank}.`, `Kont : ${c.buh.account} (${c.buh.type}) — ${c.buh.holder}.`, "Mete referans vireman an anba a epi kenbe resi a."],
-      upwork: ["Chwazi sèvis ou yo anwo a (oswa mete montan pou peye a).", "Voye demann lan ak imel ou — ou pa bezwen rekonekte.", "N ap reponn ou nan 24 è ak yon lyen kontra dirèk Upwork sekirize pou peye ak kat."],
+      buh: [`Vireman nan ${c.buh.bank}.`, `Kont : ${c.buh.account} (${c.buh.type}), ${c.buh.holder}.`, "Mete referans vireman an anba a epi kenbe resi a."],
+      upwork: ["Chwazi sèvis ou yo anwo a (oswa mete montan pou peye a).", "Voye demann lan ak imel ou, ou pa bezwen rekonekte.", "N ap reponn ou nan 24 è ak yon lyen kontra dirèk Upwork sekirize pou peye ak kat."],
     }[m]),
   }
   const steps = (m: Method) => (stepsByLang[lang] ?? stepsByLang.en!)(m)
@@ -261,14 +261,14 @@ function build(lang: Lang, c: PaymentConfig): Copy {
 
 // Labels for the Upwork "contact us for a direct-contract link" CTAs.
 const UPWORK_CTA: Record<Lang, { wa: string; email: string; msg: string; subject: string; optional: string; services: string; budget: string; onQuote: string }> = {
-  fr: { wa: "Nous écrire sur WhatsApp", email: "Nous écrire par e-mail", msg: "Bonjour, je souhaite payer par carte via Upwork.", subject: "Paiement par carte via Upwork", optional: "Optionnel — contact direct", services: "Services choisis", budget: "Budget", onQuote: "à définir / sur devis" },
-  en: { wa: "Message us on WhatsApp", email: "Email us", msg: "Hello, I would like to pay by card via Upwork.", subject: "Card payment via Upwork", optional: "Optional — direct contact", services: "Selected services", budget: "Budget", onQuote: "to be defined / on quote" },
-  es: { wa: "Escríbenos por WhatsApp", email: "Escríbenos por correo", msg: "Hola, quiero pagar con tarjeta vía Upwork.", subject: "Pago con tarjeta vía Upwork", optional: "Opcional — contacto directo", services: "Servicios elegidos", budget: "Presupuesto", onQuote: "a definir / a presupuesto" },
-  ht: { wa: "Ekri nou sou WhatsApp", email: "Ekri nou pa imel", msg: "Bonjou, mwen vle peye ak kat via Upwork.", subject: "Peman ak kat via Upwork", optional: "Opsyonèl — kontak dirèk", services: "Sèvis chwazi", budget: "Bidjè", onQuote: "pou defini / sou devi" },
-  pt: { wa: "Fale connosco no WhatsApp", email: "Envie-nos um e-mail", msg: "Olá, gostaria de pagar com cartão via Upwork.", subject: "Pagamento com cartão via Upwork", optional: "Opcional — contacto direto", services: "Serviços escolhidos", budget: "Orçamento", onQuote: "a definir / sob orçamento" },
-  it: { wa: "Scrivici su WhatsApp", email: "Scrivici via email", msg: "Salve, vorrei pagare con carta tramite Upwork.", subject: "Pagamento con carta tramite Upwork", optional: "Facoltativo — contatto diretto", services: "Servizi scelti", budget: "Budget", onQuote: "da definire / su preventivo" },
-  de: { wa: "Auf WhatsApp schreiben", email: "E-Mail senden", msg: "Hallo, ich möchte per Karte über Upwork bezahlen.", subject: "Kartenzahlung über Upwork", optional: "Optional — direkter Kontakt", services: "Gewählte Leistungen", budget: "Budget", onQuote: "noch festzulegen / auf Anfrage" },
-  ar: { wa: "راسلنا على واتساب", email: "راسلنا بالبريد", msg: "مرحباً، أرغب في الدفع بالبطاقة عبر Upwork.", subject: "الدفع بالبطاقة عبر Upwork", optional: "اختياري — تواصل مباشر", services: "الخدمات المختارة", budget: "الميزانية", onQuote: "يُحدد لاحقاً / حسب عرض السعر" },
+  fr: { wa: "Nous écrire sur WhatsApp", email: "Nous écrire par e-mail", msg: "Bonjour, je souhaite payer par carte via Upwork.", subject: "Paiement par carte via Upwork", optional: "Optionnel, contact direct", services: "Services choisis", budget: "Budget", onQuote: "à définir / sur devis" },
+  en: { wa: "Message us on WhatsApp", email: "Email us", msg: "Hello, I would like to pay by card via Upwork.", subject: "Card payment via Upwork", optional: "Optional, direct contact", services: "Selected services", budget: "Budget", onQuote: "to be defined / on quote" },
+  es: { wa: "Escríbenos por WhatsApp", email: "Escríbenos por correo", msg: "Hola, quiero pagar con tarjeta vía Upwork.", subject: "Pago con tarjeta vía Upwork", optional: "Opcional, contacto directo", services: "Servicios elegidos", budget: "Presupuesto", onQuote: "a definir / a presupuesto" },
+  ht: { wa: "Ekri nou sou WhatsApp", email: "Ekri nou pa imel", msg: "Bonjou, mwen vle peye ak kat via Upwork.", subject: "Peman ak kat via Upwork", optional: "Opsyonèl, kontak dirèk", services: "Sèvis chwazi", budget: "Bidjè", onQuote: "pou defini / sou devi" },
+  pt: { wa: "Fale connosco no WhatsApp", email: "Envie-nos um e-mail", msg: "Olá, gostaria de pagar com cartão via Upwork.", subject: "Pagamento com cartão via Upwork", optional: "Opcional, contacto direto", services: "Serviços escolhidos", budget: "Orçamento", onQuote: "a definir / sob orçamento" },
+  it: { wa: "Scrivici su WhatsApp", email: "Scrivici via email", msg: "Salve, vorrei pagare con carta tramite Upwork.", subject: "Pagamento con carta tramite Upwork", optional: "Facoltativo, contatto diretto", services: "Servizi scelti", budget: "Budget", onQuote: "da definire / su preventivo" },
+  de: { wa: "Auf WhatsApp schreiben", email: "E-Mail senden", msg: "Hallo, ich möchte per Karte über Upwork bezahlen.", subject: "Kartenzahlung über Upwork", optional: "Optional, direkter Kontakt", services: "Gewählte Leistungen", budget: "Budget", onQuote: "noch festzulegen / auf Anfrage" },
+  ar: { wa: "راسلنا على واتساب", email: "راسلنا بالبريد", msg: "مرحباً، أرغب في الدفع بالبطاقة عبر Upwork.", subject: "الدفع بالبطاقة عبر Upwork", optional: "اختياري, تواصل مباشر", services: "الخدمات المختارة", budget: "الميزانية", onQuote: "يُحدد لاحقاً / حسب عرض السعر" },
 }
 
 // Accessible labels for the quantity steppers (icon-only buttons), per language.
@@ -289,14 +289,14 @@ const PICK: Record<Lang, {
   submitReq: string; reqSuccess: string; reqSuccessSub: string; needEmail: string;
   directTitle: string; directHint: string; messageLabel: string; messagePh: string; sendOnSite: string; needContact: string; sentTitle: string; sentSub: string;
 }> = {
-  fr: { title: "Choisir des services (optionnel)", hint: "Sélectionnez vos services : le montant se calcule automatiquement.", total: "Total", quote: "sur devis", submitReq: "Soumettre la demande", reqSuccess: "Demande reçue !", reqSuccessSub: "Nous vous répondons sous 24 h avec votre lien de contrat direct Upwork sécurisé. Votre e-mail est enregistré — inutile de vous reconnecter.", needEmail: "Indiquez votre e-mail pour recevoir le lien de contrat.", directTitle: "Ou soumettez votre demande sur le site", directHint: "Envoyez-nous vos services et votre message directement — sans passer par le paiement.", messageLabel: "Votre message", messagePh: "Décrivez votre projet, vos besoins ou vos questions…", sendOnSite: "Soumettre ma demande", needContact: "Indiquez votre nom et un e-mail valide.", sentTitle: "Demande envoyée !", sentSub: "Nous avons bien reçu votre demande et vos services sélectionnés. Nous revenons vers vous très vite. Merci !" },
-  en: { title: "Choose services (optional)", hint: "Select your services: the amount is calculated automatically.", total: "Total", quote: "on quote", submitReq: "Submit request", reqSuccess: "Request received!", reqSuccessSub: "We reply within 24h with your secure Upwork direct-contract link. Your email is saved — no need to log back in.", needEmail: "Enter your email to receive the contract link.", directTitle: "Or submit your request on the site", directHint: "Send us your services and message directly — no payment needed.", messageLabel: "Your message", messagePh: "Describe your project, needs or questions…", sendOnSite: "Submit my request", needContact: "Enter your name and a valid email.", sentTitle: "Request sent!", sentSub: "We received your request and your selected services. We'll get back to you very soon. Thank you!" },
-  es: { title: "Elegir servicios (opcional)", hint: "Selecciona tus servicios: el importe se calcula automáticamente.", total: "Total", quote: "a presupuesto", submitReq: "Enviar solicitud", reqSuccess: "¡Solicitud recibida!", reqSuccessSub: "Respondemos en 24 h con tu enlace de contrato directo de Upwork seguro. Tu correo queda guardado — no necesitas volver a iniciar sesión.", needEmail: "Introduce tu correo para recibir el enlace del contrato.", directTitle: "O envía tu solicitud en el sitio", directHint: "Envíanos tus servicios y tu mensaje directamente — sin pasar por el pago.", messageLabel: "Tu mensaje", messagePh: "Describe tu proyecto, necesidades o preguntas…", sendOnSite: "Enviar mi solicitud", needContact: "Introduce tu nombre y un correo válido.", sentTitle: "¡Solicitud enviada!", sentSub: "Hemos recibido tu solicitud y tus servicios seleccionados. Te responderemos muy pronto. ¡Gracias!" },
-  ht: { title: "Chwazi sèvis (opsyonèl)", hint: "Chwazi sèvis ou yo : montan an ap kalkile otomatikman.", total: "Total", quote: "sou devi", submitReq: "Voye demann lan", reqSuccess: "Nou resevwa demann ou!", reqSuccessSub: "N ap reponn ou nan 24 è ak yon lyen kontra dirèk Upwork sekirize. Imel ou anrejistre — ou pa bezwen rekonekte.", needEmail: "Mete imel ou pou resevwa lyen kontra a.", directTitle: "Oswa soumèt demann ou sou sit la", directHint: "Voye ban nou sèvis ou yo ak mesaj ou dirèkteman — san ou pa peye.", messageLabel: "Mesaj ou", messagePh: "Dekri pwojè ou, bezwen ou oswa kesyon ou…", sendOnSite: "Voye demann mwen", needContact: "Mete non ou ak yon imel valab.", sentTitle: "Demann voye!", sentSub: "Nou resevwa demann ou ak sèvis ou chwazi yo. N ap reponn ou byen vit. Mèsi!" },
-  pt: { title: "Escolher serviços (opcional)", hint: "Selecione os seus serviços: o valor é calculado automaticamente.", total: "Total", quote: "sob orçamento", submitReq: "Enviar pedido", reqSuccess: "Pedido recebido!", reqSuccessSub: "Respondemos em 24 h com o seu link de contrato direto Upwork seguro. O seu e-mail fica guardado — não precisa de voltar a entrar.", needEmail: "Informe o seu e-mail para receber o link do contrato.", directTitle: "Ou envie o seu pedido no site", directHint: "Envie-nos os seus serviços e a sua mensagem diretamente — sem passar pelo pagamento.", messageLabel: "A sua mensagem", messagePh: "Descreva o seu projeto, necessidades ou perguntas…", sendOnSite: "Enviar o meu pedido", needContact: "Informe o seu nome e um e-mail válido.", sentTitle: "Pedido enviado!", sentSub: "Recebemos o seu pedido e os serviços selecionados. Retornaremos muito em breve. Obrigado!" },
-  it: { title: "Scegli i servizi (facoltativo)", hint: "Seleziona i tuoi servizi: l'importo si calcola automaticamente.", total: "Totale", quote: "su preventivo", submitReq: "Invia richiesta", reqSuccess: "Richiesta ricevuta!", reqSuccessSub: "Rispondiamo entro 24 h con il tuo link di contratto diretto Upwork sicuro. La tua email è salvata — non serve rifare l'accesso.", needEmail: "Inserisci la tua email per ricevere il link del contratto.", directTitle: "Oppure invia la richiesta sul sito", directHint: "Inviaci i tuoi servizi e il tuo messaggio direttamente — senza passare dal pagamento.", messageLabel: "Il tuo messaggio", messagePh: "Descrivi il tuo progetto, le esigenze o le domande…", sendOnSite: "Invia la mia richiesta", needContact: "Inserisci il tuo nome e un'email valida.", sentTitle: "Richiesta inviata!", sentSub: "Abbiamo ricevuto la tua richiesta e i servizi selezionati. Ti ricontatteremo molto presto. Grazie!" },
-  de: { title: "Leistungen wählen (optional)", hint: "Wählen Sie Ihre Leistungen: der Betrag wird automatisch berechnet.", total: "Gesamt", quote: "auf Anfrage", submitReq: "Anfrage senden", reqSuccess: "Anfrage erhalten!", reqSuccessSub: "Wir antworten innerhalb von 24 Std. mit Ihrem sicheren Upwork-Direktvertragslink. Ihre E-Mail ist gespeichert — kein erneutes Anmelden nötig.", needEmail: "Geben Sie Ihre E-Mail an, um den Vertragslink zu erhalten.", directTitle: "Oder senden Sie Ihre Anfrage auf der Website", directHint: "Senden Sie uns Ihre Leistungen und Ihre Nachricht direkt — ohne Zahlung.", messageLabel: "Ihre Nachricht", messagePh: "Beschreiben Sie Ihr Projekt, Ihren Bedarf oder Ihre Fragen…", sendOnSite: "Meine Anfrage senden", needContact: "Geben Sie Ihren Namen und eine gültige E-Mail an.", sentTitle: "Anfrage gesendet!", sentSub: "Wir haben Ihre Anfrage und Ihre ausgewählten Leistungen erhalten. Wir melden uns sehr bald. Vielen Dank!" },
-  ar: { title: "اختر الخدمات (اختياري)", hint: "اختر خدماتك: يُحتسب المبلغ تلقائياً.", total: "المجموع", quote: "حسب عرض السعر", submitReq: "إرسال الطلب", reqSuccess: "تم استلام الطلب!", reqSuccessSub: "نردّ خلال 24 ساعة برابط عقد Upwork المباشر الآمن. بريدك محفوظ — لا حاجة لإعادة تسجيل الدخول.", needEmail: "أدخل بريدك الإلكتروني لتصلك رابط العقد.", directTitle: "أو أرسل طلبك عبر الموقع", directHint: "أرسل لنا خدماتك ورسالتك مباشرةً — دون الحاجة للدفع.", messageLabel: "رسالتك", messagePh: "صف مشروعك أو احتياجاتك أو أسئلتك…", sendOnSite: "إرسال طلبي", needContact: "أدخل اسمك وبريداً إلكترونياً صالحاً.", sentTitle: "تم إرسال الطلب!", sentSub: "لقد استلمنا طلبك والخدمات التي اخترتها. سنعود إليك قريباً جداً. شكراً!" },
+  fr: { title: "Choisir des services (optionnel)", hint: "Sélectionnez vos services : le montant se calcule automatiquement.", total: "Total", quote: "sur devis", submitReq: "Soumettre la demande", reqSuccess: "Demande reçue !", reqSuccessSub: "Nous vous répondons sous 24 h avec votre lien de contrat direct Upwork sécurisé. Votre e-mail est enregistré, inutile de vous reconnecter.", needEmail: "Indiquez votre e-mail pour recevoir le lien de contrat.", directTitle: "Ou soumettez votre demande sur le site", directHint: "Envoyez-nous vos services et votre message directement, sans passer par le paiement.", messageLabel: "Votre message", messagePh: "Décrivez votre projet, vos besoins ou vos questions…", sendOnSite: "Soumettre ma demande", needContact: "Indiquez votre nom et un e-mail valide.", sentTitle: "Demande envoyée !", sentSub: "Nous avons bien reçu votre demande et vos services sélectionnés. Nous revenons vers vous très vite. Merci !" },
+  en: { title: "Choose services (optional)", hint: "Select your services: the amount is calculated automatically.", total: "Total", quote: "on quote", submitReq: "Submit request", reqSuccess: "Request received!", reqSuccessSub: "We reply within 24h with your secure Upwork direct-contract link. Your email is saved, no need to log back in.", needEmail: "Enter your email to receive the contract link.", directTitle: "Or submit your request on the site", directHint: "Send us your services and message directly, no payment needed.", messageLabel: "Your message", messagePh: "Describe your project, needs or questions…", sendOnSite: "Submit my request", needContact: "Enter your name and a valid email.", sentTitle: "Request sent!", sentSub: "We received your request and your selected services. We'll get back to you very soon. Thank you!" },
+  es: { title: "Elegir servicios (opcional)", hint: "Selecciona tus servicios: el importe se calcula automáticamente.", total: "Total", quote: "a presupuesto", submitReq: "Enviar solicitud", reqSuccess: "¡Solicitud recibida!", reqSuccessSub: "Respondemos en 24 h con tu enlace de contrato directo de Upwork seguro. Tu correo queda guardado, no necesitas volver a iniciar sesión.", needEmail: "Introduce tu correo para recibir el enlace del contrato.", directTitle: "O envía tu solicitud en el sitio", directHint: "Envíanos tus servicios y tu mensaje directamente, sin pasar por el pago.", messageLabel: "Tu mensaje", messagePh: "Describe tu proyecto, necesidades o preguntas…", sendOnSite: "Enviar mi solicitud", needContact: "Introduce tu nombre y un correo válido.", sentTitle: "¡Solicitud enviada!", sentSub: "Hemos recibido tu solicitud y tus servicios seleccionados. Te responderemos muy pronto. ¡Gracias!" },
+  ht: { title: "Chwazi sèvis (opsyonèl)", hint: "Chwazi sèvis ou yo : montan an ap kalkile otomatikman.", total: "Total", quote: "sou devi", submitReq: "Voye demann lan", reqSuccess: "Nou resevwa demann ou!", reqSuccessSub: "N ap reponn ou nan 24 è ak yon lyen kontra dirèk Upwork sekirize. Imel ou anrejistre, ou pa bezwen rekonekte.", needEmail: "Mete imel ou pou resevwa lyen kontra a.", directTitle: "Oswa soumèt demann ou sou sit la", directHint: "Voye ban nou sèvis ou yo ak mesaj ou dirèkteman, san ou pa peye.", messageLabel: "Mesaj ou", messagePh: "Dekri pwojè ou, bezwen ou oswa kesyon ou…", sendOnSite: "Voye demann mwen", needContact: "Mete non ou ak yon imel valab.", sentTitle: "Demann voye!", sentSub: "Nou resevwa demann ou ak sèvis ou chwazi yo. N ap reponn ou byen vit. Mèsi!" },
+  pt: { title: "Escolher serviços (opcional)", hint: "Selecione os seus serviços: o valor é calculado automaticamente.", total: "Total", quote: "sob orçamento", submitReq: "Enviar pedido", reqSuccess: "Pedido recebido!", reqSuccessSub: "Respondemos em 24 h com o seu link de contrato direto Upwork seguro. O seu e-mail fica guardado, não precisa de voltar a entrar.", needEmail: "Informe o seu e-mail para receber o link do contrato.", directTitle: "Ou envie o seu pedido no site", directHint: "Envie-nos os seus serviços e a sua mensagem diretamente, sem passar pelo pagamento.", messageLabel: "A sua mensagem", messagePh: "Descreva o seu projeto, necessidades ou perguntas…", sendOnSite: "Enviar o meu pedido", needContact: "Informe o seu nome e um e-mail válido.", sentTitle: "Pedido enviado!", sentSub: "Recebemos o seu pedido e os serviços selecionados. Retornaremos muito em breve. Obrigado!" },
+  it: { title: "Scegli i servizi (facoltativo)", hint: "Seleziona i tuoi servizi: l'importo si calcola automaticamente.", total: "Totale", quote: "su preventivo", submitReq: "Invia richiesta", reqSuccess: "Richiesta ricevuta!", reqSuccessSub: "Rispondiamo entro 24 h con il tuo link di contratto diretto Upwork sicuro. La tua email è salvata, non serve rifare l'accesso.", needEmail: "Inserisci la tua email per ricevere il link del contratto.", directTitle: "Oppure invia la richiesta sul sito", directHint: "Inviaci i tuoi servizi e il tuo messaggio direttamente, senza passare dal pagamento.", messageLabel: "Il tuo messaggio", messagePh: "Descrivi il tuo progetto, le esigenze o le domande…", sendOnSite: "Invia la mia richiesta", needContact: "Inserisci il tuo nome e un'email valida.", sentTitle: "Richiesta inviata!", sentSub: "Abbiamo ricevuto la tua richiesta e i servizi selezionati. Ti ricontatteremo molto presto. Grazie!" },
+  de: { title: "Leistungen wählen (optional)", hint: "Wählen Sie Ihre Leistungen: der Betrag wird automatisch berechnet.", total: "Gesamt", quote: "auf Anfrage", submitReq: "Anfrage senden", reqSuccess: "Anfrage erhalten!", reqSuccessSub: "Wir antworten innerhalb von 24 Std. mit Ihrem sicheren Upwork-Direktvertragslink. Ihre E-Mail ist gespeichert, kein erneutes Anmelden nötig.", needEmail: "Geben Sie Ihre E-Mail an, um den Vertragslink zu erhalten.", directTitle: "Oder senden Sie Ihre Anfrage auf der Website", directHint: "Senden Sie uns Ihre Leistungen und Ihre Nachricht direkt, ohne Zahlung.", messageLabel: "Ihre Nachricht", messagePh: "Beschreiben Sie Ihr Projekt, Ihren Bedarf oder Ihre Fragen…", sendOnSite: "Meine Anfrage senden", needContact: "Geben Sie Ihren Namen und eine gültige E-Mail an.", sentTitle: "Anfrage gesendet!", sentSub: "Wir haben Ihre Anfrage und Ihre ausgewählten Leistungen erhalten. Wir melden uns sehr bald. Vielen Dank!" },
+  ar: { title: "اختر الخدمات (اختياري)", hint: "اختر خدماتك: يُحتسب المبلغ تلقائياً.", total: "المجموع", quote: "حسب عرض السعر", submitReq: "إرسال الطلب", reqSuccess: "تم استلام الطلب!", reqSuccessSub: "نردّ خلال 24 ساعة برابط عقد Upwork المباشر الآمن. بريدك محفوظ, لا حاجة لإعادة تسجيل الدخول.", needEmail: "أدخل بريدك الإلكتروني لتصلك رابط العقد.", directTitle: "أو أرسل طلبك عبر الموقع", directHint: "أرسل لنا خدماتك ورسالتك مباشرةً, دون الحاجة للدفع.", messageLabel: "رسالتك", messagePh: "صف مشروعك أو احتياجاتك أو أسئلتك…", sendOnSite: "إرسال طلبي", needContact: "أدخل اسمك وبريداً إلكترونياً صالحاً.", sentTitle: "تم إرسال الطلب!", sentSub: "لقد استلمنا طلبك والخدمات التي اخترتها. سنعود إليك قريباً جداً. شكراً!" },
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -365,7 +365,7 @@ export default function Payer() {
   const [showOther, setShowOther] = useState(false)
   const [method, setMethod] = useState<Method | null>(null)
 
-  // Service picker — clients build a cart and the amount derives from it.
+  // Service picker, clients build a cart and the amount derives from it.
   const [cart, setCart] = useState<Record<number, number>>({})
   const [pickerOpen, setPickerOpen] = useState(true)
   const svcName = (s: (typeof pricingServices)[number]) => t.pricing.services[s.id]?.name ?? s.name
@@ -452,7 +452,7 @@ export default function Payer() {
       qty: cart[s.id],
       usd: s.quoteOnly ? null : s.price,
       // Per-line amount in the client's own currency (region-adjusted then converted),
-      // exactly like the proforma — so the receipt stays consistent with the total.
+      // exactly like the proforma, so the receipt stays consistent with the total.
       local: s.quoteOnly ? null : Math.round(priceFor(s.price) * rate * cart[s.id]),
     }))
     const r = await api.submitLead({
@@ -483,7 +483,7 @@ export default function Payer() {
     }
   }
 
-  // Direct on-site submission of the selected services + message — no payment
+  // Direct on-site submission of the selected services + message, no payment
   // method required. Posts a lead with the cart summary as the message body.
   async function submitSiteRequest() {
     if (siteBusy) return
@@ -538,7 +538,7 @@ export default function Payer() {
 
   // Upwork: route the client to us (WhatsApp / e-mail) so we can send a direct-contract
   // link. The message recaps the chosen services and the budget so we can prepare the
-  // contract right away — whether the client sends it via WhatsApp, e-mail, or submits
+  // contract right away, whether the client sends it via WhatsApp, e-mail, or submits
   // it on the site.
   const u = UPWORK_CTA[lang]
   const budgetText =
@@ -553,7 +553,7 @@ export default function Payer() {
     }
     lines.push("", `${u.budget} : ${budgetText}`)
     // Sign with the client's name so INOV Digital Services can prepare the contract.
-    if (name.trim()) lines.push("", `— ${name.trim()}`)
+    if (name.trim()) lines.push("", name.trim())
     return lines.join("\n")
   }
   const upworkSummary = buildUpworkSummary()
@@ -595,7 +595,7 @@ export default function Payer() {
           </div>
         ) : (
           <div style={cardStyle}>
-            {/* Service picker — the amount derives from the selection */}
+            {/* Service picker, the amount derives from the selection */}
             <div style={{ marginBottom: 22, border: "1px solid var(--ds-border)", borderRadius: "var(--r-md)", background: "var(--ds-bg-sec)", overflow: "hidden" }}>
               <button
                 type="button"
@@ -636,9 +636,9 @@ export default function Payer() {
                             <div style={{ fontFamily: "var(--font-space), monospace", fontSize: 12.5, color: "var(--ds-text-muted)" }}>{quote ? p.quote : fmt(priceFor(s.price))}</div>
                           </div>
                           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-                            <button type="button" aria-label={`${QTY_LABEL[lang].dec} — ${svcName(s)}`} onClick={(e) => { e.stopPropagation(); setQty(s.id, -1) }} disabled={qty === 0} style={{ ...stepBtn, opacity: qty === 0 ? 0.4 : 1, cursor: qty === 0 ? "default" : "pointer" }}><Minus size={15} aria-hidden="true" /></button>
+                            <button type="button" aria-label={`${QTY_LABEL[lang].dec}, ${svcName(s)}`} onClick={(e) => { e.stopPropagation(); setQty(s.id, -1) }} disabled={qty === 0} style={{ ...stepBtn, opacity: qty === 0 ? 0.4 : 1, cursor: qty === 0 ? "default" : "pointer" }}><Minus size={15} aria-hidden="true" /></button>
                             <span style={{ fontFamily: "var(--font-space), monospace", fontSize: 14, fontWeight: 700, color: "var(--ds-text)", minWidth: 16, textAlign: "center" }}>{qty}</span>
-                            <button type="button" aria-label={`${QTY_LABEL[lang].inc} — ${svcName(s)}`} onClick={(e) => { e.stopPropagation(); setQty(s.id, 1) }} style={{ ...stepBtn, cursor: "pointer" }}><Plus size={15} aria-hidden="true" /></button>
+                            <button type="button" aria-label={`${QTY_LABEL[lang].inc}, ${svcName(s)}`} onClick={(e) => { e.stopPropagation(); setQty(s.id, 1) }} style={{ ...stepBtn, cursor: "pointer" }}><Plus size={15} aria-hidden="true" /></button>
                           </div>
                         </div>
                       )
@@ -656,7 +656,7 @@ export default function Payer() {
               )}
             </div>
 
-            {/* Direct on-site request — select services + message, submit straight to us */}
+            {/* Direct on-site request, select services + message, submit straight to us */}
             <div style={{ marginBottom: 22, border: "1px solid var(--ds-accent-a30)", borderRadius: "var(--r-md)", background: "var(--ds-accent-a08)", padding: "16px 16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
                 <Send size={18} color="var(--ds-accent)" style={{ flexShrink: 0 }} />
@@ -684,7 +684,7 @@ export default function Payer() {
               </div>
             </div>
 
-            {/* Detected region — location is auto-detected, no manual toggle */}
+            {/* Detected region, location is auto-detected, no manual toggle */}
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 22, padding: "10px 14px", background: "var(--ds-bg-sec)", border: "1px solid var(--ds-border)", borderRadius: "var(--r-md)" }}>
               <MapPin size={16} color="var(--ds-accent)" style={{ flexShrink: 0 }} />
               <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13.5, color: "var(--ds-text-sec)" }}>
@@ -769,7 +769,7 @@ export default function Payer() {
                         <input style={inputStyle} inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={`0 ${CURRENCIES[currency].symbol}`} />
                       </Fld>
                       <Fld label={c.ref}>
-                        <input style={inputStyle} value={reference} onChange={(e) => setReference(e.target.value)} placeholder="—" />
+                        <input style={inputStyle} value={reference} onChange={(e) => setReference(e.target.value)} placeholder="-" />
                       </Fld>
                     </Row>
                     <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12.5, color: "var(--ds-text-faint)", margin: "-6px 0 0" }}>{c.refHint}</p>

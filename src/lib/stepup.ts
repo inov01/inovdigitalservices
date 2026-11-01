@@ -3,7 +3,7 @@
 // The admin space is security-critical: every change to the site must be backed
 // by a fresh proof of identity (password + 2FA code), not just a still-open
 // session. Rather than wrap dozens of call sites, the gate is enforced in one
-// place — the authenticated API helper — for every mutating request. A short
+// place, the authenticated API helper, for every mutating request. A short
 // grace window keeps a single burst of edits from prompting on every click.
 type Verifier = () => Promise<boolean>
 

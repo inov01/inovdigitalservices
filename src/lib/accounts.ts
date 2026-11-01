@@ -43,7 +43,7 @@ async function req<T>(path: string, init: RequestInit = {}, useAuth = false): Pr
       }
       return res.json() as Promise<T>
     } catch (err) {
-      // Network failure — retry GETs, otherwise rethrow.
+      // Network failure, retry GETs, otherwise rethrow.
       lastErr = err
       if (attempt >= maxAttempts) throw err
       await sleep(400 * attempt)

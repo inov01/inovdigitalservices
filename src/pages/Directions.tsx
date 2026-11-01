@@ -3,7 +3,7 @@ import { Link } from "react-router"
 import { ArrowLeft, ArrowUpRight, Check, Sparkles } from "lucide-react"
 
 // ─────────────────────────────────────────────────────────────────────────────
-// /directions — page d'exploration créative (NON reliée au site public).
+// /directions, page d'exploration créative (NON reliée au site public).
 // Elle présente 3 directions visuelles rendues grandeur nature pour qu'INOV
 // choisisse celle à appliquer sur tout le site. À supprimer une fois le choix
 // fait (route + import de polices dans index.css).
@@ -121,13 +121,13 @@ export default function Directions() {
           <span style={{ fontStyle: "italic", color: "#ff7a1a" }}>INOV</span>.
         </h1>
         <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, lineHeight: 1.7, color: "rgba(255,255,255,0.6)", maxWidth: 640, margin: 0 }}>
-          Chaque piste ci-dessous est une identité complète — typographie, palette, mise en page.
+          Chaque piste ci-dessous est une identité complète, typographie, palette, mise en page.
           Fais défiler, ressens laquelle te ressemble, puis clique <strong style={{ color: "#fff", fontWeight: 700 }}>« Choisir cette direction »</strong>.
           J'applique ensuite la gagnante sur tout le site.
         </p>
       </section>
 
-      {/* ═══════════════ DIRECTION 01 — ZAFÈ KREYÒL (éditorial caribéen) ═══ */}
+      {/* ═══════════════ DIRECTION 01, ZAFÈ KREYÒL (éditorial caribéen) ═══ */}
       <Concept id="kreyol" picked={picked} setPicked={setPicked}>
         <div style={{ background: "#f4ece0", color: "#1c150e", padding: "clamp(40px, 6vw, 80px) clamp(16px, 4vw, 56px)" }}>
           <ConceptLabel n="01" name="Zafè Kreyòl" tag="Éditorial · Caribéen · Chaleureux"
@@ -174,7 +174,7 @@ export default function Directions() {
         </div>
       </Concept>
 
-      {/* ═══════════════ DIRECTION 02 — STUDIO BOLD (néo-brutalist) ═══════ */}
+      {/* ═══════════════ DIRECTION 02, STUDIO BOLD (néo-brutalist) ═══════ */}
       <Concept id="studio" picked={picked} setPicked={setPicked}>
         <div style={{ background: "#0e0e0e", color: "#f5f3ec", padding: "clamp(40px, 6vw, 72px) clamp(16px, 4vw, 56px) 0", overflow: "hidden" }}>
           <ConceptLabel n="02" name="Studio Bold" tag="Brutaliste · Graphique · Énergique"
@@ -185,7 +185,7 @@ export default function Directions() {
                 DESIGN · WEB · BRANDING
               </span>
               <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 13, color: "rgba(245,243,236,0.55)" }}>
-                Basé en Haïti — disponible partout.
+                Basé en Haïti, disponible partout.
               </span>
             </div>
             <h2 style={{ fontFamily: "'Anton', sans-serif", fontWeight: 400, fontSize: "clamp(60px, 13vw, 200px)", lineHeight: 0.86, letterSpacing: "-0.01em", textTransform: "uppercase", margin: "0 0 4px" }}>
@@ -217,7 +217,7 @@ export default function Directions() {
         </div>
       </Concept>
 
-      {/* ═══════════════ DIRECTION 03 — NOCTURNE (immersif sombre) ════════ */}
+      {/* ═══════════════ DIRECTION 03, NOCTURNE (immersif sombre) ════════ */}
       <Concept id="nocturne" picked={picked} setPicked={setPicked}>
         <div style={{ position: "relative", background: "#07070c", color: "#eef0f7", padding: "clamp(40px, 6vw, 80px) clamp(16px, 4vw, 56px)", overflow: "hidden" }}>
           {/* Mesh glow */}
@@ -266,7 +266,7 @@ export default function Directions() {
       <footer style={{ padding: "clamp(48px,7vw,90px) clamp(16px,4vw,40px)", textAlign: "center" }}>
         <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: "rgba(255,255,255,0.6)", margin: "0 auto 8px", maxWidth: 520, lineHeight: 1.6 }}>
           {picked
-            ? `Super choix — tu penches pour « ${CONCEPTS.find((c) => c.id === picked)?.name} ».`
+            ? `Super choix, tu penches pour « ${CONCEPTS.find((c) => c.id === picked)?.name} ».`
             : "Une direction te parle ? Clique « Choisir cette direction » sur celle qui te plaît."}
         </p>
         <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: "rgba(255,255,255,0.4)", margin: 0 }}>

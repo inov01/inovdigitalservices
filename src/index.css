@@ -1,4 +1,4 @@
-/* Fonts are self-hosted via @fontsource-variable (imported in main.tsx) — no
+/* Fonts are self-hosted via @fontsource-variable (imported in main.tsx), no
    external Google Fonts network request. Family names carry the "Variable" suffix. */
 @import 'tailwindcss';
 
@@ -7,7 +7,7 @@
   /* Fluid horizontal gutter shared by every section wrapper (mobile → tablet → PC) */
   --section-px: 18px;
 
-  /* Radius scale — the ONLY radii to use. `--r-full` for pills/rounded ends. */
+  /* Radius scale, the ONLY radii to use. `--r-full` for pills/rounded ends. */
   --r-sm: 8px;
   --r-md: 12px;
   --r-lg: 16px;
@@ -28,7 +28,7 @@
   --color-orange-text: var(--ds-accent-text);
   --color-brand-dark: #1A1A1A;
 
-  /* Fonts — ONLY these two faces are used throughout the project */
+  /* Fonts, ONLY these two faces are used throughout the project */
   --font-outfit: 'Outfit Variable', 'Outfit', sans-serif;
   --font-space: 'Space Grotesk Variable', 'Space Grotesk', sans-serif;
 }
@@ -53,28 +53,28 @@
   --ds-accent:       #f7601b;
   --ds-accent-hover: #ec3317;
   --ds-accent-text:  #C24400;
-  /* Lighter accent — for gradient end-stops / decorative highlights */
+  /* Lighter accent, for gradient end-stops / decorative highlights */
   --ds-accent-light: #FF8A4C;
 
   /* Accent as an RGB triplet so any arbitrary-alpha orange overlay can be
-     written rgba(var(--ds-accent-rgb), <a>) — one source of truth. */
+     written rgba(var(--ds-accent-rgb), <a>), one source of truth. */
   --ds-accent-rgb:   247, 96, 27;
   /* The single orange button/tile gradient, factored out of inline copies. */
   --ds-accent-grad:  linear-gradient(135deg, var(--ds-accent), var(--ds-accent-hover));
-  /* Deeper orange ramp for SOLID buttons carrying white text — both stops meet
+  /* Deeper orange ramp for SOLID buttons carrying white text, both stops meet
      WCAG AA (>=4.5:1 with #fff): #cf4710 ~=4.6:1, #b83a0c ~=5.8:1. */
   --ds-accent-btn-grad: linear-gradient(135deg, #cf4710, #b83a0c);
 
   --ds-focus:        #f7601b;
 
-  /* Stable dark surface (footer, dark CTA cards) — identical in both themes
+  /* Stable dark surface (footer, dark CTA cards), identical in both themes
      so these intentionally-dark blocks never lose their contrast. */
   --ds-ink:          #1A1A1A;
   --ds-ink-text:     #ffffff;
   /* Frosted-glass base surface (cards sitting over imagery/colour). */
   --ds-surface-dark: #1c1c22;
 
-  /* Semantic feedback — success / danger. Theme-aware: the alpha tints derive
+  /* Semantic feedback, success / danger. Theme-aware: the alpha tints derive
      from the base via color-mix, so overriding the base in .dark recolours
      everything and keeps contrast on dark cards. */
   --ds-success:      #16A34A;
@@ -85,20 +85,20 @@
   --ds-danger-a40:   color-mix(in srgb, var(--ds-danger) 40%, transparent);
 
   /* Feedback colours for text sitting on a FIXED-dark surface (the ink footer,
-     the always-dark pricing cart) — theme-independent light hues so they stay
+     the always-dark pricing cart), theme-independent light hues so they stay
      legible even in light mode, where --ds-danger/-success are dark. */
   --ds-danger-on-dark:      #FF8A7A;
   --ds-danger-on-dark-a12:  color-mix(in srgb, var(--ds-danger-on-dark) 12%, transparent);
   --ds-danger-on-dark-a40:  color-mix(in srgb, var(--ds-danger-on-dark) 40%, transparent);
   --ds-success-on-dark:     #4ADE80;
 
-  /* Subtle accent-tinted card wash — one source of truth for the feature-card
+  /* Subtle accent-tinted card wash, one source of truth for the feature-card
      backgrounds previously hand-written as a two-stop color-mix everywhere. */
   --ds-accent-tint-grad: linear-gradient(135deg,
       color-mix(in srgb, var(--ds-accent) 8%, var(--ds-bg-card)) 0%,
       color-mix(in srgb, var(--ds-accent) 4%, var(--ds-bg-card)) 100%);
 
-  /* Accent tint scale — one source of truth for the orange overlays that were
+  /* Accent tint scale, one source of truth for the orange overlays that were
      previously hand-written as rgba(247,96,27,x) all over the codebase. */
   --ds-accent-a08:   color-mix(in srgb, var(--ds-accent) 8%,  transparent);
   --ds-accent-a10:   color-mix(in srgb, var(--ds-accent) 10%, transparent);
@@ -115,14 +115,14 @@
   --ds-accent-a35:   color-mix(in srgb, var(--ds-accent) 35%, transparent);
   --ds-accent-a45:   color-mix(in srgb, var(--ds-accent) 45%, transparent);
 
-  /* Light glassmorphism — only used on surfaces sitting over colour/imagery */
+  /* Light glassmorphism, only used on surfaces sitting over colour/imagery */
   --ds-glass-bg:     color-mix(in srgb, var(--ds-bg-card) 68%, transparent);
   --ds-glass-border: rgba(255,255,255,0.55);
   --ds-glass-blur:   blur(14px) saturate(1.4);
   --ds-glass-shadow: 0 8px 32px rgba(0,0,0,0.10);
 }
 
-/* ── Dark mode palette — activated by `.dark` on <html> ──────────────────── */
+/* ── Dark mode palette, activated by `.dark` on <html> ──────────────────── */
 .dark {
   --ds-bg:           #0B0B0F;
   --ds-bg-sec:       #131319;
@@ -163,7 +163,7 @@
 }
 
 /* Smooth scrolling is handled in JS (src/lib/smoothScroll.ts) with a fixed,
-   short duration — the native `scroll-behavior: smooth` felt too slow on long jumps. */
+   short duration, the native `scroll-behavior: smooth` felt too slow on long jumps. */
 
 body {
   font-family: var(--font-outfit);
@@ -219,7 +219,7 @@ body {
   color: var(--ds-text);
 }
 
-/* Keyboard focus — visible ring for accessibility */
+/* Keyboard focus, visible ring for accessibility */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -230,7 +230,7 @@ textarea:focus-visible {
   border-radius: 6px;
 }
 
-/* Skip-to-content link — visually hidden until focused */
+/* Skip-to-content link, visually hidden until focused */
 .skip-link {
   position: fixed;
   top: 8px;
@@ -433,7 +433,7 @@ textarea:focus-visible {
   background-clip: text;
 }
 
-/* Nav links — hover/focus via CSS so states also work for keyboard & touch */
+/* Nav links, hover/focus via CSS so states also work for keyboard & touch */
 .nav-link {
   color: var(--ds-text-sec);
   transition: color 0.2s, background 0.2s;
@@ -493,7 +493,7 @@ textarea:focus-visible {
   color: #fff;
 }
 
-/* Hero title — fluid across all devices (min covers 320px phones) */
+/* Hero title, fluid across all devices (min covers 320px phones) */
 .hero-title {
   font-family: var(--font-outfit);
   font-size: clamp(1.95rem, 6.2vw, 4.2rem);
@@ -503,7 +503,7 @@ textarea:focus-visible {
   color: var(--ds-text);
 }
 
-/* Section titles — fluid across all devices */
+/* Section titles, fluid across all devices */
 .section-title {
   font-family: var(--font-outfit);
   font-size: clamp(1.8rem, 5vw, 3.5rem);
@@ -537,7 +537,7 @@ textarea:focus-visible {
   50% { transform: scale(1.2); opacity: 0.3; }
 }
 
-/* Skeleton shimmer — used by SectionFallback in Home.tsx */
+/* Skeleton shimmer, used by SectionFallback in Home.tsx */
 @keyframes sk-shimmer {
   0% { background-position: -600px 0; }
   100% { background-position: 600px 0; }
@@ -547,14 +547,14 @@ textarea:focus-visible {
   background-size: 1200px 100%;
   animation: sk-shimmer 1.6s ease-in-out infinite;
 }
-/* Match the app's actual theme (.dark class), not the OS setting — otherwise a
+/* Match the app's actual theme (.dark class), not the OS setting, otherwise a
    user in the site's light mode on a dark-OS device gets dark skeletons. */
 .dark .sk {
   background: linear-gradient(90deg, #1e1e2a 25%, #28283a 50%, #1e1e2a 75%);
   background-size: 1200px 100%;
 }
 
-/* Respect users who prefer reduced motion — freeze looping/decorative animations */
+/* Respect users who prefer reduced motion, freeze looping/decorative animations */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -576,7 +576,7 @@ textarea:focus-visible {
 
 /* Responsive grid helpers */
 @media (max-width: 768px) {
-  /* Titles stay fluid (clamp above) — no fixed override, so they scale smoothly */
+  /* Titles stay fluid (clamp above), no fixed override, so they scale smoothly */
   /* Uniform, reduced vertical rhythm on mobile (Hero keeps its own header-aware padding) */
   #services, #why-us, #pricing, #testimonials, #faq, #contact, #promo-en-ligne, #blog {
     padding-top: 60px !important;

@@ -1,5 +1,5 @@
 // Generates a branded 2-page PDF for a blog article (cover + content) and
-// downloads it immediately — no browser print dialog.
+// downloads it immediately, no browser print dialog.
 
 import { downloadHtmlPagesAsPdf } from "./htmlToPdf"
 

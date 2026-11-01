@@ -36,7 +36,7 @@ const PRIVACY: Record<string, Doc> = {
       { h: "4. Nature de nos services", p: [
         "Pour éviter tout malentendu et pour que vous compreniez exactement quelles données sont nécessaires à nos prestations, nous précisons le périmètre exact de notre activité : INOV Digital Services est un studio de communication visuelle et de conception graphique.",
         "Nous ne proposons pas de service de photographie : nous réalisons de la retouche photo (correction de la lumière et des couleurs, détourage, mise en scène, mockups) à partir de vos images existantes. Les fichiers que vous nous transmettez à cette fin sont traités uniquement pour l'exécution de la prestation.",
-        "Nous ne proposons pas de service de vidéographie : nous réalisons le montage (editing) de vos rushes — coupe, sous-titres, habillage, transitions et export optimisé. Les médias que vous nous confiez ne sont pas exploités à d'autres fins que la réalisation de votre projet.",
+        "Nous ne proposons pas de service de vidéographie : nous réalisons le montage (editing) de vos rushes, coupe, sous-titres, habillage, transitions et export optimisé. Les médias que vous nous confiez ne sont pas exploités à d'autres fins que la réalisation de votre projet.",
         "Nous ne proposons pas de service d'impression : nous réalisons la conception des fichiers prêts à imprimer, que vous confiez ensuite à l'imprimeur de votre choix. Nous ne collectons donc aucune donnée logistique ou de livraison physique.",
       ] },
       { h: "5. Données que nous collectons", p: [
@@ -167,7 +167,7 @@ const PRIVACY: Record<string, Doc> = {
       { h: "4. Nature of our services", p: [
         "To avoid any misunderstanding and so you understand exactly what data our services require, we state the exact scope of our activity: INOV Digital Services is a visual communication and graphic design studio.",
         "We do not offer photography services: we do photo retouching (light and color correction, cut-outs, staging, mockups) from your existing images. The files you send us for this purpose are processed solely to perform the service.",
-        "We do not offer videography services: we edit your footage — cuts, subtitles, graphics, transitions and optimized export. The media you entrust to us are not used for any purpose other than completing your project.",
+        "We do not offer videography services: we edit your footage, cuts, subtitles, graphics, transitions and optimized export. The media you entrust to us are not used for any purpose other than completing your project.",
         "We do not offer printing services: we design the print-ready files, which you then send to the printer of your choice. We therefore collect no logistics or physical delivery data.",
       ] },
       { h: "5. Data we collect", p: [
@@ -285,7 +285,7 @@ const TERMS: Record<string, Doc> = {
       { h: "1. Éditeur du Site et identification légale", p: [
         "Le présent Site est édité et exploité par INOV Digital Services, studio de communication visuelle et de conception graphique, établi en République d'Haïti.",
         "Forme juridique : [à compléter : entreprise individuelle / société]. Numéro d'Identification Fiscale (NIF) délivré par la Direction Générale des Impôts (DGI) : [à compléter]. Patente / immatriculation auprès du Ministère du Commerce et de l'Industrie (MCI) : [à compléter]. Siège / adresse professionnelle : [à compléter].",
-        "Contact : inov01contact@gmail.com — +509 3625-5920. Toute correspondance relative au Site, aux commandes ou aux présentes Conditions peut être adressée à cette adresse électronique.",
+        "Contact : inov01contact@gmail.com, +509 3625-5920. Toute correspondance relative au Site, aux commandes ou aux présentes Conditions peut être adressée à cette adresse électronique.",
         "Le directeur de la publication est le représentant légal du Studio.",
       ] },
       { h: "2. Hébergement et infrastructure technique", p: [
@@ -401,7 +401,7 @@ const TERMS: Record<string, Doc> = {
       { h: "1. Site publisher and legal identification", p: [
         "This Site is published and operated by INOV Digital Services, a visual communication and graphic design studio established in the Republic of Haiti.",
         "Legal form: [to be completed: sole proprietorship / company]. Tax Identification Number (NIF) issued by the Directorate General of Taxes (DGI): [to be completed]. Business license (patente) / registration with the Ministry of Commerce and Industry (MCI): [to be completed]. Registered / business address: [to be completed].",
-        "Contact: inov01contact@gmail.com — +509 3625-5920. Any correspondence about the Site, orders or these Terms may be sent to this email address.",
+        "Contact: inov01contact@gmail.com, +509 3625-5920. Any correspondence about the Site, orders or these Terms may be sent to this email address.",
         "The publication director is the Studio's legal representative.",
       ] },
       { h: "2. Hosting and technical infrastructure", p: [
@@ -524,7 +524,7 @@ const PRIVACY_EXTRA: Record<Scope, Record<string, Extra>> = {
     fr: {
       banner: "Version applicable aux personnes situées en Haïti. Vos données sont traitées sous l'empire du droit haïtien.",
       sections: [
-        { h: "Résidents en Haïti — droit applicable à vos données", p: [
+        { h: "Résidents en Haïti, droit applicable à vos données", p: [
           "Si vous êtes situé en Haïti, le traitement de vos données à caractère personnel est soumis au droit de la République d'Haïti et aux protections de la Constitution de 1987, notamment le secret de la correspondance et des communications (article 49).",
           "En l'absence, à ce jour, d'une loi haïtienne générale dédiée à la protection des données et d'une autorité de contrôle spécialisée, tout recours relatif à vos données relève des juridictions haïtiennes compétentes, sur le fondement des protections constitutionnelles et du droit commun.",
           "Nous nous engageons néanmoins à appliquer volontairement les standards internationaux de protection des données décrits dans la présente Politique, sans que cela ne crée d'obligation excédant le droit haïtien applicable.",
@@ -534,7 +534,7 @@ const PRIVACY_EXTRA: Record<Scope, Record<string, Extra>> = {
     en: {
       banner: "Version applicable to persons located in Haiti. Your data is processed under Haitian law.",
       sections: [
-        { h: "Residents in Haiti — law applicable to your data", p: [
+        { h: "Residents in Haiti, law applicable to your data", p: [
           "If you are located in Haiti, the processing of your personal data is subject to the law of the Republic of Haiti and to the protections of the 1987 Constitution, in particular the secrecy of correspondence and communications (article 49).",
           "In the absence, to date, of a general Haitian law dedicated to data protection and of a specialized supervisory authority, any claim relating to your data falls within the competent Haitian courts, on the basis of constitutional protections and general law.",
           "We nonetheless commit to voluntarily applying the international data-protection standards described in this Policy, without this creating any obligation exceeding applicable Haitian law.",
@@ -546,7 +546,7 @@ const PRIVACY_EXTRA: Record<Scope, Record<string, Extra>> = {
     fr: {
       banner: "Version applicable aux personnes situées hors d'Haïti. Nos services sont fournis depuis la République d'Haïti.",
       sections: [
-        { h: "Utilisateurs situés hors d'Haïti — transferts et lois étrangères", p: [
+        { h: "Utilisateurs situés hors d'Haïti, transferts et lois étrangères", p: [
           "INOV Digital Services est établi en République d'Haïti et fournit ses services depuis Haïti. En utilisant le Site, en créant un compte ou en nous transmettant des données, vous comprenez et acceptez que vos données soient transférées, stockées et traitées en Haïti et auprès de nos sous-traitants, qui peuvent être situés dans d'autres pays dont la législation peut différer de celle de votre pays de résidence.",
           "Nous mettons en œuvre des garanties raisonnables pour protéger ces transferts. Dans la mesure permise par la loi, vous consentez expressément à ce transfert international lorsqu'un tel consentement est requis.",
           "Selon votre lieu de résidence, des régimes étrangers peuvent vous accorder des droits spécifiques : par exemple le Règlement (UE) 2016/679 (RGPD) pour les personnes situées dans l'Union européenne, ou des lois comparables ailleurs. Nous nous efforçons d'honorer ces droits lorsqu'ils s'appliquent, dans les limites de nos obligations légales.",
@@ -560,7 +560,7 @@ const PRIVACY_EXTRA: Record<Scope, Record<string, Extra>> = {
     en: {
       banner: "Version applicable to persons located outside Haiti. Our services are provided from the Republic of Haiti.",
       sections: [
-        { h: "Users located outside Haiti — transfers and foreign laws", p: [
+        { h: "Users located outside Haiti, transfers and foreign laws", p: [
           "INOV Digital Services is established in the Republic of Haiti and provides its services from Haiti. By using the Site, creating an account or sending us data, you understand and agree that your data may be transferred to, stored and processed in Haiti and by our processors, which may be located in other countries whose laws may differ from those of your country of residence.",
           "We implement reasonable safeguards to protect these transfers. To the extent permitted by law, you expressly consent to this international transfer where such consent is required.",
           "Depending on your place of residence, foreign regimes may grant you specific rights: for example Regulation (EU) 2016/679 (GDPR) for persons located in the European Union, or comparable laws elsewhere. We strive to honor these rights where they apply, within the limits of our legal obligations.",
@@ -579,7 +579,7 @@ const TERMS_EXTRA: Record<Scope, Record<string, Extra>> = {
     fr: {
       banner: "Version applicable aux clients résidant en Haïti. Le droit haïtien régit exclusivement la relation.",
       sections: [
-        { h: "Clients résidant en Haïti — droit et juridiction", p: [
+        { h: "Clients résidant en Haïti, droit et juridiction", p: [
           "Pour les clients résidant en Haïti, les présentes Conditions et le contrat sont régis exclusivement par le droit de la République d'Haïti, notamment le Code civil et le Code de commerce haïtiens.",
           "Tout litige qui n'aurait pu être résolu à l'amiable sera porté devant les tribunaux compétents de la République d'Haïti, auxquels les parties attribuent compétence exclusive.",
           "La version française des présentes Conditions fait foi entre les parties.",
@@ -589,7 +589,7 @@ const TERMS_EXTRA: Record<Scope, Record<string, Extra>> = {
     en: {
       banner: "Version applicable to clients residing in Haiti. Haitian law exclusively governs the relationship.",
       sections: [
-        { h: "Clients residing in Haiti — law and jurisdiction", p: [
+        { h: "Clients residing in Haiti, law and jurisdiction", p: [
           "For clients residing in Haiti, these Terms and the contract are governed exclusively by the law of the Republic of Haiti, in particular the Haitian Civil and Commercial Codes.",
           "Any dispute that could not be resolved amicably will be brought before the competent courts of the Republic of Haiti, to which the parties grant exclusive jurisdiction.",
           "The French version of these Terms prevails between the parties.",
@@ -601,7 +601,7 @@ const TERMS_EXTRA: Record<Scope, Record<string, Extra>> = {
     fr: {
       banner: "Version applicable aux clients résidant hors d'Haïti. Des clauses de protection renforcées s'appliquent.",
       sections: [
-        { h: "Clients résidant hors d'Haïti — loi applicable et compétence", p: [
+        { h: "Clients résidant hors d'Haïti, loi applicable et compétence", p: [
           "Nos services sont fournis depuis la République d'Haïti ; le contrat est réputé formé et exécuté en Haïti. Il est régi par le droit haïtien, sous la seule réserve des dispositions impératives de protection du consommateur du pays de résidence habituelle du Client qui ne peuvent être écartées par contrat.",
           "Sauf disposition impérative contraire, les parties conviennent de soumettre tout litige aux tribunaux compétents de la République d'Haïti. Le Client renonce, dans la mesure permise par la loi applicable, à contester cette compétence pour cause d'inopportunité du for.",
         ] },
@@ -627,7 +627,7 @@ const TERMS_EXTRA: Record<Scope, Record<string, Extra>> = {
     en: {
       banner: "Version applicable to clients residing outside Haiti. Enhanced protective clauses apply.",
       sections: [
-        { h: "Clients residing outside Haiti — governing law and jurisdiction", p: [
+        { h: "Clients residing outside Haiti, governing law and jurisdiction", p: [
           "Our services are provided from the Republic of Haiti; the contract is deemed formed and performed in Haiti. It is governed by Haitian law, subject only to the mandatory consumer-protection provisions of the Client's country of habitual residence that cannot be waived by contract.",
           "Unless a mandatory provision requires otherwise, the parties agree to submit any dispute to the competent courts of the Republic of Haiti. The Client waives, to the extent permitted by applicable law, any objection to that jurisdiction on grounds of inconvenient forum.",
         ] },
@@ -670,7 +670,7 @@ export default function Legal({ kind }: { kind: "privacy" | "terms" }) {
   const sections: Section[] = [...head, ...extra.sections, contact]
 
   useEffect(() => {
-    document.title = `${base.title} — INOV Digital Services`
+    document.title = `${base.title}, INOV Digital Services`
     window.scrollTo(0, 0)
   }, [base.title])
 

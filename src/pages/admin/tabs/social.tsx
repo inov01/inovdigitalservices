@@ -1,4 +1,4 @@
-// Réponses sociales — modèles de réponses Instagram/Facebook/WhatsApp.
+// Réponses sociales, modèles de réponses Instagram/Facebook/WhatsApp.
 // Source unique : édités ici, ils alimentent l'automatisation (webhook Meta) ET
 // servent de bibliothèque à copier-coller pour répondre à la main (ex. commentaires
 // sous les vidéos) tant que l'automatisation n'est pas encore activée.
@@ -10,8 +10,8 @@ import { card, btn, btnPrimary, input, sectionTitle, smallLabel, Empty } from ".
 // Contenu de démarrage : pré-rempli dans l'onglet tant que rien n'a été enregistré,
 // pour être opérationnel tout de suite. Ajustez le ton puis cliquez « Enregistrer ».
 const DEFAULT_SOCIAL: SocialReplies = {
-  waitMessage: "Bonjour et merci d'avoir contacté INOV Digital Services ! 👋 Votre message est bien arrivé. On revient vers vous très vite avec une réponse personnalisée. 🎨\n— L'équipe INOV Digital Services",
-  commentReply: "Merci beaucoup pour votre message ! 🙏 On vous répond en privé tout de suite. 💬\n— INOV Digital Services",
+  waitMessage: "Bonjour et merci d'avoir contacté INOV Digital Services ! 👋 Votre message est bien arrivé. On revient vers vous très vite avec une réponse personnalisée. 🎨\n- L'équipe INOV Digital Services",
+  commentReply: "Merci beaucoup pour votre message ! 🙏 On vous répond en privé tout de suite. 💬\n- INOV Digital Services",
   useGemini: false,
   faq: [
     { keywords: ["prix", "tarif", "combien", "coute", "coût", "price", "cost"],
@@ -27,7 +27,7 @@ const DEFAULT_SOCIAL: SocialReplies = {
     { keywords: ["commande", "commander", "commencer", "demarrer", "démarrer", "comment", "process", "étapes"],
       answer: "🚀 C'est simple : 1) vous nous décrivez votre besoin, 2) on vous envoie un devis gratuit, 3) acompte, 4) on crée et on révise ensemble, 5) livraison. On commence quand vous voulez !" },
     { keywords: ["exemple", "exemples", "portfolio", "realisation", "réalisation", "travaux", "travail", "reference", "référence"],
-      answer: "✨ Avec plaisir ! Découvrez nos réalisations sur inovdigitalservices.com — 20+ marques accompagnées et 80+ visuels livrés. Un style vous plaît ? On s'en inspire pour vous." },
+      answer: "✨ Avec plaisir ! Découvrez nos réalisations sur inovdigitalservices.com, 20+ marques accompagnées et 80+ visuels livrés. Un style vous plaît ? On s'en inspire pour vous." },
     { keywords: ["dispo", "disponible", "ouvert", "libre", "prendre", "accepte"],
       answer: "✅ Oui, on est disponibles ! Envoyez-nous votre projet en message et on revient vers vous très vite avec une proposition." },
   ],
@@ -35,22 +35,22 @@ const DEFAULT_SOCIAL: SocialReplies = {
     { title: "Merci (commentaire vidéo)",
       text: "Merci beaucoup pour votre commentaire ! 🙏 Ça nous motive énormément. N'hésitez pas à nous écrire en privé si vous avez un projet en tête. 🎨" },
     { title: "Réponse à un compliment",
-      text: "Merci infiniment ! 🥹 Contents que ça vous plaise. Si vous voulez le même niveau de qualité pour votre marque, écrivez-nous en DM — devis gratuit ! ✨" },
+      text: "Merci infiniment ! 🥹 Contents que ça vous plaise. Si vous voulez le même niveau de qualité pour votre marque, écrivez-nous en DM, devis gratuit ! ✨" },
     { title: "Inviter à commander",
       text: "Vous voulez un visuel comme celui-ci pour votre marque ? 😍 Envoyez-nous un message privé, on vous fait un devis gratuit et on démarre quand vous voulez ! 🚀" },
     { title: "« C'est combien ? » (en public)",
-      text: "Bonne question ! 💰 Le tarif dépend du projet. On vous envoie tout en détail par message privé — devis gratuit et sans engagement. 📩" },
+      text: "Bonne question ! 💰 Le tarif dépend du projet. On vous envoie tout en détail par message privé, devis gratuit et sans engagement. 📩" },
     { title: "« Vous faites quoi ? »",
       text: "On est un studio de branding & design 🎨 : logos, identité visuelle, packaging, affiches, motion design, montage vidéo et sites web. Un besoin ? Écrivez-nous ! 😊" },
     { title: "Diriger vers WhatsApp",
-      text: "Pour aller plus vite, écrivez-nous sur WhatsApp au +509 3625 5920 📲 — on vous répond directement et on prépare votre devis gratuit !" },
+      text: "Pour aller plus vite, écrivez-nous sur WhatsApp au +509 3625 5920 📲, on vous répond directement et on prépare votre devis gratuit !" },
     { title: "Répondre à un avis négatif",
       text: "Merci pour votre retour, on le prend au sérieux. 🙏 Écrivez-nous en privé pour qu'on comprenne ce qui n'a pas été et qu'on trouve une solution ensemble." },
-    { title: "TikTok — « Lien en bio »",
+    { title: "TikTok, « Lien en bio »",
       text: "Merci ! 🥰 Tout est dans notre bio 👆 (site + WhatsApp). Écris-nous, on te fait un devis gratuit en quelques minutes ! ⚡" },
-    { title: "TikTok — Réponse rapide (jeune audience)",
+    { title: "TikTok, Réponse rapide (jeune audience)",
       text: "Ça peut se faire ! 🔥 DM ou WhatsApp et on s'occupe de tout 💪 (logo, packaging, montage, site…). Devis gratuit 🙌" },
-    { title: "TikTok — Question sous une vidéo",
+    { title: "TikTok, Question sous une vidéo",
       text: "Bonne question ! 💬 On t'explique tout en privé pour pas polluer les commentaires 😅 Écris-nous en DM 📩" },
   ],
 }
@@ -58,8 +58,8 @@ const DEFAULT_SOCIAL: SocialReplies = {
 // Textes de repli réellement utilisés par le serveur quand un champ est laissé vide
 // (affichés en placeholder pour que le propriétaire sache ce qui partira par défaut).
 const FALLBACK_WAIT =
-  "Bonjour et merci d'avoir contacté INOV Digital Services ! 👋 Votre message est bien arrivé. On revient vers vous très vite avec une réponse personnalisée. 🎨\n— L'équipe INOV Digital Services"
-const FALLBACK_COMMENT = "Merci beaucoup pour votre message ! 🙏 On vous répond en privé tout de suite. 💬\n— INOV Digital Services"
+  "Bonjour et merci d'avoir contacté INOV Digital Services ! 👋 Votre message est bien arrivé. On revient vers vous très vite avec une réponse personnalisée. 🎨\n- L'équipe INOV Digital Services"
+const FALLBACK_COMMENT = "Merci beaucoup pour votre message ! 🙏 On vous répond en privé tout de suite. 💬\n- INOV Digital Services"
 
 const textarea: React.CSSProperties = { ...input, minHeight: 84, lineHeight: 1.5, resize: "vertical", padding: 12 }
 
@@ -224,8 +224,8 @@ export function SocialRepliesTab() {
       <p style={{ margin: 0, fontSize: 13.5, color: "var(--ds-text-muted)", lineHeight: 1.6 }}>
         Ces textes servent à <strong>deux choses</strong> : ils alimentent l'automatisation
         (réponses auto aux DM et commentaires Instagram/Facebook) <em>et</em> vous pouvez les
-        <strong> copier pour répondre à la main</strong> — par exemple aux commentaires sous vos
-        vidéos — même avant que l'automatisation soit activée.
+        <strong> copier pour répondre à la main</strong>, par exemple aux commentaires sous vos
+        vidéos, même avant que l'automatisation soit activée.
       </p>
       <p style={{ margin: 0, fontSize: 12.5, color: "var(--ds-text-muted)", lineHeight: 1.6, padding: "10px 12px", border: "1px solid var(--ds-border)", borderRadius: 10, background: "var(--ds-surface, transparent)" }}>
         <strong>ℹ️ TikTok :</strong> l'API de TikTok ne permet pas (encore) la réponse automatique
@@ -311,7 +311,7 @@ export function SocialRepliesTab() {
         <div style={{ ...sectionTitle, display: "flex", alignItems: "center", gap: 8 }}>
           <Copy size={16} /> Bibliothèque de réponses (à copier-coller)
         </div>
-        <p style={smallLabel}>Réponses prêtes à l'emploi pour répondre vous-même — idéal pour les commentaires sous vos vidéos. Elles n'envoient rien automatiquement : le bouton copie le texte.</p>
+        <p style={smallLabel}>Réponses prêtes à l'emploi pour répondre vous-même, idéal pour les commentaires sous vos vidéos. Elles n'envoient rien automatiquement : le bouton copie le texte.</p>
         <div style={{ display: "grid", gap: 12 }}>
           {sr.snippets.length === 0 && <Empty text="Aucune réponse enregistrée. Ajoutez vos formulations habituelles pour les réutiliser en un clic." />}
           {sr.snippets.map((sn, i) => (

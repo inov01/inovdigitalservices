@@ -165,7 +165,7 @@ export default function CookieConsent() {
           marginTop: 16, padding: "14px 16px", background: "var(--ds-bg-sec)", borderRadius: "var(--r-md)",
           display: "flex", flexDirection: "column", gap: 12,
         }}>
-          {/* Required — always on, disabled */}
+          {/* Required, always on, disabled */}
           <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "not-allowed", opacity: 0.6 }}>
             <div style={{
               width: 36, height: 20, borderRadius: "var(--r-md)", background: "var(--ds-accent)",

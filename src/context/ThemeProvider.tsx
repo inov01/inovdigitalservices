@@ -45,7 +45,7 @@ export function useTheme() {
 }
 
 // ThemeProvider is kept as a convenience wrapper that seeds the class on mount.
-// It is NOT required for useTheme to work — any component can call useTheme safely.
+// It is NOT required for useTheme to work, any component can call useTheme safely.
 export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     applyClass(getSnapshot())

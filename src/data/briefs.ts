@@ -144,7 +144,7 @@ const FR: Dict = {
   "ui.whatsapp": "WhatsApp",
   "ui.optional": "facultatif",
   "ui.attachments": "Images, documents ou vidéos de référence",
-  "ui.attachmentsHelp": "Ajoutez vos fichiers — logos, photos, exemples, documents (jusqu'à 200 Mo par fichier).",
+  "ui.attachmentsHelp": "Ajoutez vos fichiers, logos, photos, exemples, documents (jusqu'à 200 Mo par fichier).",
   "ui.addFiles": "Ajouter des fichiers",
   "ui.driveLinks": "Liens Google Drive",
   "ui.driveLinksHelp": "Partagez vos fichiers via Google Drive (logo existant, photos, documents, vidéos…). Assurez-vous que le lien est partagé en mode « Tout le monde avec le lien ».",

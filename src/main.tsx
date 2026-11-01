@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import { AppSettingsProvider } from './context/AppSettingsProvider'
 import ErrorBoundary from './components/ErrorBoundary'
-// Self-hosted variable fonts — no external Google Fonts network request.
+// Self-hosted variable fonts, no external Google Fonts network request.
 import '@fontsource-variable/outfit'
 import '@fontsource-variable/space-grotesk'
 import './index.css'
@@ -20,7 +20,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 // Register the service worker so the installed app auto-updates with the site.
 // A new deploy is picked up (network-first SW), activated immediately, and the
-// page reloads once — so users always run the latest version.
+// page reloads once, so users always run the latest version.
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').then((reg) => {
@@ -39,7 +39,7 @@ if ('serviceWorker' in navigator) {
           }
         })
       })
-    }).catch(() => { /* SW unsupported / blocked — app still works online */ })
+    }).catch(() => { /* SW unsupported / blocked, app still works online */ })
 
     // When the new worker takes control, reload once to load fresh assets.
     let refreshing = false

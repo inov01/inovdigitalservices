@@ -4,7 +4,7 @@
 // by the Figma Make connection and keeps pointing at the Make-managed project
 // (ywlvqxhjzkqrqnzkjbfq). The real edge functions and data live in the owner's
 // self-managed project (enwbfsbcxoqqnbkrngyb), so the app reads its config here
-// instead — a file Make does not regenerate.
+// instead, a file Make does not regenerate.
 //
 // publicAnonKey is a PUBLIC key (shipped in the browser bundle). Never put the
 // service_role / secret key here.

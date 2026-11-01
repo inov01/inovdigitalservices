@@ -92,7 +92,7 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
       url.searchParams.set("lang", l)
       window.history.replaceState({}, "", url)
     } catch {}
-    // Suggest the currency naturally tied to the chosen language — but never
+    // Suggest the currency naturally tied to the chosen language, but never
     // override a currency the user has explicitly picked themselves.
     const userChose = typeof localStorage !== "undefined" && localStorage.getItem("inov-currency-set") === "1"
     if (userChose) return
@@ -107,7 +107,7 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     } catch {}
   }
 
-  // Load the active dictionary — synchronously for eager languages, otherwise
+  // Load the active dictionary, synchronously for eager languages, otherwise
   // dynamically import the leaf module and swap it in (FR shows meanwhile).
   useEffect(() => {
     let cancelled = false
@@ -157,8 +157,8 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // Auto-detect the visitor's region unless they've already chosen one.
-  // Privacy-first: try LOCAL signals (timezone, browser locale) — which make no
-  // network request and share no data — and only fall back to an IP lookup when
+  // Privacy-first: try LOCAL signals (timezone, browser locale), which make no
+  // network request and share no data, and only fall back to an IP lookup when
   // those are inconclusive. Silent, deferred, non-blocking.
   useEffect(() => {
     const regionSet = typeof localStorage !== "undefined" && localStorage.getItem("inov-region-set") === "1"
@@ -234,7 +234,7 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
       return true
     }
 
-    // 1) Local signals — no network, no data shared.
+    // 1) Local signals, no network, no data shared.
     try {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""
       if (tz.includes("Port-au-Prince") && saveCountry("HT")) return
@@ -242,7 +242,7 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     const loc = (typeof navigator !== "undefined" && navigator.language) || ""
     if (saveCountry(loc.split("-")[1])) return
 
-    // 2) IP lookup as a last resort — deferred, aborted on timeout.
+    // 2) IP lookup as a last resort, deferred, aborted on timeout.
     const controller = new AbortController()
     const abortTimer = setTimeout(() => controller.abort(), 6000)
     const startTimer = setTimeout(() => {
@@ -269,7 +269,7 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     return Math.round(usd * REGIONS[region].pppFactor)
   }
 
-  // Purchasing-power pricing adjusts the PRICE only — the service itself is equal
+  // Purchasing-power pricing adjusts the PRICE only, the service itself is equal
   // everywhere. Every region gets the same revision window and the same number of
   // included revisions, so a cheaper region is never a lesser offer.
   // (To tie terms back to the regional factor, multiply by REGIONS[region].pppFactor.)

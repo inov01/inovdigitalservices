@@ -41,7 +41,7 @@ export default function Brief() {
 
   useEffect(() => {
     applyPageMeta({
-      title: `${svcName || t("ui.title")} — INOV Digital Services`,
+      title: `${svcName || t("ui.title")}, INOV Digital Services`,
       description: svc ? t(`svc.${svc.slug}.intro`) : "",
       type: "website",
     })

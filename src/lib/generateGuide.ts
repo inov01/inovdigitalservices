@@ -27,13 +27,13 @@ const DATA: Record<Lang, GuideData> = {
     printBtn: "Enregistrer en PDF",
     printHint: "Cliquez le bouton → choisissez « Enregistrer en PDF » → activez « Graphiques d'arrière-plan »",
     title: "7 erreurs de branding qui font fuir vos clients",
-    subtitle: "Le guide concret pour bâtir une marque qui inspire confiance — et qui vend, dès le premier regard.",
+    subtitle: "Le guide concret pour bâtir une marque qui inspire confiance, et qui vend, dès le premier regard.",
     toc: ["Un logo trop compliqué","Des couleurs au hasard","Un style incohérent","Copier ses concurrents","Des visuels de mauvaise qualité","Oublier l'émotion","Pas d'identité écrite"],
     stats: [{value:"20+",label:"marques accompagnées"},{value:"80+",label:"visuels livrés"},{value:"48h",label:"délai de livraison"}],
     errors: [
       { kicker:"Le logo", title:"Un logo qui essaie de tout dire",
         problemLabel:"Le problème", problem:"Trop de détails, trop de texte, dégradés compliqués… Beaucoup de marques veulent que leur logo « raconte toute l'entreprise » en une image. Résultat : il devient illisible dès qu'on le réduit (photo de profil, tampon, étiquette).",
-        costLabel:"Pourquoi ça vous coûte des clients", cost:"Un logo confus donne une impression d'amateurisme et ne se retient pas. Si votre audience ne peut pas l'identifier en une seconde, elle ne se souviendra pas de vous — et la mémorisation, c'est le début de la confiance.",
+        costLabel:"Pourquoi ça vous coûte des clients", cost:"Un logo confus donne une impression d'amateurisme et ne se retient pas. Si votre audience ne peut pas l'identifier en une seconde, elle ne se souviendra pas de vous, et la mémorisation, c'est le début de la confiance.",
         solutionLabel:"La solution", solution:"Visez la simplicité : un logo doit rester net et reconnaissable même à 16 pixels. Testez-le en tout petit et en noir & blanc avant de le valider.",
         tipLabel:"Astuce concrète", tip:"Réduisez votre logo à la taille d'une icône d'application sur votre téléphone. Si on ne le reconnaît plus, simplifiez-le." },
       { kicker:"Les couleurs", title:"Des couleurs choisies « parce qu'on les aime »",
@@ -48,12 +48,12 @@ const DATA: Record<Lang, GuideData> = {
         tipLabel:"Astuce concrète", tip:"Regardez vos 9 dernières publications en grille. Si elles n'ont pas l'air d'une même famille, il est temps d'unifier votre style." },
       { kicker:"La différenciation", title:"Copier ses concurrents",
         problemLabel:"Le problème", problem:"On regarde ce que fait « le leader du marché » et on l'imite, en pensant faire un choix sûr. On finit par ressembler à tout le monde.",
-        costLabel:"Pourquoi ça vous coûte des clients", cost:"Quand toutes les marques se ressemblent, aucune ne se remarque. Vous devenez interchangeable — et le client choisit alors uniquement le moins cher.",
+        costLabel:"Pourquoi ça vous coûte des clients", cost:"Quand toutes les marques se ressemblent, aucune ne se remarque. Vous devenez interchangeable, et le client choisit alors uniquement le moins cher.",
         solutionLabel:"La solution", solution:"Identifiez ce qui vous rend unique (votre histoire, votre ton, votre spécialité) et mettez-le en avant sans complexe.",
         tipLabel:"Astuce concrète", tip:"Complétez cette phrase : « Contrairement aux autres, nous… ». La réponse est le cœur de votre positionnement." },
       { kicker:"La qualité", title:"Négliger la qualité des visuels",
         problemLabel:"Le problème", problem:"Photos floues, captures pixelisées, montages bâclés faits à la va-vite. « Ça fera l'affaire »… mais ça ne fait jamais l'affaire.",
-        costLabel:"Pourquoi ça vous coûte des clients", cost:"Le client juge la qualité de votre produit ou service à la qualité de vos images. Un visuel négligé donne l'impression d'une offre négligée — et fait douter avant même l'achat.",
+        costLabel:"Pourquoi ça vous coûte des clients", cost:"Le client juge la qualité de votre produit ou service à la qualité de vos images. Un visuel négligé donne l'impression d'une offre négligée, et fait douter avant même l'achat.",
         solutionLabel:"La solution", solution:"Investissez dans des visuels soignés et en haute résolution. C'est votre vitrine : elle travaille pour vous 24h/24.",
         tipLabel:"Astuce concrète", tip:"Mieux vaut 3 visuels excellents que 10 visuels moyens. La qualité prime toujours sur la quantité." },
       { kicker:"L'émotion", title:"Oublier l'émotion et l'histoire",
@@ -67,7 +67,7 @@ const DATA: Record<Lang, GuideData> = {
         solutionLabel:"La solution", solution:"Créez une mini-charte graphique : logo et ses variantes, couleurs exactes, polices, ton de communication.",
         tipLabel:"Astuce concrète", tip:"Même une charte d'une seule page suffit pour démarrer. L'essentiel est qu'elle existe et que tout le monde la suive." },
     ],
-    cta: { title:"Prêt à corriger ces ", highlight:"erreurs ?", lead:"INOV Digital Services accompagne les marques dans leur branding, de A à Z. On s'occupe de tout — vous vous concentrez sur votre activité.", chips:["Logos & identité","Packaging","Affiches & flyers","Motion design","Sites vitrines","Promotion en ligne"], footer:"© INOV Digital Services — Merci de votre confiance." },
+    cta: { title:"Prêt à corriger ces ", highlight:"erreurs ?", lead:"INOV Digital Services accompagne les marques dans leur branding, de A à Z. On s'occupe de tout, vous vous concentrez sur votre activité.", chips:["Logos & identité","Packaging","Affiches & flyers","Motion design","Sites vitrines","Promotion en ligne"], footer:"© INOV Digital Services, Merci de votre confiance." },
   },
 
   en: {
@@ -76,13 +76,13 @@ const DATA: Record<Lang, GuideData> = {
     printBtn: "Save as PDF",
     printHint: "Click the button → choose 'Save as PDF' → enable 'Background graphics'",
     title: "7 branding mistakes that scare your clients away",
-    subtitle: "The practical guide to building a brand that inspires trust — and sells, from the very first glance.",
+    subtitle: "The practical guide to building a brand that inspires trust, and sells, from the very first glance.",
     toc: ["A logo that's too complex","Random colour choices","An inconsistent style","Copying competitors","Poor-quality visuals","Forgetting emotion","No written identity"],
     stats: [{value:"20+",label:"brands supported"},{value:"80+",label:"visuals delivered"},{value:"48h",label:"delivery time"}],
     errors: [
       { kicker:"The logo", title:"A logo that tries to say everything",
         problemLabel:"The problem", problem:"Too many details, too much text, complex gradients… Many brands want their logo to 'tell the whole story' in one image. The result: it becomes illegible at small sizes (profile picture, stamp, label).",
-        costLabel:"Why it costs you clients", cost:"A confusing logo looks amateurish and doesn't stick in the memory. If your audience can't identify it in a second, they won't remember you — and recognition is where trust begins.",
+        costLabel:"Why it costs you clients", cost:"A confusing logo looks amateurish and doesn't stick in the memory. If your audience can't identify it in a second, they won't remember you, and recognition is where trust begins.",
         solutionLabel:"The solution", solution:"Aim for simplicity: a logo must remain clean and recognisable even at 16 pixels. Test it at a tiny size and in black & white before signing off.",
         tipLabel:"Practical tip", tip:"Shrink your logo to app-icon size on your phone. If you can no longer recognise it, simplify it." },
       { kicker:"Colours", title:"Colours chosen 'because we like them'",
@@ -97,17 +97,17 @@ const DATA: Record<Lang, GuideData> = {
         tipLabel:"Practical tip", tip:"Look at your last 9 posts in grid view. If they don't look like one family, it's time to unify your style." },
       { kicker:"Differentiation", title:"Copying your competitors",
         problemLabel:"The problem", problem:"You look at what the 'market leader' does and imitate it, thinking it's a safe choice. You end up looking like everyone else.",
-        costLabel:"Why it costs you clients", cost:"When all brands look the same, none stand out. You become interchangeable — and the client then chooses only on price. Your difference is your best selling argument.",
+        costLabel:"Why it costs you clients", cost:"When all brands look the same, none stand out. You become interchangeable, and the client then chooses only on price. Your difference is your best selling argument.",
         solutionLabel:"The solution", solution:"Identify what makes you unique (your story, your tone, your speciality) and highlight it without hesitation.",
         tipLabel:"Practical tip", tip:"Complete this sentence: 'Unlike others, we…'. The answer is the heart of your positioning." },
       { kicker:"Quality", title:"Neglecting the quality of visuals",
         problemLabel:"The problem", problem:"Blurry photos, pixelated screenshots, rushed edits. 'It'll do'… but it never does.",
-        costLabel:"Why it costs you clients", cost:"Clients judge the quality of your product or service by the quality of your images. A careless visual gives the impression of a careless offer — and creates doubt before the purchase.",
+        costLabel:"Why it costs you clients", cost:"Clients judge the quality of your product or service by the quality of your images. A careless visual gives the impression of a careless offer, and creates doubt before the purchase.",
         solutionLabel:"The solution", solution:"Invest in polished, high-resolution visuals. It's your shop window: it works for you 24/7.",
         tipLabel:"Practical tip", tip:"Three excellent visuals are worth more than ten average ones. Quality always beats quantity." },
       { kicker:"Emotion", title:"Forgetting emotion and story",
         problemLabel:"The problem", problem:"Communication only talks about products, prices and features. No story, no emotion, no 'why'.",
-        costLabel:"Why it costs you clients", cost:"People don't buy a product: they buy what it represents and how it makes them feel. A brand without a narrative stays cold and forgettable — and therefore easy to replace.",
+        costLabel:"Why it costs you clients", cost:"People don't buy a product: they buy what it represents and how it makes them feel. A brand without a narrative stays cold and forgettable, and therefore easy to replace.",
         solutionLabel:"The solution", solution:"Tell the 'why' of your brand: its origin, its mission, the people behind it. That's what creates attachment.",
         tipLabel:"Practical tip", tip:"Share behind-the-scenes content regularly: the founder, the making-of, a happy client. Human stories create connection." },
       { kicker:"Brand guidelines", title:"Having no written identity",
@@ -116,7 +116,7 @@ const DATA: Record<Lang, GuideData> = {
         solutionLabel:"The solution", solution:"Create a mini brand guide: logo and variants, exact colours, fonts, tone of communication.",
         tipLabel:"Practical tip", tip:"Even a one-page guide is enough to start. The important thing is that it exists and that everyone follows it." },
     ],
-    cta: { title:"Ready to fix these ", highlight:"mistakes?", lead:"INOV Digital Services supports brands with their branding, from A to Z. We handle everything — you focus on your business.", chips:["Logos & identity","Packaging","Posters & flyers","Motion design","Showcase websites","Online promotion"], footer:"© INOV Digital Services — Thank you for your trust." },
+    cta: { title:"Ready to fix these ", highlight:"mistakes?", lead:"INOV Digital Services supports brands with their branding, from A to Z. We handle everything, you focus on your business.", chips:["Logos & identity","Packaging","Posters & flyers","Motion design","Showcase websites","Online promotion"], footer:"© INOV Digital Services, Thank you for your trust." },
   },
 
   es: {
@@ -125,13 +125,13 @@ const DATA: Record<Lang, GuideData> = {
     printBtn: "Guardar como PDF",
     printHint: "Haz clic → elige 'Guardar como PDF' → activa 'Gráficos de fondo'",
     title: "7 errores de branding que ahuyentan a tus clientes",
-    subtitle: "La guía práctica para construir una marca que inspire confianza — y que venda, desde el primer vistazo.",
+    subtitle: "La guía práctica para construir una marca que inspire confianza, y que venda, desde el primer vistazo.",
     toc: ["Un logo demasiado complejo","Colores al azar","Estilo inconsistente","Copiar a la competencia","Visueles de baja calidad","Olvidar la emoción","Sin identidad escrita"],
     stats: [{value:"20+",label:"marcas acompañadas"},{value:"80+",label:"visuales entregados"},{value:"48h",label:"plazo de entrega"}],
     errors: [
       { kicker:"El logo", title:"Un logo que intenta decirlo todo",
         problemLabel:"El problema", problem:"Demasiados detalles, demasiado texto, degradados complicados… Muchas marcas quieren que su logo 'cuente toda la empresa' en una imagen. Resultado: se vuelve ilegible al reducirlo (foto de perfil, sello, etiqueta).",
-        costLabel:"Por qué te cuesta clientes", cost:"Un logo confuso da imagen de amateurismo y no se recuerda. Si tu audiencia no puede identificarlo en un segundo, no se acordará de ti — y la memorización es el comienzo de la confianza.",
+        costLabel:"Por qué te cuesta clientes", cost:"Un logo confuso da imagen de amateurismo y no se recuerda. Si tu audiencia no puede identificarlo en un segundo, no se acordará de ti, y la memorización es el comienzo de la confianza.",
         solutionLabel:"La solución", solution:"Apunta a la simplicidad: un logo debe seguir siendo nítido y reconocible incluso a 16 píxeles. Pruébalo muy pequeño y en blanco y negro antes de aprobarlo.",
         tipLabel:"Consejo práctico", tip:"Reduce tu logo al tamaño de un icono de app en tu teléfono. Si ya no se reconoce, simplificalo." },
       { kicker:"Los colores", title:"Colores elegidos 'porque nos gustan'",
@@ -146,7 +146,7 @@ const DATA: Record<Lang, GuideData> = {
         tipLabel:"Consejo práctico", tip:"Mira tus 9 últimas publicaciones en cuadrícula. Si no parecen de la misma familia, es hora de unificar tu estilo." },
       { kicker:"Diferenciación", title:"Copiar a la competencia",
         problemLabel:"El problema", problem:"Observas lo que hace 'el líder del mercado' y lo imitas pensando que es una elección segura. Terminas pareciendo igual que todos.",
-        costLabel:"Por qué te cuesta clientes", cost:"Cuando todas las marcas se parecen, ninguna destaca. Te vuelves intercambiable — y el cliente elige solo por precio.",
+        costLabel:"Por qué te cuesta clientes", cost:"Cuando todas las marcas se parecen, ninguna destaca. Te vuelves intercambiable, y el cliente elige solo por precio.",
         solutionLabel:"La solución", solution:"Identifica lo que te hace único (tu historia, tu tono, tu especialidad) y resáltalo sin complejos.",
         tipLabel:"Consejo práctico", tip:"Completa esta frase: 'A diferencia de los demás, nosotros…'. La respuesta es el corazón de tu posicionamiento." },
       { kicker:"Calidad", title:"Descuidar la calidad de los visuales",
@@ -165,7 +165,7 @@ const DATA: Record<Lang, GuideData> = {
         solutionLabel:"La solución", solution:"Crea un mini manual de marca: logo y variantes, colores exactos, tipografías, tono de comunicación.",
         tipLabel:"Consejo práctico", tip:"Incluso un manual de una sola página es suficiente para empezar. Lo importante es que exista y que todos lo sigan." },
     ],
-    cta: { title:"¿Listo para corregir estos ", highlight:"errores?", lead:"INOV Digital Services acompaña a las marcas en su branding, de la A a la Z. Nos encargamos de todo — tú te concentras en tu actividad.", chips:["Logos e identidad","Packaging","Carteles y flyers","Motion design","Sitios web","Promoción online"], footer:"© INOV Digital Services — Gracias por su confianza." },
+    cta: { title:"¿Listo para corregir estos ", highlight:"errores?", lead:"INOV Digital Services acompaña a las marcas en su branding, de la A a la Z. Nos encargamos de todo, tú te concentras en tu actividad.", chips:["Logos e identidad","Packaging","Carteles y flyers","Motion design","Sitios web","Promoción online"], footer:"© INOV Digital Services, Gracias por su confianza." },
   },
 
   ht: {
@@ -174,7 +174,7 @@ const DATA: Record<Lang, GuideData> = {
     printBtn: "Anrejistre an PDF",
     printHint: "Klike bouton an → chwazi 'Anrejistre an PDF' → aktive 'Grafik background'",
     title: "7 erè branding ki fè kliyan ou yo sove",
-    subtitle: "Gid konkrè pou bati yon mak ki enspiw konfyans — epi ki vann, depi premye gade.",
+    subtitle: "Gid konkrè pou bati yon mak ki enspiw konfyans, epi ki vann, depi premye gade.",
     toc: ["Yon logo twò konplike","Koulè chwazi omaza","Yon style enkoeran","Kopye konkirann ou","Vizyèl ki pa bon kalite","Bliye emosyon","Pa gen idantite ekri"],
     stats: [{value:"20+",label:"mak akonpaye"},{value:"80+",label:"vizyèl livwe"},{value:"48h",label:"delè livrezon"}],
     errors: [
@@ -195,7 +195,7 @@ const DATA: Record<Lang, GuideData> = {
         tipLabel:"Konsèy konkrè", tip:"Gade 9 dènye piblikasyon ou yo nan griy. Si yo pa sanble yon sèl fanmi, li lè pou inifye style ou." },
       { kicker:"Diferansyasyon", title:"Kopye konkirann ou yo",
         problemLabel:"Pwoblèm nan", problem:"Ou gade sa 'lidè mache a' fè epi ou imite l, panse sa se yon chwa san risk. Ou fini pa sanble tout moun.",
-        costLabel:"Poukisa sa koute ou kliyan", cost:"Lè tout mak yo sanble, pa gen youn ki remake. Ou vin entèchanjab — epi kliyan an chwazi sèlman sou pri.",
+        costLabel:"Poukisa sa koute ou kliyan", cost:"Lè tout mak yo sanble, pa gen youn ki remake. Ou vin entèchanjab, epi kliyan an chwazi sèlman sou pri.",
         solutionLabel:"Solisyon an", solution:"Idantifye sa ki rann ou inik (istwa ou, ton ou, spesyalite ou) epi mete l devan san konplèks.",
         tipLabel:"Konsèy konkrè", tip:"Konplete fraz sa a: 'Kontrèman ak lòt yo, nou…'. Repons lan se kè pozisyonman ou." },
       { kicker:"Kalite", title:"Neglijwe kalite vizyèl yo",
@@ -214,7 +214,7 @@ const DATA: Record<Lang, GuideData> = {
         solutionLabel:"Solisyon an", solution:"Kreye yon mini chant grafik: logo ak varyasyon li, koulè egzak, fon, ton kominikasyon.",
         tipLabel:"Konsèy konkrè", tip:"Menm yon chant yon sèl paj ase pou kòmanse. Esansyèl la se ke li egziste epi tout moun swiv li." },
     ],
-    cta: { title:"Prè pou korije ", highlight:"erè sa yo?", lead:"INOV Digital Services akonpaye mak yo nan branding yo, depi A jiska Z. Nou okipe tout bagay — ou konsantre sou aktivite ou.", chips:["Logos & idantite","Packaging","Afich & flyers","Motion design","Sit wèb","Pwomosyon sou entènèt"], footer:"© INOV Digital Services — Mèsi pou konfyans ou." },
+    cta: { title:"Prè pou korije ", highlight:"erè sa yo?", lead:"INOV Digital Services akonpaye mak yo nan branding yo, depi A jiska Z. Nou okipe tout bagay, ou konsantre sou aktivite ou.", chips:["Logos & idantite","Packaging","Afich & flyers","Motion design","Sit wèb","Pwomosyon sou entènèt"], footer:"© INOV Digital Services, Mèsi pou konfyans ou." },
   },
 
   pt: {
@@ -223,7 +223,7 @@ const DATA: Record<Lang, GuideData> = {
     printBtn: "Salvar como PDF",
     printHint: "Clique → escolha 'Salvar como PDF' → ative 'Gráficos de fundo'",
     title: "7 erros de branding que afastam seus clientes",
-    subtitle: "O guia prático para construir uma marca que inspire confiança — e que venda, desde o primeiro olhar.",
+    subtitle: "O guia prático para construir uma marca que inspire confiança, e que venda, desde o primeiro olhar.",
     toc: ["Um logo complexo demais","Cores escolhidas ao acaso","Estilo inconsistente","Copiar concorrentes","Visuais de baixa qualidade","Esquecer a emoção","Sem identidade escrita"],
     stats: [{value:"20+",label:"marcas acompanhadas"},{value:"80+",label:"visuais entregues"},{value:"48h",label:"prazo de entrega"}],
     errors: [
@@ -244,7 +244,7 @@ const DATA: Record<Lang, GuideData> = {
         tipLabel:"Dica prática", tip:"Olhe suas 9 últimas publicações em grade. Se não parecerem da mesma família, é hora de unificar seu estilo." },
       { kicker:"Diferenciação", title:"Copiar os concorrentes",
         problemLabel:"O problema", problem:"Você olha o que o 'líder de mercado' faz e imita, achando que é uma escolha segura. Acaba parecendo igual a todo mundo.",
-        costLabel:"Por que isso custa clientes", cost:"Quando todas as marcas se parecem, nenhuma se destaca. Você vira intercambiável — e o cliente escolhe apenas pelo preço.",
+        costLabel:"Por que isso custa clientes", cost:"Quando todas as marcas se parecem, nenhuma se destaca. Você vira intercambiável, e o cliente escolhe apenas pelo preço.",
         solutionLabel:"A solução", solution:"Identifique o que te torna único (sua história, seu tom, sua especialidade) e destaque isso sem complexo.",
         tipLabel:"Dica prática", tip:"Complete esta frase: 'Ao contrário dos outros, nós…'. A resposta é o coração do seu posicionamento." },
       { kicker:"Qualidade", title:"Negligenciar a qualidade dos visuais",
@@ -263,7 +263,7 @@ const DATA: Record<Lang, GuideData> = {
         solutionLabel:"A solução", solution:"Crie um mini manual de marca: logo e variações, cores exatas, fontes, tom de comunicação.",
         tipLabel:"Dica prática", tip:"Mesmo um manual de uma página é suficiente para começar. O importante é que exista e que todos o sigam." },
     ],
-    cta: { title:"Pronto para corrigir esses ", highlight:"erros?", lead:"INOV Digital Services acompanha marcas no branding, do início ao fim. Cuidamos de tudo — você foca no seu negócio.", chips:["Logos & identidade","Packaging","Cartazes & flyers","Motion design","Sites vitrine","Promoção online"], footer:"© INOV Digital Services — Obrigado pela sua confiança." },
+    cta: { title:"Pronto para corrigir esses ", highlight:"erros?", lead:"INOV Digital Services acompanha marcas no branding, do início ao fim. Cuidamos de tudo, você foca no seu negócio.", chips:["Logos & identidade","Packaging","Cartazes & flyers","Motion design","Sites vitrine","Promoção online"], footer:"© INOV Digital Services, Obrigado pela sua confiança." },
   },
 
   it: {
@@ -272,7 +272,7 @@ const DATA: Record<Lang, GuideData> = {
     printBtn: "Salva come PDF",
     printHint: "Clicca → scegli 'Salva come PDF' → attiva 'Grafica di sfondo'",
     title: "7 errori di branding che allontanano i tuoi clienti",
-    subtitle: "La guida pratica per costruire un brand che ispira fiducia — e che vende, dal primo sguardo.",
+    subtitle: "La guida pratica per costruire un brand che ispira fiducia, e che vende, dal primo sguardo.",
     toc: ["Un logo troppo complesso","Colori scelti a caso","Stile inconsistente","Copiare i concorrenti","Visual di bassa qualità","Dimenticare l'emozione","Senza identità scritta"],
     stats: [{value:"20+",label:"brand supportati"},{value:"80+",label:"visual consegnati"},{value:"48h",label:"tempi di consegna"}],
     errors: [
@@ -293,7 +293,7 @@ const DATA: Record<Lang, GuideData> = {
         tipLabel:"Consiglio pratico", tip:"Guarda i tuoi ultimi 9 post a griglia. Se non sembrano della stessa famiglia, è ora di unificare il tuo stile." },
       { kicker:"Differenziazione", title:"Copiare i concorrenti",
         problemLabel:"Il problema", problem:"Si guarda cosa fa 'il leader del mercato' e si imita, pensando sia una scelta sicura. Si finisce per assomigliare a tutti.",
-        costLabel:"Perché ti costa clienti", cost:"Quando tutti i brand si assomigliano, nessuno si nota. Diventi intercambiabile — e il cliente sceglie solo sul prezzo.",
+        costLabel:"Perché ti costa clienti", cost:"Quando tutti i brand si assomigliano, nessuno si nota. Diventi intercambiabile, e il cliente sceglie solo sul prezzo.",
         solutionLabel:"La soluzione", solution:"Identifica ciò che ti rende unico (la tua storia, il tuo tono, la tua specialità) e mettilo in evidenza senza complessi.",
         tipLabel:"Consiglio pratico", tip:"Completa questa frase: 'A differenza degli altri, noi…'. La risposta è il cuore del tuo posizionamento." },
       { kicker:"Qualità", title:"Trascurare la qualità dei visual",
@@ -312,7 +312,7 @@ const DATA: Record<Lang, GuideData> = {
         solutionLabel:"La soluzione", solution:"Crea un mini brand guide: logo e varianti, colori esatti, font, tono di comunicazione.",
         tipLabel:"Consiglio pratico", tip:"Anche una guida di una sola pagina è sufficiente per iniziare. L'importante è che esista e che tutti la seguano." },
     ],
-    cta: { title:"Pronto a correggere questi ", highlight:"errori?", lead:"INOV Digital Services supporta i brand nel loro branding, dalla A alla Z. Ci occupiamo di tutto — tu ti concentri sulla tua attività.", chips:["Logo & identità","Packaging","Poster & flyer","Motion design","Siti vetrina","Promozione online"], footer:"© INOV Digital Services — Grazie per la vostra fiducia." },
+    cta: { title:"Pronto a correggere questi ", highlight:"errori?", lead:"INOV Digital Services supporta i brand nel loro branding, dalla A alla Z. Ci occupiamo di tutto, tu ti concentri sulla tua attività.", chips:["Logo & identità","Packaging","Poster & flyer","Motion design","Siti vetrina","Promozione online"], footer:"© INOV Digital Services, Grazie per la vostra fiducia." },
   },
 
   de: {
@@ -321,7 +321,7 @@ const DATA: Record<Lang, GuideData> = {
     printBtn: "Als PDF speichern",
     printHint: "Klicken → 'Als PDF speichern' wählen → 'Hintergrundgrafiken' aktivieren",
     title: "7 Branding-Fehler, die Ihre Kunden vertreiben",
-    subtitle: "Der praktische Leitfaden für eine Marke, die Vertrauen weckt — und die beim ersten Blick überzeugt.",
+    subtitle: "Der praktische Leitfaden für eine Marke, die Vertrauen weckt, und die beim ersten Blick überzeugt.",
     toc: ["Ein zu komplexes Logo","Farben ohne Konzept","Inkonsistenter Stil","Konkurrenten kopieren","Minderwertige Visuals","Emotion vergessen","Keine schriftliche Identität"],
     stats: [{value:"20+",label:"Marken begleitet"},{value:"80+",label:"Visuals geliefert"},{value:"48h",label:"Lieferzeit"}],
     errors: [
@@ -342,7 +342,7 @@ const DATA: Record<Lang, GuideData> = {
         tipLabel:"Praktischer Tipp", tip:"Schauen Sie sich Ihre letzten 9 Posts in der Rasteransicht an. Wenn sie nicht wie eine Familie aussehen, ist es Zeit, Ihren Stil zu vereinheitlichen." },
       { kicker:"Differenzierung", title:"Die Konkurrenz kopieren",
         problemLabel:"Das Problem", problem:"Man schaut, was der 'Marktführer' macht, und ahmt es nach, weil man das für eine sichere Wahl hält. Man sieht am Ende aus wie alle anderen.",
-        costLabel:"Warum das Kunden kostet", cost:"Wenn alle Marken gleich aussehen, fällt keine auf. Sie werden austauschbar — und der Kunde wählt nur nach dem Preis.",
+        costLabel:"Warum das Kunden kostet", cost:"Wenn alle Marken gleich aussehen, fällt keine auf. Sie werden austauschbar, und der Kunde wählt nur nach dem Preis.",
         solutionLabel:"Die Lösung", solution:"Identifizieren Sie, was Sie einzigartig macht (Ihre Geschichte, Ihr Ton, Ihre Spezialität) und stellen Sie es ohne Scheu in den Vordergrund.",
         tipLabel:"Praktischer Tipp", tip:"Vervollständigen Sie diesen Satz: 'Im Gegensatz zu anderen sind wir…'. Die Antwort ist das Herzstück Ihrer Positionierung." },
       { kicker:"Qualität", title:"Die Qualität der Visuals vernachlässigen",
@@ -361,7 +361,7 @@ const DATA: Record<Lang, GuideData> = {
         solutionLabel:"Die Lösung", solution:"Erstellen Sie einen Mini-Brand-Guide: Logo und Varianten, genaue Farben, Schriften, Kommunikationston.",
         tipLabel:"Praktischer Tipp", tip:"Selbst ein einseitiger Guide reicht zum Anfang. Das Wichtigste ist, dass er existiert und alle ihn befolgen." },
     ],
-    cta: { title:"Bereit, diese ", highlight:"Fehler zu beheben?", lead:"INOV Digital Services begleitet Marken bei ihrem Branding, von A bis Z. Wir kümmern uns um alles — Sie konzentrieren sich auf Ihr Geschäft.", chips:["Logo & Identität","Packaging","Plakate & Flyer","Motion Design","Webseiten","Online-Werbung"], footer:"© INOV Digital Services — Vielen Dank für Ihr Vertrauen." },
+    cta: { title:"Bereit, diese ", highlight:"Fehler zu beheben?", lead:"INOV Digital Services begleitet Marken bei ihrem Branding, von A bis Z. Wir kümmern uns um alles, Sie konzentrieren sich auf Ihr Geschäft.", chips:["Logo & Identität","Packaging","Plakate & Flyer","Motion Design","Webseiten","Online-Werbung"], footer:"© INOV Digital Services, Vielen Dank für Ihr Vertrauen." },
   },
 
   ar: {
@@ -370,7 +370,7 @@ const DATA: Record<Lang, GuideData> = {
     printBtn: "حفظ بصيغة PDF",
     printHint: "انقر → اختر 'حفظ بصيغة PDF' → فعّل 'رسومات الخلفية'",
     title: "7 أخطاء في العلامة التجارية تُنفّر عملاءك",
-    subtitle: "الدليل العملي لبناء علامة تجارية تُلهم الثقة — وتبيع، من النظرة الأولى.",
+    subtitle: "الدليل العملي لبناء علامة تجارية تُلهم الثقة, وتبيع، من النظرة الأولى.",
     toc: ["شعار معقد للغاية","ألوان عشوائية","أسلوب غير متسق","تقليد المنافسين","مرئيات رديئة الجودة","نسيان العاطفة","لا هوية مكتوبة"],
     stats: [{value:"20+",label:"علامة تجارية مدعومة"},{value:"80+",label:"مرئي تم تسليمه"},{value:"48h",label:"وقت التسليم"}],
     errors: [
@@ -391,7 +391,7 @@ const DATA: Record<Lang, GuideData> = {
         tipLabel:"نصيحة عملية", tip:"انظر إلى آخر 9 منشورات لك في عرض الشبكة. إذا لم تبدُ كعائلة واحدة، حان وقت توحيد أسلوبك." },
       { kicker:"التميّز", title:"تقليد المنافسين",
         problemLabel:"المشكلة", problem:"تنظر إلى ما يفعله 'رائد السوق' وتقلده، ظناً منك أنه خيار آمن. فتنتهي وأنت تشبه الجميع.",
-        costLabel:"لماذا يُكلّفك عملاء", cost:"عندما تتشابه كل العلامات التجارية، لا تبرز أي منها. تصبح قابلاً للاستبدال — ويختار العميل فقط بناءً على السعر.",
+        costLabel:"لماذا يُكلّفك عملاء", cost:"عندما تتشابه كل العلامات التجارية، لا تبرز أي منها. تصبح قابلاً للاستبدال, ويختار العميل فقط بناءً على السعر.",
         solutionLabel:"الحل", solution:"حدّد ما يجعلك فريداً (قصتك، أسلوبك، تخصصك) وأبرزه بثقة.",
         tipLabel:"نصيحة عملية", tip:"أكمل هذه الجملة: 'على عكس الآخرين، نحن…'. الإجابة هي جوهر تموضعك." },
       { kicker:"الجودة", title:"إهمال جودة المرئيات",
@@ -410,23 +410,23 @@ const DATA: Record<Lang, GuideData> = {
         solutionLabel:"الحل", solution:"أنشئ دليل علامة تجارية مصغراً: الشعار وتنويعاته، الألوان الدقيقة، الخطوط، نبرة التواصل.",
         tipLabel:"نصيحة عملية", tip:"حتى دليل من صفحة واحدة كافٍ للبداية. المهم أن يوجد وأن يتبعه الجميع." },
     ],
-    cta: { title:"مستعد لتصحيح هذه ", highlight:"الأخطاء؟", lead:"INOV Digital Services ترافق العلامات التجارية في برندنغها من الألف إلى الياء. نتولى كل شيء — أنت تركّز على نشاطك.", chips:["الشعارات والهوية","التغليف","الملصقات والمنشورات","موشن ديزاين","المواقع الإلكترونية","الترويج الإلكتروني"], footer:"© INOV Digital Services — شكراً لثقتكم." },
+    cta: { title:"مستعد لتصحيح هذه ", highlight:"الأخطاء؟", lead:"INOV Digital Services ترافق العلامات التجارية في برندنغها من الألف إلى الياء. نتولى كل شيء, أنت تركّز على نشاطك.", chips:["الشعارات والهوية","التغليف","الملصقات والمنشورات","موشن ديزاين","المواقع الإلكترونية","الترويج الإلكتروني"], footer:"© INOV Digital Services, شكراً لثقتكم." },
   },
 }
 
 const WA_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff" style="width:17px;height:17px;vertical-align:-3px;flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`
 
-// Demonstrative icons (one per branding mistake) — Lucide-style line icons.
+// Demonstrative icons (one per branding mistake), Lucide-style line icons.
 const IC = (paths: string) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px;">${paths}</svg>`
 const ERROR_ICONS = [
-  IC(`<path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/>`), // logo — pen tool
-  IC(`<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>`), // colours — palette
-  IC(`<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>`), // consistency — layers
-  IC(`<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>`), // differentiation — compass
-  IC(`<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>`), // quality — image
-  IC(`<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/>`), // emotion — heart
-  IC(`<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>`), // guidelines — book
+  IC(`<path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/>`), // logo, pen tool
+  IC(`<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>`), // colours, palette
+  IC(`<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>`), // consistency, layers
+  IC(`<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>`), // differentiation, compass
+  IC(`<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>`), // quality, image
+  IC(`<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/>`), // emotion, heart
+  IC(`<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>`), // guidelines, book
 ]
 
 function buildGuidePages(d: GuideData, assetOrigin?: string): string {
@@ -564,13 +564,13 @@ body{font-family:'Outfit',sans-serif;color:var(--ink);-webkit-print-color-adjust
 @media print{body{padding:0;background:#fff;}.toolbar{display:none;}.page{box-shadow:none;margin:0;width:100%;height:100vh;page-break-after:always;}.page:last-child{page-break-after:auto;}}`
 
 // Full standalone HTML document (used by the "open in tab" fallback and by the
-// static-PDF build script — pass `assetOrigin` when rendering outside the browser).
+// static-PDF build script, pass `assetOrigin` when rendering outside the browser).
 function buildGuideHTML(d: GuideData, assetOrigin?: string): string {
   return `<!doctype html>
 <html lang="${d.lang}" dir="${d.dir}">
 <head>
 <meta charset="UTF-8"/>
-<title>INOV — ${d.title}</title>
+<title>INOV, ${d.title}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
@@ -586,7 +586,7 @@ ${buildGuidePages(d, assetOrigin)}
 export { DATA, GUIDE_CSS, buildGuideHTML }
 export type { GuideData }
 
-// Immediate PDF download (no print dialog) — jsPDF + html2canvas.
+// Immediate PDF download (no print dialog), jsPDF + html2canvas.
 export async function downloadGuidePDF(lang: Lang): Promise<void> {
   const d = DATA[lang] ?? DATA.fr
   await downloadHtmlPagesAsPdf(

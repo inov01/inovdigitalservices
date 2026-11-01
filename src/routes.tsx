@@ -21,7 +21,7 @@ const FormationDetail = lazy(() => import("./pages/FormationDetail"))
 const Apropos = lazy(() => import("./pages/Apropos"))
 const Collaborateur = lazy(() => import("./pages/Collaborateur"))
 
-// Minimal fallback — keeps layout height stable while a route chunk loads.
+// Minimal fallback, keeps layout height stable while a route chunk loads.
 const L = (node: ReactNode) => <Suspense fallback={<div style={{ minHeight: "60vh" }} />}>{node}</Suspense>
 
 export const router = createBrowserRouter([

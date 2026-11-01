@@ -2,8 +2,8 @@ import { useEffect, useRef } from "react"
 
 // Enforces a maximum connection duration on the client side. Supabase refresh
 // tokens otherwise keep a session alive indefinitely, so we add two guards:
-//  • idle timeout — signed out after a period with no user activity
-//  • absolute cap — signed out a fixed time after login, active or not
+//  • idle timeout, signed out after a period with no user activity
+//  • absolute cap, signed out a fixed time after login, active or not
 // The admin is held to a stricter policy than regular client accounts.
 export interface SessionPolicy {
   key: string

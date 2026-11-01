@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { createPortal } from "react-dom"
-// Portfolio albums — logo albums drive the carousel; others go to "Autres réalisations".
+// Portfolio albums, logo albums drive the carousel; others go to "Autres réalisations".
 import { Building2, Eye, Images, FolderOpen, Flame, X, MessageSquare, ChevronLeft, ChevronRight, Play, Pause, ArrowRight } from "lucide-react"
 import useIsMobile from "../hooks/useIsMobile"
 import useReducedMotion from "../hooks/useReducedMotion"
@@ -48,7 +48,7 @@ export default function Portfolio() {
   const [activeAlbum, setActiveAlbum] = useState<Album | null>(null)
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
-  // Explicit play/pause toggle (independent of hover pausing) — WCAG 2.2.2.
+  // Explicit play/pause toggle (independent of hover pausing), WCAG 2.2.2.
   const [userPaused, setUserPaused] = useState(false)
   // On first scroll-into-view the carousel spins one full loop very fast, then
   // settles into its normal autoplay cadence.
@@ -199,7 +199,7 @@ export default function Portfolio() {
           </p>
         </div>
 
-        {/* Trust strip — quick credibility signals */}
+        {/* Trust strip, quick credibility signals */}
         <div
           className="pf-reveal"
           style={
@@ -232,7 +232,7 @@ export default function Portfolio() {
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
-          {/* Track — overflow visible so partial next card peeks */}
+          {/* Track, overflow visible so partial next card peeks */}
           <div ref={viewportRef} style={{ overflow: "hidden" }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
             <div
               style={{
@@ -255,7 +255,7 @@ export default function Portfolio() {
             </div>
           </div>
 
-          {/* Arrows — desktop only; mobile uses swipe + dots */}
+          {/* Arrows, desktop only; mobile uses swipe + dots */}
           {!isMobile && (
             <>
               <button
@@ -320,14 +320,14 @@ export default function Portfolio() {
             ))}
           </div>
 
-          {/* Swipe hint — mobile only */}
+          {/* Swipe hint, mobile only */}
           {isMobile && (
             <div style={{ textAlign: "center", marginTop: 12, fontFamily: "'Outfit', sans-serif", fontSize: 11.5, fontWeight: 600, color: "var(--ds-text-muted)", letterSpacing: "0.04em" }}>
               {t.portfolio.swipeHint}
             </div>
           )}
 
-          {/* Autoplay progress bar — restarts each slide, freezes on hover (hidden when reduced motion) */}
+          {/* Autoplay progress bar, restarts each slide, freezes on hover (hidden when reduced motion) */}
           {!reduced && (
             <div style={{ width: 180, height: 3, borderRadius: "var(--r-full)", background: "var(--ds-border)", margin: "16px auto 0", overflow: "hidden" }}>
               <div
@@ -344,7 +344,7 @@ export default function Portfolio() {
           )}
         </div>
 
-        {/* ── "Autre" section — projects without a client logo yet */}
+        {/* ── "Autre" section, projects without a client logo yet */}
         {otherAlbums.length > 0 && (
           <div style={{ marginTop: isMobile ? 64 : 88 }}>
             <div style={{ textAlign: "center", marginBottom: 32 }}>
@@ -363,7 +363,7 @@ export default function Portfolio() {
           </div>
         )}
 
-        {/* CTA — primary pushes toward the quote (funnel), Instagram stays secondary */}
+        {/* CTA, primary pushes toward the quote (funnel), Instagram stays secondary */}
         <div style={{ textAlign: "center", marginTop: 48, display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
           <a href="#pricing" className="btn-orange">
             {t.hero.ctaQuote} <ArrowRight size={16} aria-hidden="true" />
@@ -386,7 +386,7 @@ export default function Portfolio() {
 function AlbumCard({ album, onOpen }: { album: Album; onOpen: () => void }) {
   const { t } = useSettings()
   const [hovered, setHovered] = useState(false)
-  // Touch devices have no hover — reveal the "view album" affordance on touch, then
+  // Touch devices have no hover, reveal the "view album" affordance on touch, then
   // fade it back out shortly after the finger leaves the card.
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const revealOnTouch = () => {
@@ -427,7 +427,7 @@ function AlbumCard({ album, onOpen }: { album: Album; onOpen: () => void }) {
         flexDirection: "column",
       }}
     >
-      {/* ── Cover image — 1080×1320 (9:11) cropped */}
+      {/* ── Cover image, 1080×1320 (9:11) cropped */}
       <div
         onClick={onOpen}
         style={{
@@ -445,7 +445,7 @@ function AlbumCard({ album, onOpen }: { album: Album; onOpen: () => void }) {
           style={
             useLogoCover
               ? {
-                  // Logos: square box, centered. Respect each album's logoFit —
+                  // Logos: square box, centered. Respect each album's logoFit
                   // "contain" logos are padded (not cropped) so wordmarks stay legible.
                   width: "100%", height: "100%", display: "block",
                   objectFit: "cover", objectPosition: "center",
@@ -560,7 +560,7 @@ function AlbumModal({ album, onClose }: { album: Album; onClose: () => void }) {
   const work = { ...album.works[imgIndex], ...(loc?.works?.[imgIndex] ?? {}) }
 
   // Rendered through a portal to document.body so the fixed overlay centers on the
-  // viewport — otherwise the transformed RevealSection ancestor becomes its containing block.
+  // viewport, otherwise the transformed RevealSection ancestor becomes its containing block.
   return createPortal(
     <div
       onClick={onClose}
@@ -640,7 +640,7 @@ function AlbumModal({ album, onClose }: { album: Album; onClose: () => void }) {
           )}
         </div>
 
-        {/* Main image — videos keep a fixed 16:9-ish box; static images shrink-wrap to their own ratio */}
+        {/* Main image, videos keep a fixed 16:9-ish box; static images shrink-wrap to their own ratio */}
         <div style={{ position: "relative", background: "#000", flexShrink: 0, height: work.videoId ? (isMobile ? "50vh" : "58vh") : "auto", maxHeight: isMobile ? "62vh" : "68vh", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", padding: 8 }}>
           {work.videoId ? (
             playing ? (
@@ -666,7 +666,7 @@ function AlbumModal({ album, onClose }: { album: Album; onClose: () => void }) {
             ) : (
               <button
                 onClick={() => setPlaying(true)}
-                aria-label={`${t.portfolio.playVideo ?? "Lire la vidéo"} — ${work.title}`}
+                aria-label={`${t.portfolio.playVideo ?? "Lire la vidéo"}, ${work.title}`}
                 style={{ position: "relative", width: "100%", height: "100%", border: "none", background: "transparent", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
               >
                 <SmartImage

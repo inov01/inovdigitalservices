@@ -18,7 +18,7 @@ export function captureRefFromUrl(): void {
       localStorage.setItem(KEY, code.slice(0, 16))
     }
   } catch {
-    /* localStorage unavailable — ignore */
+    /* localStorage unavailable, ignore */
   }
 }
 

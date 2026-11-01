@@ -6,7 +6,7 @@ import { api } from "../lib/api"
 import type { Lang } from "../i18n/translations"
 
 /* ──────────────────────────────────────────────────────────────────────────
-   PRÊT À BRANCHER — configuration de l'envoi
+   PRÊT À BRANCHER, configuration de l'envoi
    ──────────────────────────────────────────────────────────────────────────
    Ce formulaire est fonctionnel côté UI. Pour connecter un vrai service
    d'e-mailing, renseigne UNE des options ci-dessous. Tant que tout est vide,

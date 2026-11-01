@@ -34,7 +34,7 @@ export default function FormationDetail() {
         setState("ok")
         const url = `${window.location.origin}/formation/${r.formation.slug ?? slug}`
         applyPageMeta({
-          title: `${r.formation.title} — INOV Digital Services`,
+          title: `${r.formation.title}, INOV Digital Services`,
           description: r.formation.summary,
           image: r.formation.ogImage || r.formation.image,
           url,

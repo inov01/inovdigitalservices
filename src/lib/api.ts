@@ -5,7 +5,7 @@ import { ensureStepUp } from "./stepup"
 
 const BASE = `https://${projectId}.supabase.co/functions/v1/make-server-df4bb120`
 
-// Public call — authenticated with the anon key (satisfies the function gateway;
+// Public call, authenticated with the anon key (satisfies the function gateway;
 // the server treats these as anonymous and only allows public routes).
 async function pub<T>(path: string, init: RequestInit = {}): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
@@ -20,7 +20,7 @@ async function pub<T>(path: string, init: RequestInit = {}): Promise<T> {
   return res.json() as Promise<T>
 }
 
-// Authenticated call — uses the logged-in admin's access token.
+// Authenticated call, uses the logged-in admin's access token.
 async function auth<T>(path: string, init: RequestInit = {}): Promise<T> {
   // Any write to the admin backend requires a fresh identity proof (password + 2FA).
   await ensureStepUp(init.method)
@@ -40,7 +40,7 @@ async function auth<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 // Authenticated call WITHOUT the step-up gate. Used only for the AI assistant,
-// which never mutates site data — it just relays a chat to Gemini via the server.
+// which never mutates site data, it just relays a chat to Gemini via the server.
 // The admin token is still required (the server enforces the admin allowlist).
 async function authChat<T>(path: string, init: RequestInit = {}): Promise<T> {
   const { data } = await supabase.auth.getSession()
@@ -106,7 +106,7 @@ export interface Testimonial {
   stars: number
   lang: string
 }
-// The public shape (no status — the public endpoint only returns approved ones).
+// The public shape (no status, the public endpoint only returns approved ones).
 export type PublicTestimonial = Omit<Testimonial, "status">
 export interface TestimonialInput {
   name: string
@@ -219,7 +219,7 @@ export interface SiteSettings {
    *  "Réponses sociales" panel and reusable as manual copy-paste snippets. */
   socialReplies?: SocialReplies
   /** Payment / payout coordinates shown on /payer. Served from Supabase secrets or
-   *  the admin panel — never hardcoded in the repo. */
+   *  the admin panel, never hardcoded in the repo. */
   payments?: PaymentConfig
 }
 
@@ -272,7 +272,7 @@ export interface Formation {
   liveUrl?: string        // lien Zoom/Meet/YouTube Live
   replayUrl?: string      // URL vidéo (YouTube embed ou mp4)
   resourcesUrl?: string   // PDF des ressources téléchargeables
-  startDateTime?: string  // ISO 8601 — pour les lives/conférences
+  startDateTime?: string  // ISO 8601, pour les lives/conférences
   endDateTime?: string
   isLive?: boolean        // true si la session est actuellement en cours
   recordingDate?: string  // date d'enregistrement (replays)

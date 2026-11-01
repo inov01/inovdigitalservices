@@ -9,7 +9,7 @@ import { api, type PublicTestimonial } from "../lib/api"
 // Map each testimonial's portfolio id → the company (client) name.
 const COMPANY_MAP: Record<string, string> = Object.fromEntries(albums.map((a) => [a.id, a.client]))
 
-// Client logo imports — one per portfolio album referenced in testimonials
+// Client logo imports, one per portfolio album referenced in testimonials
 import logoRosie   from "../imports/Rosie_logo.webp"
 import logoPhysio  from "../imports/2.webp"
 import logoParrots from "../imports/1_jpg.webp"
@@ -67,7 +67,7 @@ function TestimonialCard({ t, role, text }: { t: FullTestimonial; role: string; 
         strokeWidth={0}
       />
 
-      {/* Quote text — natural, unquoted, not italic */}
+      {/* Quote text, natural, unquoted, not italic */}
       <p
         style={{
           fontFamily: "'Outfit', sans-serif",
@@ -96,7 +96,7 @@ function TestimonialCard({ t, role, text }: { t: FullTestimonial; role: string; 
         ))}
       </div>
 
-      {/* Client identity — person-led, uniform avatar treatment */}
+      {/* Client identity, person-led, uniform avatar treatment */}
       <div style={{ display: "flex", alignItems: "center", gap: 13, borderTop: "1px solid var(--ds-border)", paddingTop: 18 }}>
         {/* Avatar: brand logo on a uniform neutral ground for visual coherence */}
         <div
@@ -290,7 +290,7 @@ function ReviewForm({ lang, onClose, onSubmitted }: { lang: string; onClose: () 
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={{ display: "flex", gap: 6 }}>
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <button key={i} type="button" aria-label={`${i + 1} / 5 — ${u.ratingLabels[i]}`} aria-pressed={stars === i + 1} onClick={() => setStars(i + 1)} style={{ padding: 2, border: "none", background: "transparent", cursor: "pointer", lineHeight: 0 }}>
+                    <button key={i} type="button" aria-label={`${i + 1} / 5, ${u.ratingLabels[i]}`} aria-pressed={stars === i + 1} onClick={() => setStars(i + 1)} style={{ padding: 2, border: "none", background: "transparent", cursor: "pointer", lineHeight: 0 }}>
                       <Star size={26} color="var(--ds-accent)" fill={i < stars ? "var(--ds-accent)" : "none"} strokeWidth={i < stars ? 0 : 1.6} style={{ opacity: i < stars ? 1 : 0.4 }} />
                     </button>
                   ))}

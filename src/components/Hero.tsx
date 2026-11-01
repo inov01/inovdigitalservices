@@ -33,7 +33,7 @@ function CountUp({ end, duration = 1300, reduced }: { end: number; duration?: nu
 
 // The full pool of service visuals (same images as the "Nos services" section)
 // that rotate through the circular coverflow so the animating trio keeps varying.
-// Three are visible at a time — left, principal (center, largest), right — while
+// Three are visible at a time, left, principal (center, largest), right, while
 // the rest wait hidden behind the stack ("celui du bas n'apparaît plus").
 const SHOWCASE_MS = 3000
 
@@ -201,7 +201,7 @@ export default function Hero() {
         .hero-stat-divider { width: 1px; height: 40px; background: var(--ds-border); align-self: center; }
       `}</style>
 
-      {/* Background decoration — orange radial glow */}
+      {/* Background decoration, orange radial glow */}
       <div
         aria-hidden="true"
         style={{
@@ -270,7 +270,7 @@ export default function Hero() {
             {s.sub}
           </p>
 
-          {/* Mobile showcase — circular coverflow of the service visuals */}
+          {/* Mobile showcase, circular coverflow of the service visuals */}
           {isMobile && (
             <div style={{ marginBottom: 36 }}>
               <HeroShowcase isMobile reduced={reduced} />

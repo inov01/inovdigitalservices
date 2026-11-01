@@ -1,4 +1,4 @@
-// Procédures conseillées par service — référence pour l'espace administrateur.
+// Procédures conseillées par service, référence pour l'espace administrateur.
 // Chaque entrée décrit la méthode recommandée à communiquer au client : ce qu'il
 // doit fournir, le déroulé du projet, les délais, les révisions et les livrables.
 // Contenu fidèle au positionnement INOV : 100 % en ligne, le client apporte ses
@@ -364,7 +364,7 @@ export const serviceProcedures: ServiceProcedure[] = [
 // Version texte prête à copier-coller (WhatsApp / e-mail) pour un client.
 export function procedureToText(p: ServiceProcedure): string {
   const lines: string[] = []
-  lines.push(`📋 ${p.name} — INOV Digital Services`)
+  lines.push(`📋 ${p.name}, INOV Digital Services`)
   lines.push("")
   lines.push(p.intro)
   lines.push("")

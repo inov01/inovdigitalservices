@@ -280,15 +280,15 @@ function FormationTab() {
           <span style={{ marginLeft: "auto", fontSize: 12.5, color: "var(--ds-text-faint)", fontWeight: 600 }}>{enrollments.length}</span>
         </div>
         <div style={{ padding: "10px 18px", fontSize: 12, color: "var(--ds-text-faint)", borderBottom: "1px solid var(--ds-border)" }}>
-          Le suivi des paiements (reçu, statut « gagné ») se fait dans l'onglet <strong>Devis &amp; contacts</strong> — chaque inscription y apparaît comme un lead.
+          Le suivi des paiements (reçu, statut « gagné ») se fait dans l'onglet <strong>Devis &amp; contacts</strong>, chaque inscription y apparaît comme un lead.
         </div>
         {enrollments.length === 0
           ? <div style={{ padding: 34, textAlign: "center", color: "var(--ds-text-muted)" }}>Aucune inscription pour l'instant.</div>
           : enrollments.map((e) => (
             <div key={e.id} className="adm-row" style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 18px", borderBottom: "1px solid var(--ds-border)" }}>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: 14 }}>{e.name || "—"} <span style={{ fontWeight: 500, color: "var(--ds-text-muted)", fontSize: 12.5 }}>· {e.email}</span></div>
-                <div style={{ fontSize: 12, color: "var(--ds-text-faint)" }}>{String(e.meta?.formationTitle ?? "—")} · {new Date(e.createdAt).toLocaleDateString("fr-FR")}</div>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>{e.name || "-"} <span style={{ fontWeight: 500, color: "var(--ds-text-muted)", fontSize: 12.5 }}>· {e.email}</span></div>
+                <div style={{ fontSize: 12, color: "var(--ds-text-faint)" }}>{String(e.meta?.formationTitle ?? "-")} · {new Date(e.createdAt).toLocaleDateString("fr-FR")}</div>
               </div>
               <span style={{ fontSize: 11.5, fontWeight: 700, padding: "2px 9px", borderRadius: "var(--r-full)", background: e.status === "won" ? "var(--ds-accent-a12)" : "var(--ds-bg-sec)", color: e.status === "won" ? "var(--ds-accent-text)" : "var(--ds-text-muted)" }}>
                 {e.status === "won" ? "Validé" : e.status === "contacted" ? "Contacté" : e.status === "lost" ? "Annulé" : "Nouveau"}
@@ -351,7 +351,7 @@ function CollaborateursTab() {
             {x.city && <span style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: 12, color: "var(--ds-text-faint)" }}><MapPin size={11} /> {x.city}</span>}
           </div>
           <p style={{ margin: "0 0 5px", fontSize: 13.5, color: "var(--ds-text-sec)", lineHeight: 1.5 }}>
-            <strong>{x.service}</strong>{x.description ? ` — ${x.description}` : ""}{x.price ? ` · ${x.price}` : ""}
+            <strong>{x.service}</strong>{x.description ? `, ${x.description}` : ""}{x.price ? ` · ${x.price}` : ""}
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", fontSize: 12, color: "var(--ds-text-faint)" }}>
             {x.whatsapp && <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><MessageCircle size={12} /> {x.whatsapp}</span>}
@@ -1018,14 +1018,14 @@ const SCRIPT_L: Record<Lang, {
   doc: string; est: string; words: string; hook: string; seg: string;
   onscreen: string; narration: string; cta: string; ctaText: string
 }> = {
-  fr: { doc: "SCRIPT VIDÉO", est: "Durée estimée", words: "mots", hook: "ACCROCHE", seg: "SÉQUENCE", onscreen: "Texte à l'écran", narration: "Voix off", cta: "APPEL À L'ACTION", ctaText: "Prêt à passer à l'action ? Contactez INOV Digital Services dès aujourd'hui — devis gratuit et sans engagement. 👉 inovdigitalservices.com" },
-  en: { doc: "VIDEO SCRIPT", est: "Est. duration", words: "words", hook: "HOOK", seg: "SEGMENT", onscreen: "On-screen text", narration: "Voice-over", cta: "CALL TO ACTION", ctaText: "Ready to take the next step? Contact INOV Digital Services today — free, no-obligation quote. 👉 inovdigitalservices.com" },
-  es: { doc: "GUION DE VÍDEO", est: "Duración est.", words: "palabras", hook: "GANCHO", seg: "SEGMENTO", onscreen: "Texto en pantalla", narration: "Voz en off", cta: "LLAMADA A LA ACCIÓN", ctaText: "¿Listo para dar el siguiente paso? Contacta con INOV Digital Services hoy — presupuesto gratis y sin compromiso. 👉 inovdigitalservices.com" },
-  ht: { doc: "ESKRI VIDEYO", est: "Dire estime", words: "mo", hook: "AKROCH", seg: "SEKANS", onscreen: "Tèks sou ekran", narration: "Vwa", cta: "APÈL POU AKSYON", ctaText: "Ou pare pou fè pwochen etap la ? Kontakte INOV Digital Services jodi a — devi gratis, san angajman. 👉 inovdigitalservices.com" },
-  pt: { doc: "GUIÃO DE VÍDEO", est: "Duração est.", words: "palavras", hook: "GANCHO", seg: "SEGMENTO", onscreen: "Texto no ecrã", narration: "Locução", cta: "CHAMADA À AÇÃO", ctaText: "Pronto para o próximo passo? Contacte a INOV Digital Services hoje — orçamento grátis e sem compromisso. 👉 inovdigitalservices.com" },
-  it: { doc: "SCRIPT VIDEO", est: "Durata stim.", words: "parole", hook: "GANCIO", seg: "SEGMENTO", onscreen: "Testo a schermo", narration: "Voce fuori campo", cta: "INVITO ALL'AZIONE", ctaText: "Pronto per il prossimo passo? Contatta INOV Digital Services oggi — preventivo gratuito e senza impegno. 👉 inovdigitalservices.com" },
-  de: { doc: "VIDEO-SKRIPT", est: "Gesch. Dauer", words: "Wörter", hook: "AUFHÄNGER", seg: "SEGMENT", onscreen: "Bildschirmtext", narration: "Voice-over", cta: "HANDLUNGSAUFRUF", ctaText: "Bereit für den nächsten Schritt? Kontaktieren Sie INOV Digital Services noch heute — kostenloses, unverbindliches Angebot. 👉 inovdigitalservices.com" },
-  ar: { doc: "نص الفيديو", est: "المدة التقديرية", words: "كلمة", hook: "الجاذب", seg: "المقطع", onscreen: "نص على الشاشة", narration: "التعليق الصوتي", cta: "دعوة إلى الإجراء", ctaText: "مستعد للخطوة التالية؟ تواصل مع INOV Digital Services اليوم — عرض سعر مجاني وبدون التزام. 👉 inovdigitalservices.com" },
+  fr: { doc: "SCRIPT VIDÉO", est: "Durée estimée", words: "mots", hook: "ACCROCHE", seg: "SÉQUENCE", onscreen: "Texte à l'écran", narration: "Voix off", cta: "APPEL À L'ACTION", ctaText: "Prêt à passer à l'action ? Contactez INOV Digital Services dès aujourd'hui, devis gratuit et sans engagement. 👉 inovdigitalservices.com" },
+  en: { doc: "VIDEO SCRIPT", est: "Est. duration", words: "words", hook: "HOOK", seg: "SEGMENT", onscreen: "On-screen text", narration: "Voice-over", cta: "CALL TO ACTION", ctaText: "Ready to take the next step? Contact INOV Digital Services today, free, no-obligation quote. 👉 inovdigitalservices.com" },
+  es: { doc: "GUION DE VÍDEO", est: "Duración est.", words: "palabras", hook: "GANCHO", seg: "SEGMENTO", onscreen: "Texto en pantalla", narration: "Voz en off", cta: "LLAMADA A LA ACCIÓN", ctaText: "¿Listo para dar el siguiente paso? Contacta con INOV Digital Services hoy, presupuesto gratis y sin compromiso. 👉 inovdigitalservices.com" },
+  ht: { doc: "ESKRI VIDEYO", est: "Dire estime", words: "mo", hook: "AKROCH", seg: "SEKANS", onscreen: "Tèks sou ekran", narration: "Vwa", cta: "APÈL POU AKSYON", ctaText: "Ou pare pou fè pwochen etap la ? Kontakte INOV Digital Services jodi a, devi gratis, san angajman. 👉 inovdigitalservices.com" },
+  pt: { doc: "GUIÃO DE VÍDEO", est: "Duração est.", words: "palavras", hook: "GANCHO", seg: "SEGMENTO", onscreen: "Texto no ecrã", narration: "Locução", cta: "CHAMADA À AÇÃO", ctaText: "Pronto para o próximo passo? Contacte a INOV Digital Services hoje, orçamento grátis e sem compromisso. 👉 inovdigitalservices.com" },
+  it: { doc: "SCRIPT VIDEO", est: "Durata stim.", words: "parole", hook: "GANCIO", seg: "SEGMENTO", onscreen: "Testo a schermo", narration: "Voce fuori campo", cta: "INVITO ALL'AZIONE", ctaText: "Pronto per il prossimo passo? Contatta INOV Digital Services oggi, preventivo gratuito e senza impegno. 👉 inovdigitalservices.com" },
+  de: { doc: "VIDEO-SKRIPT", est: "Gesch. Dauer", words: "Wörter", hook: "AUFHÄNGER", seg: "SEGMENT", onscreen: "Bildschirmtext", narration: "Voice-over", cta: "HANDLUNGSAUFRUF", ctaText: "Bereit für den nächsten Schritt? Kontaktieren Sie INOV Digital Services noch heute, kostenloses, unverbindliches Angebot. 👉 inovdigitalservices.com" },
+  ar: { doc: "نص الفيديو", est: "المدة التقديرية", words: "كلمة", hook: "الجاذب", seg: "المقطع", onscreen: "نص على الشاشة", narration: "التعليق الصوتي", cta: "دعوة إلى الإجراء", ctaText: "مستعد للخطوة التالية؟ تواصل مع INOV Digital Services اليوم, عرض سعر مجاني وبدون التزام. 👉 inovdigitalservices.com" },
 }
 
 type ScriptSeg = { onscreen?: string; text: string }
@@ -1055,7 +1055,7 @@ function buildScriptText(a: ScriptSource, lang: Lang): string {
   let t = 0
   const rule = "─".repeat(52)
   const lines: string[] = []
-  lines.push(`INOV DIGITAL SERVICES — ${L.doc}`)
+  lines.push(`INOV DIGITAL SERVICES, ${L.doc}`)
   lines.push(rule)
   lines.push(a.title)
   lines.push(`${a.tag}  ·  ${L.est} : ~${mmss(totalSec)}  ·  ${totalWords} ${L.words}`)
@@ -1102,7 +1102,7 @@ function buildScriptHtml(a: ScriptSource, lang: Lang): string {
   }).join("")
   const ctaHtml = block(L.cta, mmss(t), undefined, L.ctaText)
   return `<!doctype html><html lang="${lang}" dir="${rtl ? "rtl" : "ltr"}"><head><meta charset="utf-8">
-<title>${esc(a.title)} — ${esc(L.doc)}</title>
+<title>${esc(a.title)}, ${esc(L.doc)}</title>
 <style>@page{margin:22mm 18mm;} body{margin:0;color:#111;font-family:'Outfit',system-ui,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact;}</style></head>
 <body>
   <div style="border-bottom:2px solid #111;padding-bottom:14px;margin-bottom:22px;">
@@ -1293,7 +1293,7 @@ function BlogTab() {
               <div style={{ minWidth: 0, flex: 1 }}>
                 <h2 style={sectionTitle}>Partager par WhatsApp</h2>
                 <p style={{ margin: "6px 0 0", fontSize: 13.5, color: "var(--ds-text-muted)", lineHeight: 1.5 }}>
-                  Indiquez le numéro du client (avec l'indicatif, ex. 509…) pour ouvrir directement sa conversation. Le message d'accompagnement et le lien de l'article sont générés automatiquement dans la langue choisie — vous pouvez le modifier dans WhatsApp avant l'envoi. Laissez le numéro vide pour choisir le contact dans WhatsApp.
+                  Indiquez le numéro du client (avec l'indicatif, ex. 509…) pour ouvrir directement sa conversation. Le message d'accompagnement et le lien de l'article sont générés automatiquement dans la langue choisie, vous pouvez le modifier dans WhatsApp avant l'envoi. Laissez le numéro vide pour choisir le contact dans WhatsApp.
                 </p>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -1306,7 +1306,7 @@ function BlogTab() {
             <input
               value={sharePhone}
               onChange={(e) => setSharePhone(e.target.value)}
-              placeholder="Numéro du client — ex. +509 3625 5920 (optionnel)"
+              placeholder="Numéro du client, ex. +509 3625 5920 (optionnel)"
               inputMode="tel"
               style={{ ...input, marginBottom: 8 }}
             />
@@ -1324,7 +1324,7 @@ function BlogTab() {
         )
       })()}
 
-      {/* Video scripts — copy or download each article formatted for narration */}
+      {/* Video scripts, copy or download each article formatted for narration */}
       <div style={{ ...card, display: "flex", flexDirection: "column", gap: 4 }}>
         <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 8, flexWrap: "wrap" }}>
           <div style={{ minWidth: 0, flex: 1 }}>

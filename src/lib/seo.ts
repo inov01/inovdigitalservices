@@ -5,42 +5,42 @@ import type { Lang } from "../i18n/translations"
 // and descriptions < 160 chars.
 const SEO: Record<Lang, { title: string; description: string; locale: string }> = {
   fr: {
-    title: "INOV Digital Services — Branding, Logos & Design",
+    title: "INOV Digital Services, Branding, Logos & Design",
     description: "Studio de branding en Haïti : logos, packaging, affiches, motion design et design web & UI/UX. 20+ marques, 80+ visuels livrés. Livraison dès 48h.",
     locale: "fr_FR",
   },
   en: {
-    title: "INOV Digital Services — Branding, Logos & Design",
+    title: "INOV Digital Services, Branding, Logos & Design",
     description: "Branding studio: logos, packaging, posters, motion design and web & UI/UX design. 20+ brands, 80+ visuals delivered. Delivery from 48h.",
     locale: "en_US",
   },
   es: {
-    title: "INOV Digital Services — Branding, Logos y Diseño",
+    title: "INOV Digital Services, Branding, Logos y Diseño",
     description: "Estudio de branding: logos, packaging, afiches, motion design y diseño web y UI/UX. 20+ marcas, 80+ visuales entregados. Entrega desde 48h.",
     locale: "es_ES",
   },
   ht: {
-    title: "INOV Digital Services — Branding, Logo & Design",
+    title: "INOV Digital Services, Branding, Logo & Design",
     description: "Estidyo branding an Ayiti: logo, anbalaj, afich, motion design ak design web & UI/UX. 20+ mak, 80+ vizyèl livre. Livrezon depi 48è.",
     locale: "ht_HT",
   },
   pt: {
-    title: "INOV Digital Services — Branding, Logos e Design",
+    title: "INOV Digital Services, Branding, Logos e Design",
     description: "Estúdio de branding: logos, embalagens, cartazes, motion design e design web e UI/UX. 20+ marcas, 80+ visuais entregues. Entrega a partir de 48h.",
     locale: "pt_BR",
   },
   it: {
-    title: "INOV Digital Services — Branding, Loghi e Design",
+    title: "INOV Digital Services, Branding, Loghi e Design",
     description: "Studio di branding: loghi, packaging, manifesti, motion design e web & UI/UX design. 20+ brand, 80+ visual consegnati. Consegna da 48h.",
     locale: "it_IT",
   },
   de: {
-    title: "INOV Digital Services — Branding, Logos & Design",
+    title: "INOV Digital Services, Branding, Logos & Design",
     description: "Branding-Studio: Logos, Verpackung, Poster, Motion Design und Web- & UI/UX-Design. 20+ Marken, 80+ Visuals geliefert. Lieferung ab 48h.",
     locale: "de_DE",
   },
   ar: {
-    title: "INOV Digital Services — علامات تجارية وشعارات وتصميم",
+    title: "INOV Digital Services, علامات تجارية وشعارات وتصميم",
     description: "استوديو علامات تجارية: شعارات، تغليف، ملصقات، موشن ديزاين وتصميم ويب وواجهات UI/UX. أكثر من 20 علامة و80 تصميماً. التسليم خلال 48 ساعة.",
     locale: "ar_AE",
   },
@@ -57,8 +57,8 @@ const ALL_LANGS: Lang[] = ["fr", "en", "es", "ht", "pt", "it", "de", "ar"]
 const DEFAULT_LANG: Lang = "en"
 
 /** Distinct, crawlable URL for a language: origin + "/?lang=xx".
- *  Query-param URLs need no server rewrite — "/" always serves index.html and
- *  the app reads ?lang on load — so hreflang points at URLs that truly resolve. */
+ *  Query-param URLs need no server rewrite, "/" always serves index.html and
+ *  the app reads ?lang on load, so hreflang points at URLs that truly resolve. */
 function urlForLang(origin: string, l: Lang) {
   return `${origin}/?lang=${l}`
 }
@@ -86,7 +86,7 @@ function syncHreflang(lang: Lang) {
 }
 
 /** Update the document title + meta/OG/Twitter + canonical/hreflang for the active language.
- *  Only runs on the home route — page-level routes (blog article, legal…) own their
+ *  Only runs on the home route, page-level routes (blog article, legal…) own their
  *  own meta via applyPageMeta and must not be clobbered when the language changes. */
 export function applySeo(lang: Lang) {
   if (typeof document === "undefined") return

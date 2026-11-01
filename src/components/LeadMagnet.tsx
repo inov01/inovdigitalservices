@@ -10,7 +10,7 @@ import type { Lang } from "../i18n/translations"
 const FORMSPREE_ID = "mjybprza"
 
 // Static, pre-rendered PDFs hosted alongside the site (public/guides/).
-// Same file the confirmation e-mail links to — instant download, no generation.
+// Same file the confirmation e-mail links to, instant download, no generation.
 const guideUrl = (lang: string) => `/guides/guide-${lang}.pdf`
 
 const MAX_SUBMISSIONS = 2
@@ -173,7 +173,7 @@ export default function LeadMagnet() {
             <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: 22, fontWeight: 800, color: "#000", lineHeight: 1.2, marginBottom: 10 }}>{c.title}</h3>
             <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, color: "var(--ds-text-sec)", lineHeight: 1.6, marginBottom: 22 }}>{c.sub}</p>
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <input type="hidden" name="_subject" value="Nouveau lead — Guide branding" />
+              <input type="hidden" name="_subject" value="Nouveau lead, Guide branding" />
               <input type="hidden" name="source" value="lead_magnet" />
               <input
                 ref={emailRef} type="email" name="email" required placeholder={c.placeholder} aria-label={c.placeholder}

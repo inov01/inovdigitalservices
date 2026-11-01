@@ -11,7 +11,7 @@ import { api, type AdminBlog } from "../lib/api"
 import logo from "../imports/logo.webp"
 
 // SEO-friendly, human-readable slug per article id. These are the canonical
-// public URLs (/blog/<slug>) — they match the prerendered pages in public/blog
+// public URLs (/blog/<slug>), they match the prerendered pages in public/blog
 // and the sitemap. Kept language-independent so each article has one stable URL.
 export const ARTICLE_SLUG: Record<string, string> = {
   "logo":      "logo-professionnel",
@@ -150,15 +150,15 @@ export const ARTICLE_IMAGE: Record<string, { url: string; alt: string }> = {
   },
   "presence": {
     url: "https://images.unsplash.com/photo-1611926653458-09294b3142bf?w=1200&h=630&fit=crop&auto=format",
-    alt: "Icônes des réseaux sociaux sur écran de smartphone — présence en ligne",
+    alt: "Icônes des réseaux sociaux sur écran de smartphone, présence en ligne",
   },
   "erreurs": {
     url: "https://images.unsplash.com/photo-1645658043538-fc2bb1702cfe?w=1200&h=630&fit=crop&auto=format",
-    alt: "Livre Designing Brand Identity — erreurs de branding à éviter",
+    alt: "Livre Designing Brand Identity, erreurs de branding à éviter",
   },
   "site": {
     url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=630&fit=crop&auto=format",
-    alt: "Écran d'ordinateur portable affichant du code — création de site web professionnel",
+    alt: "Écran d'ordinateur portable affichant du code, création de site web professionnel",
   },
   "video": {
     url: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1200&h=630&fit=crop&auto=format",
@@ -166,11 +166,11 @@ export const ARTICLE_IMAGE: Record<string, { url: string; alt: string }> = {
   },
   "packaging": {
     url: "https://images.unsplash.com/photo-1595246007497-15e0ed4b8d96?w=1200&h=630&fit=crop&auto=format",
-    alt: "Emballage produit soigné sur une table — packaging design",
+    alt: "Emballage produit soigné sur une table, packaging design",
   },
   "print": {
     url: "https://images.unsplash.com/photo-1695634621375-0b66a9d5d1bc?w=1200&h=630&fit=crop&auto=format",
-    alt: "Brochure imprimée pliée — supports print professionnels",
+    alt: "Brochure imprimée pliée, supports print professionnels",
   },
   "carte": {
     url: "https://images.unsplash.com/photo-1777652918753-d66882b15391?w=1200&h=630&fit=crop&auto=format",
@@ -178,7 +178,7 @@ export const ARTICLE_IMAGE: Record<string, { url: string; alt: string }> = {
   },
   "motion": {
     url: "https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=1200&h=630&fit=crop&auto=format",
-    alt: "Formes abstraites colorées en spirale — motion design et animation",
+    alt: "Formes abstraites colorées en spirale, motion design et animation",
   },
   "presentation": {
     url: "https://images.unsplash.com/photo-1597931957399-211f0291bb35?w=1200&h=630&fit=crop&auto=format",
@@ -194,7 +194,7 @@ export const ARTICLE_IMAGE: Record<string, { url: string; alt: string }> = {
   },
   "flyer": {
     url: "https://images.unsplash.com/photo-1695634621375-0b66a9d5d1bc?w=1200&h=630&fit=crop&auto=format",
-    alt: "Support imprimé posé sur une surface — flyer",
+    alt: "Support imprimé posé sur une surface, flyer",
   },
   "affiche": {
     url: "https://images.unsplash.com/photo-1635873432087-50eba4c4392d?w=1200&h=630&fit=crop&auto=format",
@@ -202,7 +202,7 @@ export const ARTICLE_IMAGE: Record<string, { url: string; alt: string }> = {
   },
   "typographie": {
     url: "https://images.unsplash.com/photo-1533226458520-6f71cffeaa6a?w=1200&h=630&fit=crop&auto=format",
-    alt: "Mur de lettres typographiques noires — typographie",
+    alt: "Mur de lettres typographiques noires, typographie",
   },
   "nom": {
     url: "https://images.unsplash.com/photo-1613759612065-d5971d32ca49?w=1200&h=630&fit=crop&auto=format",
@@ -210,11 +210,11 @@ export const ARTICLE_IMAGE: Record<string, { url: string; alt: string }> = {
   },
   "charte": {
     url: "https://images.unsplash.com/photo-1645658043538-fc2bb1702cfe?w=1200&h=630&fit=crop&auto=format",
-    alt: "Guide d'identité de marque ouvert — charte graphique",
+    alt: "Guide d'identité de marque ouvert, charte graphique",
   },
   "services": {
     url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=630&fit=crop&auto=format",
-    alt: "Écran d'ordinateur avec un logiciel d'édition — retouche, montage et conception",
+    alt: "Écran d'ordinateur avec un logiciel d'édition, retouche, montage et conception",
   },
   "whatsapp": {
     url: "https://images.unsplash.com/photo-1603145733146-ae562a55031e?w=1200&h=630&fit=crop&auto=format",
@@ -222,15 +222,15 @@ export const ARTICLE_IMAGE: Record<string, { url: string; alt: string }> = {
   },
   "ads": {
     url: "https://images.unsplash.com/photo-1513757378314-e46255f6ed16?w=1200&h=630&fit=crop&auto=format",
-    alt: "Panneau publicitaire vierge — publicité payante",
+    alt: "Panneau publicitaire vierge, publicité payante",
   },
   "storytelling": {
     url: "https://images.unsplash.com/photo-1563279699-4c5dfcab048c?w=1200&h=630&fit=crop&auto=format",
-    alt: "Équipe en réunion autour d'une table — stratégie de marque",
+    alt: "Équipe en réunion autour d'une table, stratégie de marque",
   },
   "slogan": {
     url: "https://images.unsplash.com/photo-1610454059909-f9a5a6eb4e58?w=1200&h=630&fit=crop&auto=format",
-    alt: "Lettres et mots découpés en rouge et noir — slogan",
+    alt: "Lettres et mots découpés en rouge et noir, slogan",
   },
   "newsletter": {
     url: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=630&fit=crop&auto=format",
@@ -238,7 +238,7 @@ export const ARTICLE_IMAGE: Record<string, { url: string; alt: string }> = {
   },
   "seo": {
     url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=630&fit=crop&auto=format",
-    alt: "Écran affichant du code — référencement et site web",
+    alt: "Écran affichant du code, référencement et site web",
   },
   "ecommerce": {
     url: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200&h=630&fit=crop&auto=format",
@@ -250,55 +250,55 @@ export const ARTICLE_IMAGE: Record<string, { url: string; alt: string }> = {
   },
   "tendances": {
     url: "https://images.unsplash.com/photo-1461958508236-9a742665a0d5?w=1200&h=630&fit=crop&auto=format",
-    alt: "Découpes colorées en gros plan — tendances design",
+    alt: "Découpes colorées en gros plan, tendances design",
   },
   "budget": {
     url: "https://images.unsplash.com/photo-1716471330463-f475b00f0506?w=1200&h=630&fit=crop&auto=format",
-    alt: "Bureau avec échantillons de couleurs et outils de design — budget",
+    alt: "Bureau avec échantillons de couleurs et outils de design, budget",
   },
   "refonte": {
     url: "https://images.unsplash.com/photo-1764737740462-2a310c7b2c39?w=1200&h=630&fit=crop&auto=format",
-    alt: "Designer esquissant un nouveau logo — refonte de marque",
+    alt: "Designer esquissant un nouveau logo, refonte de marque",
   },
   "communication-visuelle": {
     url: "https://images.unsplash.com/photo-1461958508236-9a742665a0d5?w=1200&h=630&fit=crop&auto=format",
-    alt: "Formes et découpes colorées — la communication visuelle",
+    alt: "Formes et découpes colorées, la communication visuelle",
   },
   "moodboard": {
     url: "https://images.unsplash.com/photo-1716471330463-f475b00f0506?w=1200&h=630&fit=crop&auto=format",
-    alt: "Échantillons de couleurs et références visuelles sur un bureau — moodboard",
+    alt: "Échantillons de couleurs et références visuelles sur un bureau, moodboard",
   },
   "reel": {
     url: "https://images.unsplash.com/photo-1611926653458-09294b3142bf?w=1200&h=630&fit=crop&auto=format",
-    alt: "Smartphone affichant des vidéos courtes sur les réseaux sociaux — Reels",
+    alt: "Smartphone affichant des vidéos courtes sur les réseaux sociaux, Reels",
   },
   "carrousel": {
     url: "https://images.unsplash.com/photo-1596526131090-bcbe09e432d3?w=1200&h=630&fit=crop&auto=format",
-    alt: "Application de réseau social sur un écran de smartphone — carrousel",
+    alt: "Application de réseau social sur un écran de smartphone, carrousel",
   },
   "banniere": {
     url: "https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=1200&h=630&fit=crop&auto=format",
-    alt: "Formes abstraites colorées — bannière et couverture",
+    alt: "Formes abstraites colorées, bannière et couverture",
   },
   "coherence": {
     url: "https://images.unsplash.com/photo-1645658043538-fc2bb1702cfe?w=1200&h=630&fit=crop&auto=format",
-    alt: "Guide d'identité de marque ouvert — cohérence visuelle",
+    alt: "Guide d'identité de marque ouvert, cohérence visuelle",
   },
   "retouche": {
     url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=630&fit=crop&auto=format",
-    alt: "Écran d'ordinateur portable avec un logiciel d'édition — retouche photo",
+    alt: "Écran d'ordinateur portable avec un logiciel d'édition, retouche photo",
   },
   "infographie": {
     url: "https://images.unsplash.com/photo-1461958508236-9a742665a0d5?w=1200&h=630&fit=crop&auto=format",
-    alt: "Découpes colorées organisées — infographie",
+    alt: "Découpes colorées organisées, infographie",
   },
   "miniature": {
     url: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1200&h=630&fit=crop&auto=format",
-    alt: "Timeline de montage vidéo sur un écran — miniature vidéo",
+    alt: "Timeline de montage vidéo sur un écran, miniature vidéo",
   },
   "montage": {
     url: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=1200&h=630&fit=crop&auto=format",
-    alt: "Logiciel de montage vidéo avec des clips sur une timeline — montage",
+    alt: "Logiciel de montage vidéo avec des clips sur une timeline, montage",
   },
   "vectorisation": {
     url: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1200&h=630&fit=crop&auto=format",
@@ -306,7 +306,7 @@ export const ARTICLE_IMAGE: Record<string, { url: string; alt: string }> = {
   },
   "pixelisation": {
     url: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200&h=630&fit=crop&auto=format",
-    alt: "Gros plan sur des pixels d'une image agrandie — résolution",
+    alt: "Gros plan sur des pixels d'une image agrandie, résolution",
   },
   "ia-design": {
     url: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&h=630&fit=crop&auto=format",
@@ -327,20 +327,20 @@ export const ARTICLE_VIDEO: Record<string, { url: string; alt: string }> = {
   },
   "motion": {
     url: "https://videos.pexels.com/video-files/11387730/11387730-sd_960_540_30fps.mp4",
-    alt: "Formes et couleurs abstraites en mouvement — motion design",
+    alt: "Formes et couleurs abstraites en mouvement, motion design",
   },
 }
 
 // Localized captions for the inline media (one animated clip + one real project).
 export const MEDIA_CAPTION: Record<string, { video: string; work: string }> = {
-  fr: { video: "Aperçu animé — un exemple du rendu final.", work: "Une réalisation INOV pour ce type de service" },
-  en: { video: "Animated preview — an example of the final result.", work: "An INOV project for this type of service" },
-  es: { video: "Vista previa animada — un ejemplo del resultado final.", work: "Un proyecto de INOV para este tipo de servicio" },
-  ht: { video: "Apèsi anime — yon egzanp rannman final la.", work: "Yon reyalizasyon INOV pou tip sèvis sa a" },
-  pt: { video: "Pré-visualização animada — um exemplo do resultado final.", work: "Um projeto INOV para este tipo de serviço" },
-  it: { video: "Anteprima animata — un esempio del risultato finale.", work: "Un progetto INOV per questo tipo di servizio" },
-  de: { video: "Animierte Vorschau — ein Beispiel für das Endergebnis.", work: "Ein INOV-Projekt für diese Art von Service" },
-  ar: { video: "معاينة متحركة — مثال على النتيجة النهائية.", work: "مشروع من INOV لهذا النوع من الخدمات" },
+  fr: { video: "Aperçu animé, un exemple du rendu final.", work: "Une réalisation INOV pour ce type de service" },
+  en: { video: "Animated preview, an example of the final result.", work: "An INOV project for this type of service" },
+  es: { video: "Vista previa animada, un ejemplo del resultado final.", work: "Un proyecto de INOV para este tipo de servicio" },
+  ht: { video: "Apèsi anime, yon egzanp rannman final la.", work: "Yon reyalizasyon INOV pou tip sèvis sa a" },
+  pt: { video: "Pré-visualização animada, um exemplo do resultado final.", work: "Um projeto INOV para este tipo de serviço" },
+  it: { video: "Anteprima animata, un esempio del risultato finale.", work: "Un progetto INOV per questo tipo di servizio" },
+  de: { video: "Animierte Vorschau, ein Beispiel für das Endergebnis.", work: "Ein INOV-Projekt für diese Art von Service" },
+  ar: { video: "معاينة متحركة, مثال على النتيجة النهائية.", work: "مشروع من INOV لهذا النوع من الخدمات" },
 }
 
 import { ARTICLES, type Article } from "../data/blogArticles"
@@ -440,49 +440,49 @@ const VIDEO_OUTRO: Record<string, {
 }> = {
   fr: {
     question: "Et toi, quelle est ta plus grande difficulté en design ou communication ? Dis-nous en commentaire 👇",
-    shareCta: "Si cet article t'a été utile, partage-le à quelqu'un qui en a besoin — ça nous aide beaucoup à grandir !",
+    shareCta: "Si cet article t'a été utile, partage-le à quelqu'un qui en a besoin, ça nous aide beaucoup à grandir !",
     contactCta: "Tu as un projet design, web ou branding ? On est là pour t'aider.",
     whatsappLabel: "Écrire sur WhatsApp", devisLabel: "Demander un devis",
   },
   en: {
     question: "What's your biggest challenge in design or communication? Tell us in the comments 👇",
-    shareCta: "If this article helped you, share it with someone who needs it — it helps us grow a lot!",
+    shareCta: "If this article helped you, share it with someone who needs it, it helps us grow a lot!",
     contactCta: "Got a design, web or branding project? We're here to help.",
     whatsappLabel: "Message us on WhatsApp", devisLabel: "Request a quote",
   },
   es: {
     question: "¿Cuál es tu mayor dificultad en diseño o comunicación? Cuéntanos en los comentarios 👇",
-    shareCta: "Si este artículo te fue útil, compártelo con alguien que lo necesite — ¡nos ayuda mucho a crecer!",
+    shareCta: "Si este artículo te fue útil, compártelo con alguien que lo necesite, ¡nos ayuda mucho a crecer!",
     contactCta: "¿Tienes un proyecto de diseño, web o branding? Estamos aquí para ayudarte.",
     whatsappLabel: "Escríbenos por WhatsApp", devisLabel: "Pedir un presupuesto",
   },
   ht: {
     question: "Ki pi gwo difikilte ou genyen nan design oswa kominikasyon? Di nou nan kòmantè yo 👇",
-    shareCta: "Si atik sa a te ede w, pataje l ak yon moun ki bezwen l — sa ede nou grandi anpil!",
+    shareCta: "Si atik sa a te ede w, pataje l ak yon moun ki bezwen l, sa ede nou grandi anpil!",
     contactCta: "Ou gen yon pwojè design, entènèt oswa branding? Nou la pou ede w.",
     whatsappLabel: "Ekri nou sou WhatsApp", devisLabel: "Mande yon devis",
   },
   pt: {
     question: "Qual é o seu maior desafio em design ou comunicação? Conte-nos nos comentários 👇",
-    shareCta: "Se este artigo te ajudou, compartilhe com alguém que precisa — isso nos ajuda muito a crescer!",
+    shareCta: "Se este artigo te ajudou, compartilhe com alguém que precisa, isso nos ajuda muito a crescer!",
     contactCta: "Tem um projeto de design, web ou branding? Estamos aqui para ajudar.",
     whatsappLabel: "Fale conosco no WhatsApp", devisLabel: "Pedir um orçamento",
   },
   it: {
     question: "Qual è la tua più grande difficoltà nel design o nella comunicazione? Dimmelo nei commenti 👇",
-    shareCta: "Se questo articolo ti è stato utile, condividilo con chi ne ha bisogno — ci aiuta molto a crescere!",
+    shareCta: "Se questo articolo ti è stato utile, condividilo con chi ne ha bisogno, ci aiuta molto a crescere!",
     contactCta: "Hai un progetto di design, web o branding? Siamo qui per aiutarti.",
     whatsappLabel: "Scrivici su WhatsApp", devisLabel: "Richiedere un preventivo",
   },
   de: {
     question: "Was ist deine größte Herausforderung im Design oder in der Kommunikation? Schreib es uns in die Kommentare 👇",
-    shareCta: "Wenn dir dieser Artikel geholfen hat, teile ihn mit jemandem, der ihn braucht — das hilft uns sehr zu wachsen!",
+    shareCta: "Wenn dir dieser Artikel geholfen hat, teile ihn mit jemandem, der ihn braucht, das hilft uns sehr zu wachsen!",
     contactCta: "Hast du ein Design-, Web- oder Branding-Projekt? Wir helfen gerne.",
     whatsappLabel: "Schreib uns auf WhatsApp", devisLabel: "Angebot anfordern",
   },
   ar: {
     question: "ما هو أكبر تحدٍّ تواجهه في التصميم أو التواصل؟ أخبرنا في التعليقات 👇",
-    shareCta: "إذا أفادك هذا المقال، شاركه مع من يحتاجه — هذا يساعدنا كثيراً على النمو!",
+    shareCta: "إذا أفادك هذا المقال، شاركه مع من يحتاجه, هذا يساعدنا كثيراً على النمو!",
     contactCta: "هل لديك مشروع تصميم، ويب، أو هوية بصرية؟ نحن هنا لمساعدتك.",
     whatsappLabel: "راسلنا على واتساب", devisLabel: "طلب عرض سعر",
   },
@@ -571,7 +571,7 @@ function ArticleModal({ article, slug, lang, ui, onClose }: {
           <X size={20} />
         </button>
 
-        {/* Hero — animated clip when available, else the cover image */}
+        {/* Hero, animated clip when available, else the cover image */}
         <div style={{ width: "100%", height: "clamp(180px, 34vw, 320px)", background: "var(--ds-bg-sec)", overflow: "hidden", position: "relative" }}>
           {vid ? (
             <video src={vid.url} poster={img?.url} autoPlay muted loop playsInline preload="metadata" aria-label={vid.alt}

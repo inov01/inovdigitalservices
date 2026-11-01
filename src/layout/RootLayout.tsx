@@ -38,7 +38,7 @@ export default function RootLayout() {
   }, [location.pathname, lang])
 
   useEffect(() => {
-    // Hide the loader after the first paint — don't wait on fonts.ready which can hang.
+    // Hide the loader after the first paint, don't wait on fonts.ready which can hang.
     const raf = requestAnimationFrame(() => setLoading(false))
     return () => cancelAnimationFrame(raf)
   }, [])
@@ -66,7 +66,7 @@ export default function RootLayout() {
       const id = match[1]
       e.preventDefault()
       if (location.pathname !== "/") {
-        // Coming from a blog/legal page — go home, then scroll once the section mounts.
+        // Coming from a blog/legal page, go home, then scroll once the section mounts.
         navigate(`/#${id}`)
       } else {
         smoothScrollToId(id)
@@ -85,7 +85,7 @@ export default function RootLayout() {
   }, [location.pathname, location.hash])
 
   // Scroll back to the top on every route change (e.g. a footer/header link
-  // followed while scrolled down). Skip when a hash is present — anchor scrolling
+  // followed while scrolled down). Skip when a hash is present, anchor scrolling
   // is handled by the effect above.
   useEffect(() => {
     if (location.hash) return

@@ -28,14 +28,14 @@ const dielinesCard: { icon: LucideIcon; price: number; preview: string; copy: Re
   price: 54,
   preview: dielinesPackaging,
   copy: {
-    fr: { title: "Emballage & Dielines", desc: "Gabarit de découpe, boîte, sac cadeau et mockup 3D — un emballage structurel prêt à imprimer pour sublimer votre produit." },
-    en: { title: "Packaging & Dielines", desc: "Cut template, box, gift bag and 3D mockup — print-ready structural packaging to make your product shine." },
-    es: { title: "Packaging & Dielines", desc: "Plantilla de corte, caja, bolsa de regalo y mockup 3D — packaging estructural listo para imprimir para lucir tu producto." },
-    ht: { title: "Anbalaj & Dielines", desc: "Modèl koupe, bwat, sak kado ak mockup 3D — yon anbalaj estriktirèl ki pare pou enprime pou mete pwodwi ou an valè." },
-    pt: { title: "Embalagem & Dielines", desc: "Molde de corte, caixa, sacola e mockup 3D — embalagem estrutural pronta para impressão para valorizar o seu produto." },
-    it: { title: "Packaging & Dielines", desc: "Fustella, scatola, shopper e mockup 3D — packaging strutturale pronto per la stampa per valorizzare il tuo prodotto." },
-    de: { title: "Verpackung & Stanzformen", desc: "Stanzkontur, Schachtel, Geschenktüte und 3D-Mockup — druckfertige Verpackung, die Ihr Produkt hervorhebt." },
-    ar: { title: "التغليف والقوالب (Dielines)", desc: "قالب القص وعلبة وحقيبة هدايا ومعاينة ثلاثية الأبعاد — تغليف هيكلي جاهز للطباعة لإبراز منتجك." },
+    fr: { title: "Emballage & Dielines", desc: "Gabarit de découpe, boîte, sac cadeau et mockup 3D, un emballage structurel prêt à imprimer pour sublimer votre produit." },
+    en: { title: "Packaging & Dielines", desc: "Cut template, box, gift bag and 3D mockup, print-ready structural packaging to make your product shine." },
+    es: { title: "Packaging & Dielines", desc: "Plantilla de corte, caja, bolsa de regalo y mockup 3D, packaging estructural listo para imprimir para lucir tu producto." },
+    ht: { title: "Anbalaj & Dielines", desc: "Modèl koupe, bwat, sak kado ak mockup 3D, yon anbalaj estriktirèl ki pare pou enprime pou mete pwodwi ou an valè." },
+    pt: { title: "Embalagem & Dielines", desc: "Molde de corte, caixa, sacola e mockup 3D, embalagem estrutural pronta para impressão para valorizar o seu produto." },
+    it: { title: "Packaging & Dielines", desc: "Fustella, scatola, shopper e mockup 3D, packaging strutturale pronto per la stampa per valorizzare il tuo prodotto." },
+    de: { title: "Verpackung & Stanzformen", desc: "Stanzkontur, Schachtel, Geschenktüte und 3D-Mockup, druckfertige Verpackung, die Ihr Produkt hervorhebt." },
+    ar: { title: "التغليف والقوالب (Dielines)", desc: "قالب القص وعلبة وحقيبة هدايا ومعاينة ثلاثية الأبعاد, تغليف هيكلي جاهز للطباعة لإبراز منتجك." },
   },
 }
 
@@ -66,7 +66,7 @@ function ServiceCard({ icon: Icon, title, desc, preview, orderLabel, waHref }: {
     >
       {preview ? (
         <div style={{ borderRadius: "var(--r-md)", overflow: "hidden", marginBottom: 18, lineHeight: 0, background: "var(--ds-bg-sec)" }}>
-          <img src={preview} alt={`Exemple — ${title}`} loading="lazy" decoding="async" style={{ width: "100%", height: "auto", display: "block", objectFit: "contain" }} />
+          <img src={preview} alt={`Exemple, ${title}`} loading="lazy" decoding="async" style={{ width: "100%", height: "auto", display: "block", objectFit: "contain" }} />
         </div>
       ) : (
         <div style={{ width: 52, height: 52, borderRadius: "var(--r-md)", background: "var(--ds-accent-a08)", border: "1px solid var(--ds-accent-a18)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 18 }}>

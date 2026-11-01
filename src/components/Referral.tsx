@@ -24,7 +24,7 @@ const COPY: Record<Lang, {
     step1t: "Partagez votre expérience",
     step1d: "Vous avez aimé travailler avec INOV ? Mentionnez-nous à un entrepreneur, un ami ou un collègue qui cherche à soigner son image.",
     step2t: "Votre contact est accueilli avec soin",
-    step2d: "Il bénéficie d'un accueil personnalisé et d'une révision offerte sur sa première commande — pas un code promo, une vraie attention.",
+    step2d: "Il bénéficie d'un accueil personnalisé et d'une révision offerte sur sa première commande, pas un code promo, une vraie attention.",
     step3t: "Nous vous offrons un bonus",
     step3d: "À chaque client que vous nous présentez et qui commande, vous recevez un crédit de remerciement à valoir sur n'importe lequel de vos projets futurs.",
     badge: "Réservé à nos clients satisfaits",
@@ -39,7 +39,7 @@ const COPY: Record<Lang, {
     step1t: "Share your experience",
     step1d: "Enjoyed working with INOV? Mention us to an entrepreneur, a friend, or a colleague who wants to improve their brand image.",
     step2t: "Your contact gets personal attention",
-    step2d: "They receive a warm onboarding and a complimentary revision on their first order — not a promo code, genuine care.",
+    step2d: "They receive a warm onboarding and a complimentary revision on their first order, not a promo code, genuine care.",
     step3t: "We offer you a thank-you bonus",
     step3d: "For every client you introduce who places an order, you receive a credit to use on any future project of yours.",
     badge: "Reserved for satisfied clients",
@@ -54,7 +54,7 @@ const COPY: Record<Lang, {
     step1t: "Comparte tu experiencia",
     step1d: "¿Te gustó trabajar con INOV? Menciónanos a un emprendedor, amigo o colega que quiera mejorar su imagen de marca.",
     step2t: "Tu contacto recibe atención personalizada",
-    step2d: "Recibe una bienvenida personalizada y una revisión gratuita en su primer pedido — no un código promo, atención real.",
+    step2d: "Recibe una bienvenida personalizada y una revisión gratuita en su primer pedido, no un código promo, atención real.",
     step3t: "Te ofrecemos un bono de agradecimiento",
     step3d: "Por cada cliente que nos presentes y que realice un pedido, recibes un crédito para cualquiera de tus proyectos futuros.",
     badge: "Reservado para clientes satisfechos",
@@ -69,7 +69,7 @@ const COPY: Record<Lang, {
     step1t: "Pataje eksperyans ou",
     step1d: "Ou te renmen travay ak INOV? Pale nou ak yon antreprenè, yon zanmi oswa yon kolèg ki vle amelyore imaj mak li.",
     step2t: "Kontак ou resevwa atansyon pèsonèl",
-    step2d: "Li resevwa yon akèy pèsonalize ak yon retouche gratis sou premye kòmand li — pa yon kòd promo, yon vrè atansyon.",
+    step2d: "Li resevwa yon akèy pèsonalize ak yon retouche gratis sou premye kòmand li, pa yon kòd promo, yon vrè atansyon.",
     step3t: "Nou ofri ou yon bonis remèsiman",
     step3d: "Pou chak kliyan ou prezante ki fè yon kòmand, ou resevwa yon kredi pou nenpòt pwojè futur ou.",
     badge: "Rezève pou kliyan satisfè",
@@ -84,7 +84,7 @@ const COPY: Record<Lang, {
     step1t: "Compartilhe sua experiência",
     step1d: "Gostou de trabalhar com a INOV? Fale de nós para um empreendedor, amigo ou colega que queira melhorar sua imagem de marca.",
     step2t: "Seu contato recebe atenção personalizada",
-    step2d: "Ele recebe uma recepção personalizada e uma revisão gratuita no primeiro pedido — não um código promocional, cuidado verdadeiro.",
+    step2d: "Ele recebe uma recepção personalizada e uma revisão gratuita no primeiro pedido, não um código promocional, cuidado verdadeiro.",
     step3t: "Oferecemos um bônus de agradecimento",
     step3d: "Para cada cliente que você nos apresentar e que fizer um pedido, você recebe um crédito para qualquer projeto futuro.",
     badge: "Reservado para clientes satisfeitos",
@@ -99,7 +99,7 @@ const COPY: Record<Lang, {
     step1t: "Condividi la tua esperienza",
     step1d: "Ti è piaciuto lavorare con INOV? Parlaci a un imprenditore, un amico o un collega che vuole migliorare la sua immagine di marca.",
     step2t: "Il tuo contatto riceve attenzione personale",
-    step2d: "Riceve un'accoglienza personalizzata e una revisione gratuita sul primo ordine — non un codice promo, vera attenzione.",
+    step2d: "Riceve un'accoglienza personalizzata e una revisione gratuita sul primo ordine, non un codice promo, vera attenzione.",
     step3t: "Ti offriamo un bonus di ringraziamento",
     step3d: "Per ogni cliente che ci presenti e che effettua un ordine, ricevi un credito da usare su qualsiasi tuo progetto futuro.",
     badge: "Riservato ai clienti soddisfatti",
@@ -114,7 +114,7 @@ const COPY: Record<Lang, {
     step1t: "Teilen Sie Ihre Erfahrung",
     step1d: "Hat die Arbeit mit INOV Ihnen gefallen? Empfehlen Sie uns einem Unternehmer, Freund oder Kollegen, der sein Markenimage verbessern möchte.",
     step2t: "Ihr Kontakt erhält persönliche Betreuung",
-    step2d: "Er erhält ein persönliches Onboarding und eine kostenlose Überarbeitung bei der ersten Bestellung — kein Promo-Code, echte Aufmerksamkeit.",
+    step2d: "Er erhält ein persönliches Onboarding und eine kostenlose Überarbeitung bei der ersten Bestellung, kein Promo-Code, echte Aufmerksamkeit.",
     step3t: "Wir bieten Ihnen einen Dankesbonus",
     step3d: "Für jeden Kunden, den Sie uns vorstellen und der bestellt, erhalten Sie ein Guthaben für beliebige künftige Projekte.",
     badge: "Nur für zufriedene Kunden",
@@ -129,7 +129,7 @@ const COPY: Record<Lang, {
     step1t: "شارك تجربتك",
     step1d: "أعجبك العمل مع INOV؟ أخبر عنا رائد أعمال أو صديقاً أو زميلاً يريد تحسين صورة علامته التجارية.",
     step2t: "جهة اتصالك تحصل على اهتمام شخصي",
-    step2d: "يحصل على ترحيب مخصص ومراجعة مجانية على أول طلب — ليس كوداً ترويجياً، بل اهتمام حقيقي.",
+    step2d: "يحصل على ترحيب مخصص ومراجعة مجانية على أول طلب, ليس كوداً ترويجياً، بل اهتمام حقيقي.",
     step3t: "نقدم لك مكافأة شكر",
     step3d: "مقابل كل عميل تُعرّفنا به ويضع طلباً، تحصل على رصيد تستخدمه في أي مشروع مستقبلي.",
     badge: "حصري للعملاء الراضين",
@@ -202,7 +202,7 @@ export default function Referral() {
           <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 17.6, color: "var(--ds-text-sec)", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>{c.sub}</p>
         </div>
 
-        {/* Steps — carousel */}
+        {/* Steps, carousel */}
         <style>{`
           @keyframes amb-fade-up {
             from { opacity: 0; transform: translateY(20px); }

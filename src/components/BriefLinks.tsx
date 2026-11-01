@@ -5,14 +5,14 @@ import { allBriefServices, briefStr } from "../data/briefs"
 
 // Section heading copy per language. The per-service names come from briefStr().
 const COPY: Record<string, { tag: string; title: string; subtitle: string; cta: string }> = {
-  fr: { tag: "Formulaires de brief", title: "Démarrez votre projet", subtitle: "Choisissez votre service et remplissez un brief détaillé — nous revenons vers vous avec une proposition sur mesure.", cta: "Remplir le brief" },
-  en: { tag: "Project briefs", title: "Start your project", subtitle: "Pick your service and fill in a detailed brief — we get back to you with a tailored proposal.", cta: "Fill the brief" },
-  es: { tag: "Formularios de brief", title: "Empieza tu proyecto", subtitle: "Elige tu servicio y completa un brief detallado — te respondemos con una propuesta a medida.", cta: "Completar el brief" },
-  ht: { tag: "Fòm brief", title: "Kòmanse pwojè ou", subtitle: "Chwazi sèvis ou epi ranpli yon brief detaye — n ap reponn ou ak yon pwopozisyon sou mezi.", cta: "Ranpli brief la" },
-  pt: { tag: "Formulários de brief", title: "Comece o seu projeto", subtitle: "Escolha o seu serviço e preencha um brief detalhado — respondemos com uma proposta personalizada.", cta: "Preencher o brief" },
-  it: { tag: "Moduli di brief", title: "Avvia il tuo progetto", subtitle: "Scegli il tuo servizio e compila un brief dettagliato — ti rispondiamo con una proposta su misura.", cta: "Compila il brief" },
-  de: { tag: "Projekt-Briefings", title: "Starten Sie Ihr Projekt", subtitle: "Wählen Sie Ihren Service und füllen Sie ein detailliertes Briefing aus — wir melden uns mit einem maßgeschneiderten Angebot.", cta: "Briefing ausfüllen" },
-  ar: { tag: "نماذج الموجز", title: "ابدأ مشروعك", subtitle: "اختر خدمتك واملأ موجزًا مفصلاً — سنعود إليك باقتراح مُخصّص.", cta: "املأ الموجز" },
+  fr: { tag: "Formulaires de brief", title: "Démarrez votre projet", subtitle: "Choisissez votre service et remplissez un brief détaillé, nous revenons vers vous avec une proposition sur mesure.", cta: "Remplir le brief" },
+  en: { tag: "Project briefs", title: "Start your project", subtitle: "Pick your service and fill in a detailed brief, we get back to you with a tailored proposal.", cta: "Fill the brief" },
+  es: { tag: "Formularios de brief", title: "Empieza tu proyecto", subtitle: "Elige tu servicio y completa un brief detallado, te respondemos con una propuesta a medida.", cta: "Completar el brief" },
+  ht: { tag: "Fòm brief", title: "Kòmanse pwojè ou", subtitle: "Chwazi sèvis ou epi ranpli yon brief detaye, n ap reponn ou ak yon pwopozisyon sou mezi.", cta: "Ranpli brief la" },
+  pt: { tag: "Formulários de brief", title: "Comece o seu projeto", subtitle: "Escolha o seu serviço e preencha um brief detalhado, respondemos com uma proposta personalizada.", cta: "Preencher o brief" },
+  it: { tag: "Moduli di brief", title: "Avvia il tuo progetto", subtitle: "Scegli il tuo servizio e compila un brief dettagliato, ti rispondiamo con una proposta su misura.", cta: "Compila il brief" },
+  de: { tag: "Projekt-Briefings", title: "Starten Sie Ihr Projekt", subtitle: "Wählen Sie Ihren Service und füllen Sie ein detailliertes Briefing aus, wir melden uns mit einem maßgeschneiderten Angebot.", cta: "Briefing ausfüllen" },
+  ar: { tag: "نماذج الموجز", title: "ابدأ مشروعك", subtitle: "اختر خدمتك واملأ موجزًا مفصلاً, سنعود إليك باقتراح مُخصّص.", cta: "املأ الموجز" },
 }
 
 export default function BriefLinks() {

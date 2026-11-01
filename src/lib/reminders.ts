@@ -39,7 +39,7 @@ export function saveReminders(list: Reminder[]): void {
   try {
     localStorage.setItem(KEY, JSON.stringify(list))
   } catch {
-    /* quota / mode privé — on ignore */
+    /* quota / mode privé, on ignore */
   }
 }
 
@@ -67,18 +67,18 @@ export async function ensureNotificationPermission(): Promise<boolean> {
 
 export function fireNotification(r: Reminder): void {
   if (typeof Notification === "undefined" || Notification.permission !== "granted") return
-  const body = [r.client ? `Client : ${r.client}` : "", r.note ?? ""].filter(Boolean).join(" — ")
+  const body = [r.client ? `Client : ${r.client}` : "", r.note ?? ""].filter(Boolean).join(", ")
   try {
     new Notification(`${kindLabel(r.kind)} : ${r.title}`, {
       body: body || "C'est l'heure !",
       tag: r.id,
     })
   } catch {
-    /* certains navigateurs bloquent hors HTTPS — sans effet */
+    /* certains navigateurs bloquent hors HTTPS, sans effet */
   }
 }
 
-// ── Export calendrier (.ics) — vraie alarme cross-device ───────────────────────
+// ── Export calendrier (.ics), vraie alarme cross-device ───────────────────────
 function icsDate(d: Date): string {
   return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "")
 }
@@ -90,7 +90,7 @@ function icsEscape(s: string): string {
 export function reminderToICS(r: Reminder): string {
   const start = new Date(r.at)
   const end = new Date(start.getTime() + 30 * 60 * 1000)
-  const desc = [r.client ? `Client : ${r.client}` : "", r.note ?? ""].filter(Boolean).join(" — ")
+  const desc = [r.client ? `Client : ${r.client}` : "", r.note ?? ""].filter(Boolean).join(", ")
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",

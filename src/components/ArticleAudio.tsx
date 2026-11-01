@@ -4,7 +4,7 @@ import { Volume2, Pause, Play, Square } from "lucide-react"
 // Detect the actual language of the text so we pick a matching voice even when
 // the reader's UI language differs from the article's language (e.g. a French
 // article read while the interface is in English). Without this, the browser
-// would speak French words with an English voice — the reported accent bug.
+// would speak French words with an English voice, the reported accent bug.
 const HINTS: Record<string, string[]> = {
   fr: ["le", "la", "les", "des", "une", "est", "vous", "pour", "votre", "avec", "qui", "plus", "nous", "pas", "sur"],
   en: ["the", "and", "you", "your", "for", "with", "that", "this", "are", "not", "our", "have"],
@@ -32,7 +32,7 @@ function detectLang(text: string, fallback: string): string {
 }
 
 // BCP-47 locale used to pick a voice per app language. Haitian Creole has no
-// common TTS voice, so it falls back to French (closest phonetically) — but the
+// common TTS voice, so it falls back to French (closest phonetically), but the
 // text is respelled first (see creoleToFrenchPhonetic) so the French voice
 // actually pronounces Creole words instead of reading the spelling literally.
 const LOCALE: Record<string, string> = {
@@ -111,7 +111,7 @@ export default function ArticleAudio({ text, lang }: { text: string; lang: strin
   const stoppedRef = useRef(false)
 
   const L = LABELS[lang] ?? LABELS.fr
-  // Language used to choose the voice — derived from the text, not the UI.
+  // Language used to choose the voice, derived from the text, not the UI.
   const voiceLang = useMemo(() => detectLang(text, lang), [text, lang])
   const voicesRef = useRef<SpeechSynthesisVoice[]>([])
 
@@ -122,7 +122,7 @@ export default function ArticleAudio({ text, lang }: { text: string; lang: strin
     // getVoices() is async: it's often empty on the first call and only fills
     // once the engine loads voices, firing `voiceschanged`. Without this the
     // picker finds nothing and the browser falls back to its default (en-US)
-    // voice — the "American accent" bug. We keep the list refreshed here.
+    // voice, the "American accent" bug. We keep the list refreshed here.
     const load = () => { voicesRef.current = window.speechSynthesis.getVoices() }
     load()
     window.speechSynthesis.onvoiceschanged = load
@@ -148,7 +148,7 @@ export default function ArticleAudio({ text, lang }: { text: string; lang: strin
     if (!sameLang.length) return null
     // Rank by how human the voice sounds. Modern neural/cloud voices (Google,
     // Microsoft "Natural"/"Neural", Apple "Siri"/"Premium/Enhanced") are far more
-    // lifelike than the built-in "localService" robots we used to prefer — so we
+    // lifelike than the built-in "localService" robots we used to prefer, so we
     // now score those UP and use localService only as a last-resort tiebreaker.
     const HUMAN = ["natural", "neural", "wavenet", "premium", "enhanced", "siri", "google", "multilingual", "studio", "journey"]
     const score = (v: SpeechSynthesisVoice): number => {

@@ -34,7 +34,7 @@ export type Str = {
 export const TR: Record<Lang, Str> = {
   fr: {
     eyebrow: "Espace Formation", title: "Apprends le design avec INOV",
-    intro: "Des formations concrètes, animées par des pros haïtiens, pour maîtriser le design, le branding et le web — à ton rythme.",
+    intro: "Des formations concrètes, animées par des pros haïtiens, pour maîtriser le design, le branding et le web, à ton rythme.",
     back: "Retour à l'accueil", free: "Gratuite", paid: "Payante", hours: "h", from: "À partir de",
     freeHint: "Pour comprendre la communication visuelle et le branding, sans prérequis technique.",
     paidHint: "Pour apprendre un métier : graphic design, branding, montage vidéo et communication visuelle.",
@@ -42,7 +42,7 @@ export const TR: Record<Lang, Str> = {
     beginner: "Débutant", intermediate: "Intermédiaire", advanced: "Avancé",
     seats: "places", program: "Au programme", enroll: "S'inscrire", enrolled: "Inscrit",
     instructor: "Formateur", empty: "Bientôt de nouvelles formations",
-    emptyHint: "Reviens vite — le catalogue s'enrichit régulièrement.", starts: "Débute le",
+    emptyHint: "Reviens vite, le catalogue s'enrichit régulièrement.", starts: "Débute le",
     name: "Nom complet", email: "E-mail", whatsapp: "Numéro WhatsApp", whatsappPh: "34 56 78 90",
     msg: "Message (optionnel)", msgPh: "Une question, un objectif d'apprentissage…",
     submit: "Confirmer mon inscription", sending: "Envoi…",
@@ -57,15 +57,15 @@ export const TR: Record<Lang, Str> = {
   },
   en: {
     eyebrow: "Training Space", title: "Learn design with INOV",
-    intro: "Hands-on courses led by Haitian pros to master design, branding and the web — at your own pace.",
+    intro: "Hands-on courses led by Haitian pros to master design, branding and the web, at your own pace.",
     back: "Back to home", free: "Free", paid: "Paid", hours: "h", from: "From",
-    freeHint: "To understand visual communication and branding — no technical background needed.",
+    freeHint: "To understand visual communication and branding, no technical background needed.",
     paidHint: "To learn a craft: graphic design, branding, video editing and visual communication.",
     online: "Online", presential: "In person", hybrid: "Hybrid",
     beginner: "Beginner", intermediate: "Intermediate", advanced: "Advanced",
     seats: "seats", program: "Curriculum", enroll: "Enroll", enrolled: "Enrolled",
     instructor: "Instructor", empty: "New courses coming soon",
-    emptyHint: "Check back soon — the catalogue grows regularly.", starts: "Starts",
+    emptyHint: "Check back soon, the catalogue grows regularly.", starts: "Starts",
     name: "Full name", email: "Email", whatsapp: "WhatsApp number", whatsappPh: "555 123 4567",
     msg: "Message (optional)", msgPh: "A question, a learning goal…",
     submit: "Confirm my enrollment", sending: "Sending…",
@@ -80,7 +80,7 @@ export const TR: Record<Lang, Str> = {
   },
   es: {
     eyebrow: "Espacio Formación", title: "Aprende diseño con INOV",
-    intro: "Cursos prácticos con profesionales haitianos para dominar el diseño, el branding y la web — a tu ritmo.",
+    intro: "Cursos prácticos con profesionales haitianos para dominar el diseño, el branding y la web, a tu ritmo.",
     back: "Volver al inicio", free: "Gratis", paid: "De pago", hours: "h", from: "Desde",
     freeHint: "Para entender la comunicación visual y el branding, sin requisitos técnicos.",
     paidHint: "Para aprender un oficio: diseño gráfico, branding, edición de video y comunicación visual.",
@@ -88,7 +88,7 @@ export const TR: Record<Lang, Str> = {
     beginner: "Principiante", intermediate: "Intermedio", advanced: "Avanzado",
     seats: "plazas", program: "Programa", enroll: "Inscribirse", enrolled: "Inscrito",
     instructor: "Formador", empty: "Próximamente nuevos cursos",
-    emptyHint: "Vuelve pronto — el catálogo crece a menudo.", starts: "Empieza el",
+    emptyHint: "Vuelve pronto, el catálogo crece a menudo.", starts: "Empieza el",
     name: "Nombre completo", email: "Correo", whatsapp: "Número de WhatsApp", whatsappPh: "612 34 56 78",
     msg: "Mensaje (opcional)", msgPh: "Una duda, un objetivo…",
     submit: "Confirmar inscripción", sending: "Enviando…",
@@ -103,7 +103,7 @@ export const TR: Record<Lang, Str> = {
   },
   ht: {
     eyebrow: "Espas Fòmasyon", title: "Aprann design ak INOV",
-    intro: "Fòmasyon konkrè, anime pa pwofesyonèl ayisyen, pou w metrize design, branding ak entènèt — nan pwòp ritm pa w.",
+    intro: "Fòmasyon konkrè, anime pa pwofesyonèl ayisyen, pou w metrize design, branding ak entènèt, nan pwòp ritm pa w.",
     back: "Tounen nan akèy", free: "Gratis", paid: "Peye", hours: "è", from: "Apati",
     freeHint: "Pou w konprann kominikasyon vizyèl ak branding, san okenn baz teknik.",
     paidHint: "Pou w aprann yon metye : graphic design, branding, montaj videyo ak kominikasyon vizyèl.",
@@ -111,7 +111,7 @@ export const TR: Record<Lang, Str> = {
     beginner: "Debitan", intermediate: "Mwayen", advanced: "Avanse",
     seats: "plas", program: "Sa w ap aprann", enroll: "Enskri", enrolled: "Enskri",
     instructor: "Fòmatè", empty: "Gen lòt fòmasyon k ap vini talè",
-    emptyHint: "Tounen vin gade — katalòg la ap grandi souvan.", starts: "Kòmanse",
+    emptyHint: "Tounen vin gade, katalòg la ap grandi souvan.", starts: "Kòmanse",
     name: "Non konplè", email: "Imèl", whatsapp: "Nimewo WhatsApp", whatsappPh: "34 56 78 90",
     msg: "Mesaj (opsyonèl)", msgPh: "Yon kesyon, yon objektif…",
     submit: "Konfime enskripsyon m", sending: "N ap voye…",
@@ -126,7 +126,7 @@ export const TR: Record<Lang, Str> = {
   },
   pt: {
     eyebrow: "Espaço Formação", title: "Aprenda design com a INOV",
-    intro: "Cursos práticos com profissionais haitianos para dominar design, branding e web — no seu ritmo.",
+    intro: "Cursos práticos com profissionais haitianos para dominar design, branding e web, no seu ritmo.",
     back: "Voltar ao início", free: "Grátis", paid: "Pago", hours: "h", from: "A partir de",
     freeHint: "Para entender a comunicação visual e o branding, sem pré-requisitos técnicos.",
     paidHint: "Para aprender uma profissão: design gráfico, branding, edição de vídeo e comunicação visual.",
@@ -134,7 +134,7 @@ export const TR: Record<Lang, Str> = {
     beginner: "Iniciante", intermediate: "Intermediário", advanced: "Avançado",
     seats: "vagas", program: "Programa", enroll: "Inscrever-se", enrolled: "Inscrito",
     instructor: "Instrutor", empty: "Novos cursos em breve",
-    emptyHint: "Volte logo — o catálogo cresce sempre.", starts: "Começa em",
+    emptyHint: "Volte logo, o catálogo cresce sempre.", starts: "Começa em",
     name: "Nome completo", email: "E-mail", whatsapp: "Número de WhatsApp", whatsappPh: "11 91234 5678",
     msg: "Mensagem (opcional)", msgPh: "Uma dúvida, um objetivo…",
     submit: "Confirmar inscrição", sending: "Enviando…",
@@ -149,7 +149,7 @@ export const TR: Record<Lang, Str> = {
   },
   it: {
     eyebrow: "Spazio Formazione", title: "Impara il design con INOV",
-    intro: "Corsi pratici tenuti da professionisti haitiani per padroneggiare design, branding e web — al tuo ritmo.",
+    intro: "Corsi pratici tenuti da professionisti haitiani per padroneggiare design, branding e web, al tuo ritmo.",
     back: "Torna alla home", free: "Gratis", paid: "A pagamento", hours: "h", from: "Da",
     freeHint: "Per capire la comunicazione visiva e il branding, senza prerequisiti tecnici.",
     paidHint: "Per imparare un mestiere: graphic design, branding, montaggio video e comunicazione visiva.",
@@ -157,7 +157,7 @@ export const TR: Record<Lang, Str> = {
     beginner: "Principiante", intermediate: "Intermedio", advanced: "Avanzato",
     seats: "posti", program: "Programma", enroll: "Iscriviti", enrolled: "Iscritto",
     instructor: "Docente", empty: "Nuovi corsi in arrivo",
-    emptyHint: "Torna presto — il catalogo cresce spesso.", starts: "Inizia il",
+    emptyHint: "Torna presto, il catalogo cresce spesso.", starts: "Inizia il",
     name: "Nome completo", email: "E-mail", whatsapp: "Numero WhatsApp", whatsappPh: "312 345 6789",
     msg: "Messaggio (facoltativo)", msgPh: "Una domanda, un obiettivo…",
     submit: "Conferma iscrizione", sending: "Invio…",
@@ -172,15 +172,15 @@ export const TR: Record<Lang, Str> = {
   },
   de: {
     eyebrow: "Weiterbildung", title: "Lerne Design mit INOV",
-    intro: "Praxisnahe Kurse von haitianischen Profis, um Design, Branding und Web zu meistern — in deinem Tempo.",
+    intro: "Praxisnahe Kurse von haitianischen Profis, um Design, Branding und Web zu meistern, in deinem Tempo.",
     back: "Zur Startseite", free: "Kostenlos", paid: "Kostenpflichtig", hours: "Std.", from: "Ab",
-    freeHint: "Um visuelle Kommunikation und Branding zu verstehen — ohne technische Vorkenntnisse.",
+    freeHint: "Um visuelle Kommunikation und Branding zu verstehen, ohne technische Vorkenntnisse.",
     paidHint: "Um einen Beruf zu erlernen: Grafikdesign, Branding, Videoschnitt und visuelle Kommunikation.",
     online: "Online", presential: "Vor Ort", hybrid: "Hybrid",
     beginner: "Anfänger", intermediate: "Mittelstufe", advanced: "Fortgeschritten",
     seats: "Plätze", program: "Lehrplan", enroll: "Anmelden", enrolled: "Angemeldet",
     instructor: "Dozent", empty: "Bald neue Kurse",
-    emptyHint: "Schau bald wieder vorbei — der Katalog wächst stetig.", starts: "Beginnt am",
+    emptyHint: "Schau bald wieder vorbei, der Katalog wächst stetig.", starts: "Beginnt am",
     name: "Vollständiger Name", email: "E-Mail", whatsapp: "WhatsApp-Nummer", whatsappPh: "151 23456789",
     msg: "Nachricht (optional)", msgPh: "Eine Frage, ein Lernziel…",
     submit: "Anmeldung bestätigen", sending: "Senden…",
@@ -195,7 +195,7 @@ export const TR: Record<Lang, Str> = {
   },
   ar: {
     eyebrow: "مساحة التدريب", title: "تعلّم التصميم مع INOV",
-    intro: "دورات عملية يقدّمها محترفون هايتيون لإتقان التصميم والهوية والويب — على وتيرتك.",
+    intro: "دورات عملية يقدّمها محترفون هايتيون لإتقان التصميم والهوية والويب, على وتيرتك.",
     back: "العودة للرئيسية", free: "مجاني", paid: "مدفوع", hours: "س", from: "ابتداءً من",
     freeHint: "لفهم التواصل البصري والعلامة التجارية، دون متطلبات تقنية.",
     paidHint: "لتعلّم مهنة: التصميم الجرافيكي، العلامة التجارية، مونتاج الفيديو والتواصل البصري.",
@@ -203,7 +203,7 @@ export const TR: Record<Lang, Str> = {
     beginner: "مبتدئ", intermediate: "متوسط", advanced: "متقدّم",
     seats: "مقاعد", program: "المنهج", enroll: "سجّل", enrolled: "مسجّل",
     instructor: "المدرّب", empty: "دورات جديدة قريباً",
-    emptyHint: "عُد قريباً — الكتالوج يتوسّع باستمرار.", starts: "يبدأ في",
+    emptyHint: "عُد قريباً, الكتالوج يتوسّع باستمرار.", starts: "يبدأ في",
     name: "الاسم الكامل", email: "البريد", whatsapp: "رقم واتساب", whatsappPh: "50 123 4567",
     msg: "رسالة (اختياري)", msgPh: "سؤال أو هدف تعليمي…",
     submit: "تأكيد التسجيل", sending: "جارٍ الإرسال…",
@@ -326,7 +326,7 @@ export default function Formation() {
   const [filter, setFilter] = useState<CourseType>("all")
 
   useEffect(() => {
-    applyPageMeta({ title: `${s.title} — INOV Digital Services`, description: s.intro, type: "website" })
+    applyPageMeta({ title: `${s.title}, INOV Digital Services`, description: s.intro, type: "website" })
     track("view_formation")
     window.scrollTo(0, 0)
     api.listFormations().then((r) => setCourses(r.formations)).catch(() => setCourses([]))
@@ -422,11 +422,11 @@ export default function Formation() {
           <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 22px", marginBottom: 32 }}>
             <span style={{ display: "inline-flex", alignItems: "flex-start", gap: 8, maxWidth: 440, fontFamily: "'Outfit', sans-serif", fontSize: 13.5, lineHeight: 1.5, color: "var(--ds-text-muted)" }}>
               <span aria-hidden style={{ flexShrink: 0, width: 9, height: 9, borderRadius: "50%", background: "#16A34A", marginTop: 5 }} />
-              <span><strong style={{ color: "var(--ds-text)", fontWeight: 700 }}>{s.free} —</strong> {s.freeHint}</span>
+              <span><strong style={{ color: "var(--ds-text)", fontWeight: 700 }}>{s.free} :</strong> {s.freeHint}</span>
             </span>
             <span style={{ display: "inline-flex", alignItems: "flex-start", gap: 8, maxWidth: 440, fontFamily: "'Outfit', sans-serif", fontSize: 13.5, lineHeight: 1.5, color: "var(--ds-text-muted)" }}>
               <span aria-hidden style={{ flexShrink: 0, width: 9, height: 9, borderRadius: "50%", background: "var(--ds-accent)", marginTop: 5 }} />
-              <span><strong style={{ color: "var(--ds-text)", fontWeight: 700 }}>{s.paid} —</strong> {s.paidHint}</span>
+              <span><strong style={{ color: "var(--ds-text)", fontWeight: 700 }}>{s.paid} :</strong> {s.paidHint}</span>
             </span>
           </div>
         )}
