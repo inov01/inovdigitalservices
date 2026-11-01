@@ -153,7 +153,6 @@ export default function Header() {
 
             {/* Language selector */}
             <div style={{ position: "relative" }} ref={settingsRef}>
-              {/* Desktop */}
               <button
                 onClick={() => setLangOpen((o) => !o)}
                 aria-haspopup="listbox"
@@ -176,23 +175,6 @@ export default function Header() {
                   <ChevronDown size={14} aria-hidden="true" />
                 </span>
               </button>
-              {/* Mobile: globe icon */}
-              <button
-                onClick={() => setLangOpen((o) => !o)}
-                aria-haspopup="listbox"
-                aria-expanded={langOpen}
-                aria-label={langLabel}
-                className="lang-btn-mobile"
-                style={{
-                  display: "none", alignItems: "center", justifyContent: "center",
-                  width: 38, height: 38,
-                  background: "transparent", border: "1.5px solid var(--ds-border-strong)", borderRadius: "50%",
-                  cursor: "pointer", color: "var(--ds-text)", padding: 0,
-                }}
-              >
-                <Globe size={18} aria-hidden="true" />
-              </button>
-
               {langOpen && (
                 <div
                   className="lang-dropdown glass"
@@ -321,13 +303,40 @@ export default function Header() {
               <UserRound size={17} strokeWidth={2} />
               {accountLabel}
             </Link>
+            {/* Language: lives in the menu on mobile so the header keeps room for the burger */}
+            <div role="group" aria-label={langLabel} style={{ padding: "14px 0 4px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "var(--font-outfit)", fontSize: 13, fontWeight: 700, color: "var(--ds-text-faint)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 10 }}>
+                <Globe size={16} aria-hidden="true" />
+                {langLabel}
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {LANGS.map((l) => (
+                  <button
+                    key={l.code}
+                    type="button"
+                    aria-pressed={l.code === lang}
+                    onClick={() => { setLang(l.code); setMenuOpen(false) }}
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: 7,
+                      fontFamily: "var(--font-outfit)", fontSize: 14, fontWeight: l.code === lang ? 700 : 500,
+                      color: l.code === lang ? "var(--ds-accent-text)" : "var(--ds-text)",
+                      background: l.code === lang ? "var(--ds-accent-a08)" : "transparent",
+                      border: `1.5px solid ${l.code === lang ? "var(--ds-accent)" : "var(--ds-border-strong)"}`,
+                      borderRadius: "var(--r-full)", padding: "7px 14px", cursor: "pointer",
+                    }}
+                  >
+                    <span style={{ fontSize: 16, lineHeight: 1 }} aria-hidden="true">{l.flag}</span>
+                    {l.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </nav>
         </div>
       </div>
 
       <style>{`
         .site-logo { height: 32px; margin: 6px 8px 6px 0; }
-        .lang-btn-mobile { display: none !important; }
         /* Breathing room around the "Demander un devis" CTA on tablet + desktop */
         .cta-quote { margin-inline: 8px 6px; }
         @media (max-width: 768px) {
@@ -348,8 +357,6 @@ export default function Header() {
           .burger-btn { display: flex !important; }
           .site-logo { height: 34px; margin: 6px 6px 6px 0; }
           .lang-btn-desktop { display: none !important; }
-          .lang-btn-mobile { display: flex !important; }
-          .lang-dropdown { right: auto !important; left: 0 !important; }
         }
       `}</style>
     </header>
