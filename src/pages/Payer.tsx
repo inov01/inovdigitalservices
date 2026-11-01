@@ -300,6 +300,45 @@ const PICK: Record<Lang, {
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// Clarity strings: which currency to send, what the form does (and does not do),
+// and what to enter. Kept separate so the main dictionaries stay untouched.
+type Clarity = {
+  noPay: string; payFirst: string; toSend: string; walletHtg: string; bankUsd: string
+  approx: string; copyNumber: string; copyAmount: string; errAmount: string; errRef: string
+  recap: string; recMethod: string; recAmount: string; recRef: string; amountIn: string
+}
+const CLARITY: Record<Lang, Clarity> = {
+  fr: { noPay: "Aucun paiement requis", payFirst: "Ce formulaire ne débite rien. Effectuez d'abord le paiement dans votre application ou votre banque, puis confirmez ici avec la référence.", toSend: "Montant à envoyer", walletHtg: "Les portefeuilles MonCash et NatCash fonctionnent en gourdes (HTG).", bankUsd: "Le compte BUH est en dollars US (USD) : envoyez le montant en USD.", approx: "conversion indicative", copyNumber: "Copier le numéro", copyAmount: "Copier le montant", errAmount: "Indiquez le montant que vous avez payé.", errRef: "Indiquez la référence de la transaction (reçue par SMS ou sur le reçu).", recap: "Récapitulatif", recMethod: "Moyen", recAmount: "Montant", recRef: "Référence", amountIn: "devise" },
+  en: { noPay: "No payment required", payFirst: "This form does not charge anything. Pay first in your app or bank, then confirm here with the reference.", toSend: "Amount to send", walletHtg: "MonCash and NatCash wallets work in gourdes (HTG).", bankUsd: "The BUH account is in US dollars (USD): send the amount in USD.", approx: "indicative conversion", copyNumber: "Copy number", copyAmount: "Copy amount", errAmount: "Enter the amount you paid.", errRef: "Enter the transaction reference (from the SMS or receipt).", recap: "Summary", recMethod: "Method", recAmount: "Amount", recRef: "Reference", amountIn: "currency" },
+  es: { noPay: "No requiere pago", payFirst: "Este formulario no cobra nada. Paga primero en tu app o banco y confirma aquí con la referencia.", toSend: "Importe a enviar", walletHtg: "Las carteras MonCash y NatCash funcionan en gourdes (HTG).", bankUsd: "La cuenta BUH es en dólares (USD): envía el importe en USD.", approx: "conversión indicativa", copyNumber: "Copiar número", copyAmount: "Copiar importe", errAmount: "Indica el importe que pagaste.", errRef: "Indica la referencia de la transacción (del SMS o del recibo).", recap: "Resumen", recMethod: "Método", recAmount: "Importe", recRef: "Referencia", amountIn: "moneda" },
+  ht: { noPay: "Pa gen peman ki obligatwa", payFirst: "Fòm sa a pa retire lajan. Peye avan nan aplikasyon w oswa nan bank ou, apresa konfime isit la ak referans lan.", toSend: "Montan pou voye", walletHtg: "Pòtfèy MonCash ak NatCash yo mache an goud (HTG).", bankUsd: "Kont BUH la an dola ameriken (USD) : voye montan an an USD.", approx: "konvèsyon apwoksimatif", copyNumber: "Kopye nimewo a", copyAmount: "Kopye montan an", errAmount: "Mete montan ou te peye a.", errRef: "Mete referans tranzaksyon an (nan SMS la oswa nan resi a).", recap: "Rezime", recMethod: "Mwayen", recAmount: "Montan", recRef: "Referans", amountIn: "lajan" },
+  pt: { noPay: "Sem pagamento necessário", payFirst: "Este formulário não cobra nada. Pague primeiro na sua app ou banco e confirme aqui com a referência.", toSend: "Valor a enviar", walletHtg: "As carteiras MonCash e NatCash funcionam em gourdes (HTG).", bankUsd: "A conta BUH é em dólares (USD): envie o valor em USD.", approx: "conversão indicativa", copyNumber: "Copiar número", copyAmount: "Copiar valor", errAmount: "Informe o valor que pagou.", errRef: "Informe a referência da transação (do SMS ou do recibo).", recap: "Resumo", recMethod: "Método", recAmount: "Valor", recRef: "Referência", amountIn: "moeda" },
+  it: { noPay: "Nessun pagamento richiesto", payFirst: "Questo modulo non addebita nulla. Paga prima nella tua app o banca, poi conferma qui con il riferimento.", toSend: "Importo da inviare", walletHtg: "I portafogli MonCash e NatCash funzionano in gourde (HTG).", bankUsd: "Il conto BUH è in dollari USA (USD): invia l'importo in USD.", approx: "conversione indicativa", copyNumber: "Copia numero", copyAmount: "Copia importo", errAmount: "Inserisci l'importo che hai pagato.", errRef: "Inserisci il riferimento della transazione (dall'SMS o dalla ricevuta).", recap: "Riepilogo", recMethod: "Metodo", recAmount: "Importo", recRef: "Riferimento", amountIn: "valuta" },
+  de: { noPay: "Keine Zahlung erforderlich", payFirst: "Dieses Formular bucht nichts ab. Zahlen Sie zuerst in Ihrer App oder Bank und bestätigen Sie hier mit der Referenz.", toSend: "Zu sendender Betrag", walletHtg: "MonCash- und NatCash-Wallets arbeiten in Gourdes (HTG).", bankUsd: "Das BUH-Konto lautet auf US-Dollar (USD): Senden Sie den Betrag in USD.", approx: "unverbindliche Umrechnung", copyNumber: "Nummer kopieren", copyAmount: "Betrag kopieren", errAmount: "Geben Sie den gezahlten Betrag an.", errRef: "Geben Sie die Transaktionsreferenz an (aus SMS oder Beleg).", recap: "Zusammenfassung", recMethod: "Methode", recAmount: "Betrag", recRef: "Referenz", amountIn: "Währung" },
+  ar: { noPay: "لا يلزم أي دفع", payFirst: "هذا النموذج لا يخصم أي مبلغ. ادفع أولاً عبر تطبيقك أو مصرفك ثم أكّد هنا بالمرجع.", toSend: "المبلغ المطلوب إرساله", walletHtg: "محافظ MonCash وNatCash تعمل بالغورد (HTG).", bankUsd: "حساب BUH بالدولار الأمريكي (USD): أرسل المبلغ بالدولار.", approx: "تحويل تقريبي", copyNumber: "نسخ الرقم", copyAmount: "نسخ المبلغ", errAmount: "أدخل المبلغ الذي دفعته.", errRef: "أدخل مرجع المعاملة (من الرسالة النصية أو الإيصال).", recap: "الملخص", recMethod: "الوسيلة", recAmount: "المبلغ", recRef: "المرجع", amountIn: "العملة" },
+}
+
+// Wallets want the local 8-digit number; strip the country code and separators.
+function walletDigits(num: string): string {
+  const d = num.replace(/\D/g, "")
+  return d.startsWith("509") && d.length === 11 ? d.slice(3) : d
+}
+
+// Clipboard with a fallback for browsers/webviews where navigator.clipboard is blocked.
+async function copyText(text: string): Promise<boolean> {
+  try {
+    if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(text); return true }
+  } catch {}
+  try {
+    const ta = document.createElement("textarea")
+    ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0"
+    document.body.appendChild(ta); ta.select()
+    const ok = document.execCommand("copy")
+    document.body.removeChild(ta)
+    return ok
+  } catch { return false }
+}
 type Status = "idle" | "loading" | "success" | "error"
 
 export default function Payer() {
@@ -316,6 +355,7 @@ export default function Payer() {
   }, [])
   const c = build(lang, payCfg)
   const p = PICK[lang] ?? PICK.fr
+  const k = CLARITY[lang] ?? CLARITY.fr
   const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams()
 
   // Location is auto-detected (region), so there is no manual Haiti/Diaspora
@@ -351,6 +391,7 @@ export default function Payer() {
   const [status, setStatus] = useState<Status>("idle")
   const [errMsg, setErrMsg] = useState("")
   const [copied, setCopied] = useState<string | null>(null)
+  const [receipt, setReceipt] = useState<{ method: string; amount: string; reference: string } | null>(null)
 
   // Direct on-site request: the client selects services + writes a message and
   // submits it straight to us, without having to pick a payment method first.
@@ -368,13 +409,22 @@ export default function Payer() {
     setAmount(hasQuoteOnly && totalLocal === 0 ? "" : String(totalLocal))
   }, [totalLocal, hasQuoteOnly, cartItems.length])
 
-  function copy(text: string, key: string) {
-    try {
-      navigator.clipboard?.writeText(text)
+  async function copy(text: string, key: string) {
+    if (await copyText(text)) {
       setCopied(key)
       setTimeout(() => setCopied(null), 1600)
-    } catch {}
+    }
   }
+
+  // Amount to actually send, in the currency the chosen method really uses:
+  // MonCash / NatCash wallets are in HTG, the BUH account is in USD. Derived from
+  // the cart (or the typed amount) so the client never has to convert by hand.
+  const typedAmt = parseFloat(amount.replace(/[^\d.]/g, ""))
+  const baseUsd = cartItems.length > 0 && !hasQuoteOnly
+    ? totalUsdAdj
+    : Number.isFinite(typedAmt) && typedAmt > 0 ? typedAmt / (rates[currency] ?? 1) : 0
+  const payCur = method === "moncash" || method === "natcash" ? "HTG" : method === "buh" ? "USD" : null
+  const payAmt = payCur && baseUsd > 0 ? Math.round(baseUsd * (rates[payCur as keyof typeof rates] ?? 1) * (payCur === "USD" ? 100 : 1)) / (payCur === "USD" ? 100 : 1) : 0
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
@@ -386,6 +436,12 @@ export default function Payer() {
     }
     if (!isUpwork && !name.trim() && !EMAIL_RE.test(email.trim())) {
       setStatus("error"); setErrMsg(c.errContact); return
+    }
+    if (!isUpwork && !(Number.isFinite(typedAmt) && typedAmt > 0)) {
+      setStatus("error"); setErrMsg(k.errAmount); return
+    }
+    if (!isUpwork && reference.trim().length < 3) {
+      setStatus("error"); setErrMsg(k.errRef); return
     }
     setStatus("loading"); setErrMsg("")
     const amt = parseFloat(amount.replace(/[^\d.]/g, ""))
@@ -410,6 +466,8 @@ export default function Payer() {
       meta: {
         paymentMethod: method,
         paymentMethodLabel: c.names[method],
+        payCurrency: payCur ?? currency,
+        payAmount: payAmt || (Number.isFinite(amt) ? amt : null),
         reference: isUpwork ? "" : reference.trim(),
         rate,
         services: services.length ? services : undefined,
@@ -417,6 +475,7 @@ export default function Payer() {
     })
     if (r) {
       setSubmittedVia(isUpwork ? "upwork" : "payment")
+      setReceipt({ method: c.names[method], amount: payAmt && payCur ? `${payAmt} ${payCur}` : `${Number.isFinite(amt) ? amt : ""} ${CURRENCIES[currency].symbol}`.trim(), reference: reference.trim() })
       setStatus("success")
       track("payment_declared", { method, value: Number.isFinite(amt) ? amt : 0, currency })
     } else {
@@ -517,6 +576,17 @@ export default function Payer() {
             </div>
             <h2 className="section-title" style={{ margin: 0 }}>{submittedVia === "site" ? p.sentTitle : submittedVia === "upwork" ? p.reqSuccess : c.success}</h2>
             <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, color: "var(--ds-text-sec)", lineHeight: 1.6, maxWidth: 440 }}>{submittedVia === "site" ? p.sentSub : submittedVia === "upwork" ? p.reqSuccessSub : c.successSub}</p>
+            {submittedVia === "payment" && receipt && (
+              <dl style={{ margin: 0, width: "100%", maxWidth: 380, textAlign: "start", background: "var(--ds-bg-sec)", border: "1px solid var(--ds-border)", borderRadius: "var(--r-md)", padding: "12px 16px", display: "grid", gap: 6, fontFamily: "'Outfit', sans-serif", fontSize: 14 }}>
+                <div style={{ fontSize: 11.5, fontWeight: 700, color: "var(--ds-text-faint)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{k.recap}</div>
+                {([[k.recMethod, receipt.method], [k.recAmount, receipt.amount], [k.recRef, receipt.reference]] as const).map(([l, v]) => (
+                  <div key={l} style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                    <dt style={{ color: "var(--ds-text-muted)" }}>{l}</dt>
+                    <dd style={{ margin: 0, fontWeight: 700, color: "var(--ds-text)", wordBreak: "break-all", textAlign: "end" }}>{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
             {submittedVia === "payment" && (
               <a href={waHref} target="_blank" rel="noreferrer" className="btn-orange" style={{ ...ctaStyle, textDecoration: "none", marginTop: 4 }}>
                 <Send size={17} /> {c.waProof}
@@ -591,6 +661,7 @@ export default function Payer() {
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
                 <Send size={18} color="var(--ds-accent)" style={{ flexShrink: 0 }} />
                 <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, fontWeight: 700, color: "var(--ds-text)" }}>{p.directTitle}</span>
+                <span style={{ marginInlineStart: "auto", fontFamily: "'Outfit', sans-serif", fontSize: 11.5, fontWeight: 700, color: "var(--ds-accent)", border: "1px solid var(--ds-accent-a30)", borderRadius: "var(--r-full)", padding: "2px 10px", whiteSpace: "nowrap" }}>{k.noPay}</span>
               </div>
               <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12.5, color: "var(--ds-text-muted)", margin: "0 0 14px 30px" }}>{p.directHint}</p>
               <div style={{ display: "grid", gap: 12 }}>
@@ -653,9 +724,25 @@ export default function Payer() {
                   ))}
                 </ol>
 
+                {method !== "upwork" && (
+                  <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, color: "var(--ds-text-muted)", background: "var(--ds-accent-a08)", border: "1px solid var(--ds-accent-a15)", borderRadius: "var(--r-md)", padding: "10px 14px", margin: 0, lineHeight: 1.55 }}>
+                    {k.payFirst}
+                  </p>
+                )}
+                {payCur && (
+                  <div style={{ display: "grid", gap: 8 }}>
+                    {payAmt > 0 && (
+                      <CopyRow label={`${k.toSend} (${payCur})`} value={`${payAmt} ${payCur}`} copyValue={String(payAmt)} sub={`${payCur !== currency ? `${k.approx} · ` : ""}${payCur === "HTG" ? k.walletHtg : k.bankUsd}`} onCopy={copy} copied={copied} c={c} copyLabel={k.copyAmount} />
+                    )}
+                    {payAmt <= 0 && (
+                      <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12.5, color: "var(--ds-text-muted)", margin: 0 }}>{payCur === "HTG" ? k.walletHtg : k.bankUsd}</p>
+                    )}
+                  </div>
+                )}
+
                 {/* Copyable details / CTA */}
-                {method === "moncash" && <CopyRow label="MonCash" value={payCfg.moncash.number} sub={payCfg.moncash.holder} onCopy={copy} copied={copied} c={c} />}
-                {method === "natcash" && <CopyRow label="NatCash" value={payCfg.natcash.number} sub={payCfg.natcash.holder} onCopy={copy} copied={copied} c={c} />}
+                {method === "moncash" && <CopyRow label="MonCash" value={payCfg.moncash.number} copyValue={walletDigits(payCfg.moncash.number)} copyLabel={k.copyNumber} sub={payCfg.moncash.holder} onCopy={copy} copied={copied} c={c} />}
+                {method === "natcash" && <CopyRow label="NatCash" value={payCfg.natcash.number} copyValue={walletDigits(payCfg.natcash.number)} copyLabel={k.copyNumber} sub={payCfg.natcash.holder} onCopy={copy} copied={copied} c={c} />}
                 {method === "buh" && <CopyRow label={payCfg.buh.bank} value={payCfg.buh.account} sub={`${payCfg.buh.holder} · ${payCfg.buh.type}`} onCopy={copy} copied={copied} c={c} />}
                 {method === "upwork" && (
                   <div style={{ display: "grid", gap: 10 }}>
@@ -672,13 +759,13 @@ export default function Payer() {
                 <div style={dividerStyle} />
 
                 {method === "upwork" ? (
-                  <Fld label={c.amount}>
+                  <Fld label={`${c.amount} (${CURRENCIES[currency].symbol})`}>
                     <input style={inputStyle} inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={`0 ${CURRENCIES[currency].symbol}`} />
                   </Fld>
                 ) : (
                   <>
                     <Row>
-                      <Fld label={c.amount}>
+                      <Fld label={`${c.amount} (${CURRENCIES[currency].symbol})`}>
                         <input style={inputStyle} inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={`0 ${CURRENCIES[currency].symbol}`} />
                       </Fld>
                       <Fld label={c.ref}>
@@ -711,7 +798,8 @@ export default function Payer() {
 }
 
 // ── Small presentational helpers ──────────────────────────────────────────────
-function CopyRow({ label, value, sub, onCopy, copied, c }: { label: string; value: string; sub?: string; onCopy: (t: string, k: string) => void; copied: string | null; c: Copy }) {
+function CopyRow({ label, value, copyValue, copyLabel, sub, onCopy, copied, c }: { label: string; value: string; copyValue?: string; copyLabel?: string; sub?: string; onCopy: (t: string, k: string) => void; copied: string | null; c: Copy }) {
+  const isCopied = copied === label
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, background: "var(--ds-bg-sec)", border: "1px solid var(--ds-border)", borderRadius: "var(--r-md)", padding: "12px 14px" }}>
       <div style={{ minWidth: 0 }}>
@@ -719,8 +807,8 @@ function CopyRow({ label, value, sub, onCopy, copied, c }: { label: string; valu
         <div style={{ fontFamily: "var(--font-space), monospace", fontSize: 15.5, fontWeight: 700, color: "var(--ds-text)", overflow: "hidden", textOverflow: "ellipsis" }}>{value}</div>
         {sub && <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 12.5, color: "var(--ds-text-muted)", marginTop: 2 }}>{sub}</div>}
       </div>
-      <button type="button" onClick={() => onCopy(value, label)} style={{ ...linkBtn, display: "inline-flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-        <CopyIcon size={14} /> {copied === label ? c.copied : c.copyBtn}
+      <button type="button" onClick={() => onCopy(copyValue ?? value, label)} style={{ ...linkBtn, display: "inline-flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+        {isCopied ? <Check size={14} /> : <CopyIcon size={14} />} <span aria-live="polite">{isCopied ? c.copied : copyLabel ?? c.copyBtn}</span>
       </button>
     </div>
   )
