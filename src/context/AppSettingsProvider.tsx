@@ -265,7 +265,9 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
   }
 
   // Adjust a USD base price by the active region's purchasing-power factor.
-  function priceFor(usd: number) {
+  // `fixed` services keep the same price in every region.
+  function priceFor(usd: number, fixed = false) {
+    if (fixed) return Math.round(usd)
     return Math.round(usd * REGIONS[region].pppFactor)
   }
 
