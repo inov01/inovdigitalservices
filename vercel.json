@@ -4,6 +4,7 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
+    { "source": "/portfolio/:id", "destination": "/api/portfolio-share?id=:id" },
     { "source": "/formation/:slug", "destination": "/api/formation-share?slug=:slug" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],

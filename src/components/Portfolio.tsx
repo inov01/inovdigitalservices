@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { createPortal } from "react-dom"
 // Portfolio albums, logo albums drive the carousel; others go to "Autres réalisations".
-import { Building2, Eye, Images, FolderOpen, Flame, X, MessageSquare, ChevronLeft, ChevronRight, Play, Pause, ArrowRight } from "lucide-react"
+import { Building2, Eye, Images, FolderOpen, Flame, X, MessageSquare, ChevronLeft, ChevronRight, Play, Pause, ArrowRight, Share2, Link2, Check } from "lucide-react"
 import useIsMobile from "../hooks/useIsMobile"
 import useReducedMotion from "../hooks/useReducedMotion"
 import useModal from "../hooks/useModal"
 import SmartImage from "./SmartImage"
 import { useSettings } from "../context/AppSettings"
+import type { Lang } from "../i18n/translations"
 import { smoothScrollToId } from "../lib/smoothScroll"
 
 import { albums as staticAlbums, ytThumb, workPoster, onThumbError, type Work, type Album } from "../data/portfolio"
@@ -163,6 +164,19 @@ export default function Portfolio() {
     timerRef.current = setInterval(next, AUTOPLAY_MS)
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
   }, [paused, userPaused, next, reduced, bursting])
+
+  // Shared link (/portfolio/:id): PortfolioShare stores the id, we open that project
+  // as soon as the albums (including admin-added ones) are available.
+  useEffect(() => {
+    let id: string | null = null
+    try { id = sessionStorage.getItem("inov-open-album") } catch {}
+    if (!id) return
+    const album = albums.find((a) => a.id === id)
+    if (!album) return
+    try { sessionStorage.removeItem("inov-open-album") } catch {}
+    setActiveAlbum(album)
+    setTimeout(() => smoothScrollToId("portfolio"), 80)
+  }, [albums])
 
   // Open a specific album when requested from elsewhere (e.g. founder bio link).
   useEffect(() => {
@@ -621,6 +635,7 @@ function AlbumModal({ album, onClose }: { album: Album; onClose: () => void }) {
               </span>
             )}
             <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+              <ShareButton albumId={album.id} client={album.client} tagline={tagline} />
               <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 11.5, fontWeight: 700, color: "rgba(255,255,255,0.4)" }}>{imgIndex + 1} / {album.works.length}</span>
               <button onClick={onClose} aria-label={t.pricing.close} style={{ background: "rgba(255,255,255,0.08)", border: "none", color: "#fff", width: 30, height: 30, borderRadius: "50%", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={15} /></button>
             </div>
@@ -749,5 +764,76 @@ function AlbumModal({ album, onClose }: { album: Album; onClose: () => void }) {
       </div>
     </div>,
     document.body,
+  )
+}
+
+
+const SHARE_L: Record<Lang, { share: string; copy: string; copied: string; text: (c: string) => string }> = {
+  fr: { share: "Partager", copy: "Copier le lien", copied: "Lien copié", text: (c) => `Découvrez la réalisation ${c} par INOV Digital Services` },
+  en: { share: "Share", copy: "Copy link", copied: "Link copied", text: (c) => `Check out the ${c} project by INOV Digital Services` },
+  es: { share: "Compartir", copy: "Copiar enlace", copied: "Enlace copiado", text: (c) => `Descubre el proyecto ${c} de INOV Digital Services` },
+  ht: { share: "Pataje", copy: "Kopye lyen an", copied: "Lyen kopye", text: (c) => `Gade pwojè ${c} INOV Digital Services fè` },
+  pt: { share: "Partilhar", copy: "Copiar link", copied: "Link copiado", text: (c) => `Descubra o projeto ${c} da INOV Digital Services` },
+  it: { share: "Condividi", copy: "Copia link", copied: "Link copiato", text: (c) => `Scopri il progetto ${c} di INOV Digital Services` },
+  de: { share: "Teilen", copy: "Link kopieren", copied: "Link kopiert", text: (c) => `Entdecken Sie das Projekt ${c} von INOV Digital Services` },
+  ar: { share: "مشاركة", copy: "نسخ الرابط", copied: "تم نسخ الرابط", text: (c) => `اكتشف مشروع ${c} من INOV Digital Services` },
+}
+
+// Share a project: native share sheet when available (mobile), otherwise a small
+// menu with WhatsApp / Facebook / LinkedIn / copy link. The link is /portfolio/:id,
+// which serves the project's own preview image to social crawlers.
+function ShareButton({ albumId, client, tagline }: { albumId: string; client: string; tagline: string }) {
+  const { lang } = useSettings()
+  const l = SHARE_L[lang] ?? SHARE_L.fr
+  const [open, setOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const url = `${typeof window !== "undefined" ? window.location.origin : "https://inovdigitalservices.com"}/portfolio/${albumId}`
+  const text = `${l.text(client)}${tagline ? `, ${tagline}` : ""}`
+
+  async function onShare() {
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+      try { await navigator.share({ title: client, text, url }); return } catch (e) {
+        if ((e as Error)?.name === "AbortError") return
+      }
+    }
+    setOpen((o) => !o)
+  }
+  async function copyLink() {
+    try { await navigator.clipboard.writeText(url) } catch {
+      const ta = document.createElement("textarea")
+      ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0"
+      document.body.appendChild(ta); ta.select()
+      try { document.execCommand("copy") } catch {}
+      document.body.removeChild(ta)
+    }
+    setCopied(true)
+    setTimeout(() => { setCopied(false); setOpen(false) }, 1400)
+  }
+
+  const item: React.CSSProperties = { display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "9px 12px", background: "none", border: "none", color: "#fff", fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 600, cursor: "pointer", textDecoration: "none", textAlign: "start", borderRadius: 8 }
+  const enc = encodeURIComponent
+  return (
+    <span style={{ position: "relative", display: "inline-flex" }}>
+      <button
+        type="button"
+        onClick={onShare}
+        aria-label={`${l.share}, ${client}`}
+        aria-expanded={open}
+        style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.08)", border: "none", color: "#fff", height: 30, padding: "0 12px", borderRadius: 15, cursor: "pointer", fontFamily: "'Outfit', sans-serif", fontSize: 12.5, fontWeight: 700 }}
+      >
+        <Share2 size={14} aria-hidden="true" /> {l.share}
+      </button>
+      {open && (
+        <div role="menu" style={{ position: "absolute", top: 36, insetInlineEnd: 0, zIndex: 5, minWidth: 190, background: "#1b1b1f", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, padding: 6, boxShadow: "0 12px 32px rgba(0,0,0,0.45)" }}>
+          <a role="menuitem" style={item} href={`https://wa.me/?text=${enc(`${text} ${url}`)}`} target="_blank" rel="noreferrer">WhatsApp</a>
+          <a role="menuitem" style={item} href={`https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`} target="_blank" rel="noreferrer">Facebook</a>
+          <a role="menuitem" style={item} href={`https://www.linkedin.com/sharing/share-offsite/?url=${enc(url)}`} target="_blank" rel="noreferrer">LinkedIn</a>
+          <button role="menuitem" type="button" style={item} onClick={copyLink}>
+            {copied ? <Check size={15} aria-hidden="true" /> : <Link2 size={15} aria-hidden="true" />}
+            <span aria-live="polite">{copied ? l.copied : l.copy}</span>
+          </button>
+        </div>
+      )}
+    </span>
   )
 }
