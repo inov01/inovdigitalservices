@@ -264,11 +264,10 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     return `${val.toLocaleString(c.locale)} ${c.symbol}`
   }
 
-  // Adjust a USD base price by the active region's purchasing-power factor.
-  // `fixed` services keep the same price in every region.
-  function priceFor(usd: number, fixed = false) {
-    if (fixed) return Math.round(usd)
-    return Math.round(usd * REGIONS[region].pppFactor)
+  // One base price for everyone: budgets are served by the Essentiel / Standard /
+  // Premium formulas, not by a regional discount.
+  function priceFor(usd: number) {
+    return Math.round(usd)
   }
 
   // Purchasing-power pricing adjusts the PRICE only, the service itself is equal

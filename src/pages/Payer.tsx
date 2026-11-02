@@ -379,7 +379,7 @@ export default function Payer() {
     })
   const cartItems = pricingServices.filter((s) => (cart[s.id] ?? 0) > 0)
   const hasQuoteOnly = cartItems.some((s) => s.quoteOnly || s.price <= 0)
-  const totalUsdAdj = cartItems.reduce((sum, s) => sum + (s.quoteOnly ? 0 : priceFor(s.price, s.fixedPrice) * cart[s.id]), 0)
+  const totalUsdAdj = cartItems.reduce((sum, s) => sum + (s.quoteOnly ? 0 : priceFor(s.price) * cart[s.id]), 0)
   const totalLocal = Math.round(totalUsdAdj * (rates[currency] ?? 1))
 
   const [amount, setAmount] = useState(params.get("amount") ?? "")
@@ -453,7 +453,7 @@ export default function Payer() {
       usd: s.quoteOnly ? null : s.price,
       // Per-line amount in the client's own currency (region-adjusted then converted),
       // exactly like the proforma, so the receipt stays consistent with the total.
-      local: s.quoteOnly ? null : Math.round(priceFor(s.price, s.fixedPrice) * rate * cart[s.id]),
+      local: s.quoteOnly ? null : Math.round(priceFor(s.price) * rate * cart[s.id]),
     }))
     const r = await api.submitLead({
       source: isUpwork ? "upwork_request" : "payment",
@@ -497,7 +497,7 @@ export default function Payer() {
       name: svcName(s),
       qty: cart[s.id],
       usd: s.quoteOnly ? null : s.price,
-      local: s.quoteOnly ? null : Math.round(priceFor(s.price, s.fixedPrice) * rate * cart[s.id]),
+      local: s.quoteOnly ? null : Math.round(priceFor(s.price) * rate * cart[s.id]),
     }))
     const lines: string[] = []
     if (note.trim()) lines.push(note.trim())
@@ -633,7 +633,7 @@ export default function Payer() {
                         >
                           <div style={{ minWidth: 0, flex: 1 }}>
                             <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 14, fontWeight: 700, color: "var(--ds-text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{svcName(s)}</div>
-                            <div style={{ fontFamily: "var(--font-space), monospace", fontSize: 12.5, color: "var(--ds-text-muted)" }}>{quote ? p.quote : fmt(priceFor(s.price, s.fixedPrice))}</div>
+                            <div style={{ fontFamily: "var(--font-space), monospace", fontSize: 12.5, color: "var(--ds-text-muted)" }}>{quote ? p.quote : fmt(priceFor(s.price))}</div>
                           </div>
                           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
                             <button type="button" aria-label={`${QTY_LABEL[lang].dec}, ${svcName(s)}`} onClick={(e) => { e.stopPropagation(); setQty(s.id, -1) }} disabled={qty === 0} style={{ ...stepBtn, opacity: qty === 0 ? 0.4 : 1, cursor: qty === 0 ? "default" : "pointer" }}><Minus size={15} aria-hidden="true" /></button>

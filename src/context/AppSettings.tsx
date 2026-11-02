@@ -38,8 +38,8 @@ export interface AppSettings {
   setRegion: (r: RegionCode) => void
   /** Detected ISO 3166-1 alpha-2 country of the visitor ("" until resolved). Used to preselect the phone dial code. */
   country: string
-  /** Apply the region's purchasing-power factor to a USD base price (returns adjusted USD). */
-  priceFor: (usd: number, fixed?: boolean) => number
+  /** Price shown to the visitor in USD. Same base price for everyone (no regional adjustment: clients pick the formula that fits their budget). */
+  priceFor: (usd: number) => number
   /** Scale a revision window (days) by the region factor: cheaper region = shorter, pricier = longer. */
   revisionDaysFor: (days: number) => number
   /** Scale the included revision count by the region factor: cheaper region = fewer, pricier = more. */

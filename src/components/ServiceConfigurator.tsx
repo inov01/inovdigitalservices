@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef } from "react"
 import { createPortal } from "react-dom"
-import { X, Check, Share2, Sparkles, Clock, RefreshCw, ShieldCheck, Target } from "lucide-react"
+import { X, Check, Share2, Sparkles, Clock, RefreshCw, ShieldCheck, Target, ChevronDown, Info } from "lucide-react"
 import { SiWhatsapp } from "./SocialIcons"
 import useModal from "../hooks/useModal"
 import { track } from "../lib/analytics"
@@ -34,6 +34,18 @@ const L: Record<Lang, Record<CfgKey, string>> = {
   ar: { customize: "تخصيص", options: "عرضك المشترك", estimated: "تقدير", priceNote: "تقدير إرشادي, يتم تأكيد العرض النهائي بعد الموجز.", designOnly: "سعر التصميم فقط", order: "اطلب عبر واتساب", share: "مشاركة", shared: "تمت المشاركة", copied: "تم نسخ الرابط", close: "إغلاق", from: "ابتداءً من", included: "متضمّن", choosePlan: "اختر الباقة", planIncluded: "ما تتضمنه", delivery: "التسليم", revisions: "تعديلات", revisionWindow: "نافذة", deposit: "العربون اليوم", balance: "الرصيد عند التسليم", whyItWorks: "لماذا هذه الخدمة", recommended: "موصى به", days: "أيام" },
 }
 
+// Labels for the explanation panels and the price breakdown.
+const X_L: Record<Lang, { about: string; hide: string; details: string; breakdown: string; base: string; total: string; none: string; options: (n: number) => string }> = {
+  fr: { about: "À quoi ça sert ?", hide: "Masquer", details: "Détails de l'option", breakdown: "Détail du prix", base: "Formule de base", total: "Total estimé", none: "Aucune option payante sélectionnée", options: (n) => `${n} option${n > 1 ? "s" : ""} choisie${n > 1 ? "s" : ""}` },
+  en: { about: "What is this for?", hide: "Hide", details: "Option details", breakdown: "Price breakdown", base: "Base plan", total: "Estimated total", none: "No paid option selected", options: (n) => `${n} option${n > 1 ? "s" : ""} selected` },
+  es: { about: "¿Para qué sirve?", hide: "Ocultar", details: "Detalles de la opción", breakdown: "Desglose del precio", base: "Fórmula base", total: "Total estimado", none: "Ninguna opción de pago seleccionada", options: (n) => `${n} opción${n > 1 ? "es" : ""} elegida${n > 1 ? "s" : ""}` },
+  ht: { about: "Pou kisa l sèvi?", hide: "Kache", details: "Detay opsyon an", breakdown: "Detay pri a", base: "Fòmil de baz", total: "Total estime", none: "Pa gen opsyon peyan chwazi", options: (n) => `${n} opsyon chwazi` },
+  pt: { about: "Para que serve?", hide: "Ocultar", details: "Detalhes da opção", breakdown: "Detalhe do preço", base: "Fórmula base", total: "Total estimado", none: "Nenhuma opção paga selecionada", options: (n) => `${n} opç${n > 1 ? "ões" : "ão"} escolhida${n > 1 ? "s" : ""}` },
+  it: { about: "A cosa serve?", hide: "Nascondi", details: "Dettagli dell'opzione", breakdown: "Dettaglio del prezzo", base: "Formula base", total: "Totale stimato", none: "Nessuna opzione a pagamento selezionata", options: (n) => `${n} opzion${n > 1 ? "i" : "e"} scelt${n > 1 ? "e" : "a"}` },
+  de: { about: "Wofür ist das?", hide: "Ausblenden", details: "Details zur Option", breakdown: "Preisaufstellung", base: "Basisformel", total: "Geschätzte Summe", none: "Keine kostenpflichtige Option gewählt", options: (n) => `${n} Option${n > 1 ? "en" : ""} gewählt` },
+  ar: { about: "ما فائدة هذا؟", hide: "إخفاء", details: "تفاصيل الخيار", breakdown: "تفصيل السعر", base: "الصيغة الأساسية", total: "المجموع التقديري", none: "لم يتم اختيار خيارات مدفوعة", options: (n) => `${n} خيارات مختارة` },
+}
+
 export default function ServiceConfigurator({
   service, name, description, advantage, tier, tierLabel, tierLabels, onTier, onClose,
 }: {
@@ -49,11 +61,14 @@ export default function ServiceConfigurator({
 }) {
   const { fmt, priceFor, lang, currency, region } = useSettings()
   const l = L[lang] ?? L.fr
+  const x = X_L[lang] ?? X_L.fr
   const dialogRef = useModal<HTMLDivElement>(true, onClose)
 
   const groups: ServiceOptionGroup[] = useMemo(() => optionsFor(service.id, service.type), [service.id, service.type])
   const [sel, setSel] = useState<Record<string, string[]>>(() => defaultSelection(groups))
   const [shareMsg, setShareMsg] = useState("")
+  const [info, setInfo] = useState<Record<string, boolean>>({})
+  const flip = (k: string) => setInfo((p) => ({ ...p, [k]: !p[k] }))
   const shareTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const basePrice = tierValues(service, tier).price
@@ -62,6 +77,10 @@ export default function ServiceConfigurator({
   const totalDisplay = fmt(priceFor(totalUsd))
   const tierDetails = tierValues(service, tier)
   const features = tierFeatureList(service.id, tier, lang)
+  // Paid options currently selected, for the price breakdown.
+  const chosenOptions = groups.flatMap((g) =>
+    g.options.filter((o) => o.delta > 0 && (sel[g.id] ?? []).includes(o.id)).map((o) => ({ key: `${g.id}:${o.id}`, label: o.label, delta: o.delta })),
+  )
   const depositDisplay = fmt(priceFor(totalUsd) * 0.7)
   const balanceDisplay = fmt(priceFor(totalUsd) * 0.3)
 
@@ -237,7 +256,25 @@ export default function ServiceConfigurator({
 
           {groups.map((g) => (
             <fieldset key={g.id} style={{ border: "none", margin: 0, padding: 0 }}>
-              <legend style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 700, color: "var(--ds-text)", padding: 0, marginBottom: 8 }}>{g.label}</legend>
+              <legend style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 700, color: "var(--ds-text)", padding: 0, marginBottom: 8, width: "100%" }}>
+                <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                  <span>{g.label}</span>
+                  {g.intro && (
+                    <button
+                      type="button"
+                      onClick={() => flip(`g:${g.id}`)}
+                      aria-expanded={!!info[`g:${g.id}`]}
+                      style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "none", border: "none", padding: 0, cursor: "pointer", color: "var(--ds-accent-text)", fontFamily: "'Outfit', sans-serif", fontSize: 12, fontWeight: 700 }}
+                    >
+                      {info[`g:${g.id}`] ? x.hide : x.about}
+                      <ChevronDown size={14} aria-hidden="true" style={{ transform: info[`g:${g.id}`] ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+                    </button>
+                  )}
+                </span>
+              </legend>
+              {g.intro && info[`g:${g.id}`] && (
+                <p style={{ margin: "0 0 9px", padding: "10px 12px", borderRadius: 10, background: "var(--ds-bg-sec)", fontFamily: "'Outfit', sans-serif", fontSize: 12.5, lineHeight: 1.5, color: "var(--ds-text-sec)" }}>{g.intro}</p>
+              )}
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {g.options.map((opt) => {
                   const checked = (sel[g.id] ?? []).includes(opt.id)
@@ -271,12 +308,28 @@ export default function ServiceConfigurator({
                       </span>
                       <span style={{ flex: 1, minWidth: 0 }}>
                         <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
-                          <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 600, color: "var(--ds-text)" }}>{opt.label}</span>
+                          <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13.5, fontWeight: 600, color: "var(--ds-text)" }}>
+                            {opt.label}
+                            {opt.help && (
+                              <button
+                                type="button"
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); flip(`o:${g.id}:${opt.id}`) }}
+                                aria-expanded={!!info[`o:${g.id}:${opt.id}`]}
+                                aria-label={`${x.details} : ${opt.label}`}
+                                style={{ display: "inline-flex", verticalAlign: "middle", marginInlineStart: 6, background: "none", border: "none", padding: 0, cursor: "pointer", color: info[`o:${g.id}:${opt.id}`] ? "var(--ds-accent-text)" : "var(--ds-text-faint)" }}
+                              >
+                                <Info size={15} aria-hidden="true" />
+                              </button>
+                            )}
+                          </span>
                           <span style={{ flexShrink: 0, fontFamily: "'Outfit', sans-serif", fontSize: 12.5, fontWeight: 700, color: opt.delta > 0 ? "var(--ds-accent-text)" : "var(--ds-text-faint)" }}>
                             {opt.delta > 0 ? `+${fmt(priceFor(opt.delta))}` : l.included}
                           </span>
                         </span>
                         {opt.hint && <span style={{ display: "block", fontFamily: "'Outfit', sans-serif", fontSize: 11.5, color: "var(--ds-text-muted)", marginTop: 2, lineHeight: 1.35 }}>{opt.hint}</span>}
+                        {opt.help && info[`o:${g.id}:${opt.id}`] && (
+                          <span style={{ display: "block", marginTop: 6, padding: "8px 10px", borderRadius: 8, background: "var(--ds-bg-sec)", fontFamily: "'Outfit', sans-serif", fontSize: 12, lineHeight: 1.5, color: "var(--ds-text-sec)" }}>{opt.help}</span>
+                        )}
                       </span>
                     </label>
                   )
@@ -290,6 +343,28 @@ export default function ServiceConfigurator({
               ⚠︎ {service.priceNote}
             </p>
           )}
+
+          <div style={{ border: "1px solid var(--ds-border)", borderRadius: "var(--r-md)", overflow: "hidden" }}>
+            <button
+              type="button"
+              onClick={() => flip("breakdown")}
+              aria-expanded={!!info.breakdown}
+              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, width: "100%", padding: "12px", background: "none", border: "none", cursor: "pointer", fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 700, color: "var(--ds-text)" }}
+            >
+              <span>{x.breakdown} <span style={{ fontWeight: 500, color: "var(--ds-text-muted)" }}>({x.options(chosenOptions.length)})</span></span>
+              <ChevronDown size={16} aria-hidden="true" style={{ transform: info.breakdown ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+            </button>
+            {info.breakdown && (
+              <div style={{ borderTop: "1px solid var(--ds-border)", padding: "10px 12px", display: "grid", gap: 6, fontFamily: "'Outfit', sans-serif", fontSize: 12.5, color: "var(--ds-text-sec)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{x.base} ({tierLabel})</span><strong style={{ color: "var(--ds-text)" }}>{fmt(priceFor(basePrice))}</strong></div>
+                {chosenOptions.length === 0 && <div style={{ color: "var(--ds-text-muted)" }}>{x.none}</div>}
+                {chosenOptions.map((o) => (
+                  <div key={o.key} style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span>{o.label}</span><strong style={{ color: "var(--ds-text)", flexShrink: 0 }}>+{fmt(priceFor(o.delta))}</strong></div>
+                ))}
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 10, paddingTop: 6, borderTop: "1px solid var(--ds-border)" }}><span style={{ fontWeight: 700, color: "var(--ds-text)" }}>{x.total}</span><strong style={{ color: "var(--ds-accent-text)" }}>{totalDisplay}</strong></div>
+              </div>
+            )}
+          </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px", border: "1px solid var(--ds-border)", borderRadius: "var(--r-md)" }}>
             <ShieldCheck size={19} color="var(--ds-accent-text)" aria-hidden="true" />

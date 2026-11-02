@@ -181,7 +181,7 @@ export default function Pricing() {
   const svcAdvantage = (s: PricingService) => t.pricing.services[s.id]?.advantage ?? s.advantage
 
   const { totalQty, subtotal, discountPct, discount, total, deposit: acompte } = computeQuote(
-    services.map((s) => ({ unitPrice: priceFor(eff(s).price, s.fixedPrice), qty: s.qty })),
+    services.map((s) => ({ unitPrice: priceFor(eff(s).price), qty: s.qty })),
   )
 
   const ux = UX_LABELS[lang] ?? UX_LABELS.fr
@@ -417,7 +417,7 @@ export default function Pricing() {
   async function orderWhatsApp() {
     if (!requireName()) return
     const wa = t.pricing.wa
-    const lines = selectedServices.map((s) => `• ${svcName(s)}${tierOf(s) !== "standard" ? ` (${tl[tierOf(s)]})` : ""} ×${s.qty} = ${fmt(priceFor(eff(s).price, s.fixedPrice) * s.qty)}`)
+    const lines = selectedServices.map((s) => `• ${svcName(s)}${tierOf(s) !== "standard" ? ` (${tl[tierOf(s)]})` : ""} ×${s.qty} = ${fmt(priceFor(eff(s).price) * s.qty)}`)
     if (otherChecked && otherText) lines.push(`• ${wa.other} : ${otherText}`)
     const discLine = discount > 0 ? `\n${wa.reduction} (${Math.round(discountPct * 100)}%) : -${fmt(discount)}` : ""
     // Sign the message with the client's name so INOV recognizes the sender at a glance.
@@ -438,7 +438,7 @@ export default function Pricing() {
       name: svcName(s),
       tier: tierOf(s) !== "standard" ? tl[tierOf(s)] : "",
       qty: s.qty,
-      price: Math.round(priceFor(eff(s).price, s.fixedPrice) * rate * s.qty),
+      price: Math.round(priceFor(eff(s).price) * rate * s.qty),
     }))
     return {
       rate,
@@ -537,7 +537,7 @@ export default function Pricing() {
       rows: selectedServices.map((s) => ({
         label: (s.qty > 1 ? `${svcName(s)} (×${s.qty})` : svcName(s)).toUpperCase(),
         sla: slaText(s),
-        amount: fmt(priceFor(eff(s).price, s.fixedPrice) * s.qty),
+        amount: fmt(priceFor(eff(s).price) * s.qty),
       })),
       otherText: otherChecked && otherText ? otherText : "",
       discount: discount > 0 ? { pct: discountPct, amountLabel: fmt(discount), subtotalLabel: fmt(subtotal) } : null,
@@ -791,7 +791,7 @@ export default function Pricing() {
                       </span>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
                         <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 700, color: "#fff" }}>
-                          {fmt(priceFor(eff(s).price, s.fixedPrice) * s.qty)}
+                          {fmt(priceFor(eff(s).price) * s.qty)}
                         </span>
                         <button
                           onClick={() => removeItem(s.id)}
@@ -1595,13 +1595,13 @@ function ServiceRow({ s, name, desc, idx, updateQty, fmt, tier, onTier, tl, onCo
           <>
             <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 15, fontWeight: 800, color: "var(--ds-text)" }}>
               {s.qty > 1 ? (
-                <span style={{ color: "var(--ds-accent-text)" }}>{fmt(priceFor(ev.price, s.fixedPrice) * s.qty)}</span>
+                <span style={{ color: "var(--ds-accent-text)" }}>{fmt(priceFor(ev.price) * s.qty)}</span>
               ) : (
-                <span>{fmt(priceFor(ev.price, s.fixedPrice))}</span>
+                <span>{fmt(priceFor(ev.price))}</span>
               )}
             </div>
             {s.qty > 1 && (
-              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 11, color: "var(--ds-text-muted)" }}>{fmt(priceFor(ev.price, s.fixedPrice))}/{t.pricing.perUnit}</div>
+              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: 11, color: "var(--ds-text-muted)" }}>{fmt(priceFor(ev.price))}/{t.pricing.perUnit}</div>
             )}
           </>
         )}
